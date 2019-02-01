@@ -302,8 +302,14 @@ class Mouse {
     
     getMousePositionRelative(evt) {
         let rect = this.object.getBoundingClientRect();
-        this.x = evt.clientX - rect.left;
-        this.y = evt.clientY - rect.top;
+        if(evt.type == 'touchmove'){
+            this.x = evt.changedTouches.item(0).clientX - rect.left;
+            this.y = evt.changedTouches.item(0).clientY - rect.top;
+        } else {
+            this.x = evt.clientX - rect.left;
+            this.y = evt.clientY - rect.top;    
+        }
+        
         return {
             x: evt.clientX - rect.left,
             y: evt.clientY - rect.top,
