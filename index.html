@@ -10,5 +10,21 @@
 </head>
 <body>
     <canvas id="myCanvas" width="1500" height="800"></canvas>
+
+    <form action="/action_page.php">
+        Update number of balls: <input type="number" min=1 max=30 value=20 name="nb" oninput="changeNb(this.value)">
+        Canvas size: <input type="button" onclick="set(1)" value="Full"> 
+                    <input type="button" onclick="set(0.8)" value="80%">
+                    <input type="button" onclick="set(0.6)" value="60%">
+                    <input type="button" onclick="set(0.4)" value="40%">
+                    <input type="button" onclick="set(0.2)" value="20%">
+        Or set your own percentage <input type="number" oninput="set(this.value/100)" value="80" min=0>
+    </form>
+    
+    <div>
+        <h2>Monitor variables</h2>
+        <p id="nBalls">Number of balls is: 20</p>
+        <p id="nBullets">Number of bullets is: 5</p>
+    </div>
 </body>
 </html>

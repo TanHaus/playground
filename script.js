@@ -3,23 +3,12 @@ let mouse;
 let w,h;
 let balls = [];
 let numberOfBalls = 20;
-
-let mousePosition = {
-    x: 10,
-    y: 10,
-};
-let isFire = false;
-
-let bullet = {
-    x: 0,
-    y: 0,
-    width: 10,
-    height: 20,
-    speedX: 0,
-    speedY: 0,
-    color: 'black',
-    orientation: 'vertical',
-};
+let showNBalls, showNBullets;
+let player, player2;
+let bullets = [];
+let numberOfBullets = 5;
+let viewportWidth, viewportHeight;
+let sizeFactor = 0.5;
 
 class Player {
     constructor(x,y,width,height,color) {
@@ -31,7 +20,7 @@ class Player {
     }
 
     draw() {
-        Draw.drawFilledRectangle(this.x,this.y,this.width,this.height,this.color);
+        Draw.filledRectangle(this);
     }
 
     moveMouse(mouse,evt) {
@@ -46,10 +35,29 @@ class Player {
         this.x -= speed*Math.cos(angle);
         this.y -= speed*Math.sin(angle);
     }
-}
 
-let player = new Player(10,10,50,50,'red');
-let player2 = new Player(100,100,50,50,'blue');
+    fire(evt) {
+        if(numberOfBullets>0) {
+            switch(evt.code) {
+                case 'ArrowUp':
+                case 'ArrowDown':
+                case 'ArrowLeft':
+                case 'ArrowRight':
+                    bullets.push(new Bullet(this,evt.code));
+                    numberOfBullets--;
+                    break;
+                default:
+            }
+        }
+    }
+
+    resolveCollideBall(balls) {
+        let player = this;
+        balls.forEach(function(ball) {
+            if(Collide.collideBallBox(ball,player)) console.log('touch!');
+        });
+    }
+}
 
 class Ball {
     constructor(x,y,radius,color,speedX,speedY) {
@@ -65,12 +73,10 @@ class Ball {
         this.x += this.speedX;
         this.y += this.speedY;
         this.resolveCollideWall();
-
-        //Draw.drawLine(this.x,this.y,this.x+this.speedX*10,this.y+this.speedY*10,2);
     }
 
     draw() {
-        Draw.drawCircle(this.x,this.y,this.radius,this.color,2);
+        Draw.filledCircle(this);
     }
 
     resolveCollideWall() {
@@ -93,11 +99,15 @@ class Ball {
         }
     }
 
+    resolveCollidePlayer(player) {
+        let ball = this;
+        if(Collide.collideBallBox(ball,player)) {
+            ball.remove();
+        }
+    }
+
     detectCollideBall(otherBall) {
-        let radiusSum = this.radius + otherBall.radius;
-        let distanceSquared = Math.pow((this.x-otherBall.x),2) + Math.pow((this.y-otherBall.y),2);
-        if (distanceSquared>Math.pow(radiusSum,2)) return false;
-        return true;
+        return Collide.collideBallBall(this,otherBall);
     }
 
     resolveCollideBall(otherBall) {
@@ -107,7 +117,7 @@ class Ball {
             
             thisResolvedSpeed = this.resolveSpeed(slope);
             otherResolvedSpeed = otherBall.resolveSpeed(slope);
-            console.log(thisResolvedSpeed);
+            //console.log(thisResolvedSpeed);
 
             this.speedX = thisResolvedSpeed.speedNewX;
             this.speedY = thisResolvedSpeed.speedNewY;
@@ -149,32 +159,106 @@ class Ball {
 
         Draw.drawLine(this.x,this.y,this.x+newSpeed.speedNewX*10,otherBall.y,2);
     }*/
+
+    resolveCollideBullet(bulletArray) {
+        let ball = this;
+        bulletArray.forEach(function(bullet) {
+            if(Collide.collideBallBox(ball,bullet)) {
+                ball.remove(balls);
+                bullet.remove(bullets);
+            }
+        });
+    }
+
+    remove(ballArray) {
+        let index = ballArray.indexOf(this);
+        ballArray.splice(index,1);
+        numberOfBalls--;
+    }
+}
+
+class Bullet {
+    constructor(playerName, direction) {
+        this.speed = 5;
+        this.short = 15;
+        this.long = 30;
+        this.direction = direction;
+        switch(direction) {
+            case 'ArrowUp':
+                this.speedX = 0;
+                this.speedY = -this.speed;
+                this.width = this.short;
+                this.height = this.long;
+                break;
+            case 'ArrowDown':
+                this.speedX = 0;
+                this.speedY = this.speed;
+                this.width = this.short;
+                this.height = this.long;
+                break;
+            case 'ArrowLeft':
+                this.speedX = -this.speed;
+                this.speedY = 0;
+                this.width = this.long;
+                this.height = this.short;
+                break;
+            case 'ArrowRight':
+                this.speedX = this.speed;
+                this.speedY = 0;
+                this.width = this.long;
+                this.height = this.short;
+                break;
+        }
+        this.x = playerName.x + playerName.width/2 - this.width/2;
+        this.y = playerName.y + playerName.height/2 - this.height/2;
+        this.color = 'black';
+    }
+
+    draw() {
+        Draw.filledRectangle(this);
+    }
+
+    move() {
+        this.x += this.speedX;
+        this.y += this.speedY;
+    }
+
+    resolveCollideWall() {
+        if(this.x<-this.long || this.x>w || this.y<-this.long || this.y>h) {
+            this.remove(bullets);
+        }
+    }
+
+    remove(bulletList) {
+        let index = bulletList.indexOf(this);
+        bulletList.splice(index,1);
+    }
 }
 
 class Draw {
-    static drawCircle(x,y,radius,color) {
+    static filledCircle(ob) {
         ctx.save();
         
-        ctx.translate(x,y);
+        ctx.translate(ob.x,ob.y);
         ctx.beginPath();
-        ctx.arc(0,0,radius,0,2*Math.PI);
-        ctx.fillStyle = color;
+        ctx.arc(0,0,ob.radius,0,2*Math.PI);
+        ctx.fillStyle = ob.color;
         ctx.fill();
         
         ctx.restore();
     }
     
-    static drawFilledRectangle(x,y,width,height,color) {
+    static filledRectangle(ob) {
         ctx.save();
     
-        ctx.translate(x,y);
-        ctx.fillStyle = color;
-        ctx.fillRect(0,0,width,height);
+        ctx.translate(ob.x,ob.y);
+        ctx.fillStyle = ob.color;
+        ctx.fillRect(0,0,ob.width,ob.height);
     
         ctx.restore();
     }
 
-    static drawLine(x1,y1,x2,y2,weight=2) {
+    static line(x1,y1,x2,y2,weight=2) {
         ctx.save();
 
         ctx.translate(x1,y1);
@@ -247,30 +331,11 @@ class Game {
         return ballResult;
     }
 
-    static startGame(nb) {
-        balls = Game.createBalls(nb);
-        Game.updateBalls();
-        player.draw();
-        player2.draw();
-        drawBullet(bullet);
-    }
-    
-    static mainLoop() {
-        ctx.clearRect(0,0,w,h);
-        Game.updateBalls();
-        player.draw();
-        player2.draw();
-        drawBullet(bullet);
-        bulletMove(bullet);
-        player2.moveMouseSlow(mouse);
-        Game.ballsCollide();
-        requestAnimationFrame(Game.mainLoop);
-    }
-
     static updateBalls() {
         balls.forEach(function(ball) {
             ball.draw();
             ball.move();
+            ball.resolveCollideBullet(bullets);
         });
     }
 
@@ -282,12 +347,79 @@ class Game {
             }
         }
     }
+    static updateBullets() {
+        bullets.forEach(function(bullet) {
+            bullet.draw();
+            bullet.move();
+            bullet.resolveCollideWall();
+        })
+    }
+
+    static startGame(nb) {
+        balls = Game.createBalls(nb);
+        Game.updateBalls();
+        player.draw();
+        //player2.draw();
+        Game.updateBullets();
+    }
+    
+    static mainLoop() {
+        Update.nBalls();
+        Update.nBullets();
+        ctx.clearRect(0,0,w,h);
+        Game.updateBalls();
+        player.draw();
+        //player2.draw();
+
+        Game.updateBullets();
+        //player2.moveMouseSlow(mouse);
+        player.resolveCollideBall(balls);
+        Game.ballsCollide();
+        requestAnimationFrame(Game.mainLoop);
+    }
 }
+
+class Collide {
+    static collideBallBox(ball,box) {
+        let x = ball.x;
+        let y = ball.y;
+        if(x < box.x) x = box.x;
+        else if(x > box.x+box.width) x = box.x+box.width;
+        if(y < box.y) y = box.y;
+        else if(y > box.y+box.height) y = box.y+box.height;
+
+        return (Math.pow(ball.x-x,2)+Math.pow(ball.y-y,2) < Math.pow(ball.radius,2));
+    }
+
+    static collideBallBall(ball1, ball2) {
+        let radiusSum = ball1.radius + ball2.radius;
+        let distanceSquared = Math.pow((ball1.x-ball2.x),2) + Math.pow((ball1.y-ball2.y),2);
+        if (distanceSquared>Math.pow(radiusSum,2)) return false;
+        return true;
+    }
+
+    static collideBoxBox(box1, box2) {
+
+    }
+}
+
+class Update {
+    static nBalls() {
+        showNBalls.innerHTML = 'Number of balls is: ' + numberOfBalls; 
+    }
+    static nBullets() {
+        showNBullets.innerHTML = 'Number of bullets is: ' + numberOfBullets;
+    }
+}
+
+player = new Player(10,10,50,50,'red');
+player2 = new Player(100,100,50,50,'blue');
 
 window.onload = function init() {
     canvas = document.querySelector("#myCanvas");
-    w = canvas.width;
-    h = canvas.height;
+    
+    setCanvas(canvas);
+
     ctx = canvas.getContext('2d');
     mouse = new Mouse(10,10,canvas);
     
@@ -295,77 +427,40 @@ window.onload = function init() {
         player.moveMouse(mouse,evt);
     });
 
-    window.addEventListener("keydown", function(evt) {
-        switch(evt.code) {
-            case "ArrowUp":
-            case "ArrowDown":
-            case "ArrowLeft":
-            case "ArrowRight":
-                fire(evt.code);
-                break;
-        }
+    window.addEventListener("keyup", function(evt) {
+        player.fire(evt);
     });
+
+    showNBalls = document.querySelector('#nBalls');
+    showNBullets = document.querySelector('#nBullets');
 
     Game.startGame(numberOfBalls);
     Game.mainLoop();
 }
 
-function fire(keyCode) {
-    if(!isFire) {
-        bullet.x = player.x + player.width/2;
-        bullet.y = player.y + player.height/2;
-        switch(keyCode) {
-            case "ArrowUp":
-                bullet.orientation = 'vertical';
-                bullet.speedY = -10;
-                bullet.speedX = 0;
-                break;
-            case "ArrowDown":
-                bullet.orientation = 'vertical';
-                bullet.speedY = 10;
-                bullet.speedX = 0;
-                break;
-            case "ArrowLeft":
-                bullet.orientation = 'horizontal';
-                bullet.speedX = -10;
-                bullet.speedY = 0;
-                break;
-            case "ArrowRight":
-                bullet.orientation = 'horizontal';
-                bullet.speedX = 10;
-                bullet.speedY = 0;
-                break;
-        }
-        isFire = true;
-    }
+window.onresize = function onresize() {
+    setCanvas(canvas);
+    Game.startGame(numberOfBalls);
 }
 
+function setCanvas(canvas) {
+    viewportWidth = window.innerWidth;
+    viewportHeight = window.innerHeight;
 
+    canvas.width = viewportWidth;
+    canvas.height = viewportHeight*sizeFactor;
 
-function drawBullet(bullet) {
-    if(isFire) {
-        if(bullet.orientation==='vertical') {
-            Draw.drawFilledRectangle(bullet.x,bullet.y,bullet.width,bullet.height,bullet.color);
-        } else if(bullet.orientation==='horizontal') {
-            Draw.drawFilledRectangle(bullet.x,bullet.y,bullet.height,bullet.width,bullet.color);
-        }
-    }
+    w = canvas.width;
+    h = canvas.height;
 }
 
-
-
-function bulletMove(bullet) {
-    bullet.x += bullet.speedX;
-    bullet.y += bullet.speedY;
-
-    bulletCollideWall(bullet);
+function changeNb(nb) {
+    numberOfBalls = nb;
+    Game.startGame(numberOfBalls);
 }
 
-function bulletCollideWall(bullet) {
-    if (bullet.x<0 || bullet.x>w || bullet.y<0|| bullet.y>h) isFire=false;
-}
-
-function printInfo() {
-    ctx.save();
-    ctx.restore();
+function set(value){
+    sizeFactor = value;
+    setCanvas(canvas);
+    Game.startGame(numberOfBalls);
 }
