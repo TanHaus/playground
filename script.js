@@ -3,12 +3,15 @@ let mouse;
 let w,h;
 let balls = [];
 let numberOfBalls = 20;
-let showNBalls, showNBullets;
+let showNBalls, showNBullets, showMinR, showMaxR;
 let player, player2;
 let bullets = [];
 let numberOfBullets = 5;
 let viewportWidth, viewportHeight;
 let sizeFactor = 0.5;
+let margin = 10;
+let minRadius = 30;
+let maxRadius = 40;
 
 class Player {
     constructor(x,y,width,height,color) {
@@ -312,8 +315,6 @@ class Game {
     static createBalls(nb) {
         let ballResult = [];
         
-        let minRadius = 30;
-        let maxRadius = 40;
         let minSpeedMagnitude = 1;
         let maxSpeedMagnitude = 5;
     
@@ -343,10 +344,11 @@ class Game {
         let size = balls.length;
         for(let i = size-1; i>=0; i--) {
             for(let j = 0; j<i; j++) {
-                balls[i].resolveCollideBall(balls[j]);
+                //balls[i].resolveCollideBall(balls[j]);
             }
         }
     }
+
     static updateBullets() {
         bullets.forEach(function(bullet) {
             bullet.draw();
@@ -355,7 +357,7 @@ class Game {
         })
     }
 
-    static startGame(nb) {
+    static startGame(nb=numberOfBalls) {
         balls = Game.createBalls(nb);
         Game.updateBalls();
         player.draw();
@@ -433,6 +435,8 @@ window.onload = function init() {
 
     showNBalls = document.querySelector('#nBalls');
     showNBullets = document.querySelector('#nBullets');
+    showMaxR = document.querySelector('#maxR');
+    showMinR = document.querySelector('#minR');
 
     Game.startGame(numberOfBalls);
     Game.mainLoop();
@@ -440,12 +444,11 @@ window.onload = function init() {
 
 window.onresize = function onresize() {
     setCanvas(canvas);
-    Game.startGame(numberOfBalls);
 }
 
 function setCanvas(canvas) {
-    viewportWidth = window.innerWidth;
-    viewportHeight = window.innerHeight;
+    viewportWidth = document.documentElement.clientWidth;
+    viewportHeight = document.documentElement.clientHeight;
 
     canvas.width = viewportWidth;
     canvas.height = viewportHeight*sizeFactor;
@@ -456,11 +459,19 @@ function setCanvas(canvas) {
 
 function changeNb(nb) {
     numberOfBalls = nb;
-    Game.startGame(numberOfBalls);
 }
 
-function set(value){
+function set(value) {
     sizeFactor = value;
     setCanvas(canvas);
-    Game.startGame(numberOfBalls);
+}
+
+function updateMinSize(value) {
+    minRadius = parseInt(value);
+    showMinR.innerHTML = 'Min ball size: ' + minRadius;
+}
+
+function updateMaxSize(value) {
+    maxRadius = parseInt(value);
+    showMaxR.innerHTML = 'Max ball size: ' + maxRadius;
 }

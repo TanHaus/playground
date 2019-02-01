@@ -1,3 +1,15 @@
 canvas {
     border: 1px solid black;
 }
+
+#control {
+    position: fixed;
+    bottom: 10%;
+    left: 5%;
+}
+
+#monitor {
+    position: fixed;
+    top: 5%;
+    right: 10%;
+}
