@@ -429,6 +429,10 @@ window.onload = function init() {
         player.moveMouse(mouse,evt);
     });
 
+    canvas.addEventListener('touchmove', function(evt) {
+        player.moveMouse(mouse,evt);
+    });
+
     window.addEventListener("keyup", function(evt) {
         player.fire(evt);
     });

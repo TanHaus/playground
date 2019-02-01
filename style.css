@@ -2,14 +2,19 @@ canvas {
     border: 1px solid black;
 }
 
+body {
+    font-size: 1em;
+    font-family: sans-serif;
+}
+
 #control {
     position: fixed;
     bottom: 10%;
-    left: 5%;
+    right: 1%;
 }
 
 #monitor {
     position: fixed;
-    top: 5%;
+    top: 1%;
     right: 10%;
 }
