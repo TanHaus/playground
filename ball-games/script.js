@@ -2,8 +2,8 @@ let canvas,ctx;
 let mouse;
 let w,h;
 let balls = [];
-let numberOfBalls = 20;
-let showNBalls, showNBullets, showMinR, showMaxR;
+let numberOfBalls = 10;
+let showNBalls, showNBullets, showMinR, showMaxR, showRestitution;
 let player, player2;
 let bullets = [];
 let numberOfBullets = 5;
@@ -12,6 +12,7 @@ let sizeFactor = 0.5;
 let margin = 10;
 let minRadius = 30;
 let maxRadius = 40;
+let restitution = 0.5;
 
 class Player {
     constructor(x,y,width,height,color) {
@@ -63,13 +64,14 @@ class Player {
 }
 
 class Ball {
-    constructor(x,y,radius,color,speedX,speedY) {
+    constructor(x,y,radius,color,speedX,speedY,mass=1) {
         this.x = x;
         this.y = y;
         this.radius = radius;
         this.color = color;
         this.speedX = speedX;
         this.speedY = speedY;
+        this.mass = mass;
     }
 
     move() {
@@ -85,20 +87,20 @@ class Ball {
     resolveCollideWall() {
         if(this.x<this.radius) {
             this.x = this.radius;
-            this.speedX *= -1;
+            this.speedX *= -restitution;
         }
         if(this.x>w-this.radius) {
             this.x = w-this.radius;
-            this.speedX *= -1;
+            this.speedX *= -restitution;
         }
         
         if(this.y<this.radius) {
             this.y = this.radius;
-            this.speedY *= -1;
+            this.speedY *= -restitution;
         }
         if(this.y>h-this.radius) {
             this.y = h-this.radius;
-            this.speedY *= -1;
+            this.speedY *= -restitution;
         }
     }
 
@@ -109,59 +111,65 @@ class Ball {
         }
     }
 
-    detectCollideBall(otherBall) {
-        return Collide.collideBallBall(this,otherBall);
-    }
-
     resolveCollideBall(otherBall) {
-        if(this.detectCollideBall(otherBall)) {
-            let thisResolvedSpeed, otherResolvedSpeed;
-            let slope = this.getSlope(otherBall);
-            
-            thisResolvedSpeed = this.resolveSpeed(slope);
-            otherResolvedSpeed = otherBall.resolveSpeed(slope);
-            //console.log(thisResolvedSpeed);
+        let ball = this;
+        if(Collide.collideBallBall(ball,otherBall)) { // check if two balls collide
+            let alpha = ball.getAngle(otherBall);  // get the normal direction
+            let ballSpeedRotated = Ball.rotateSpeedAxis(ball,alpha);  // resolve speed into the direction of normal
+            let otherSpeedRotated = Ball.rotateSpeedAxis(otherBall,alpha);
 
-            this.speedX = thisResolvedSpeed.speedNewX;
-            this.speedY = thisResolvedSpeed.speedNewY;
-            otherBall.speedX = otherResolvedSpeed.speedNewX;
-            otherBall.speedY = otherResolvedSpeed.speedNewY;
+            let eqn = [[        1,             -1,                          otherSpeedRotated.speedX-ballSpeedRotated.speedX],  // solve for new normal speed
+                       [ball.mass, otherBall.mass, ball.mass*ballSpeedRotated.speedX+otherBall.mass*otherSpeedRotated.speedX]];
 
-            // swap values of the speed component parallel to the axis
-            let swap = this.speedX;
-            this.speedX = otherBall.speedX;
-            otherBall.speedX = swap;
+            eqn[1][2] *= restitution;
+            let eqnSolved = Ball.eqnSolver(eqn);
+            ballSpeedRotated.speedX = eqnSolved.x;
+            otherSpeedRotated.speedX = eqnSolved.y;
 
-            thisResolvedSpeed = this.resolveSpeed(this.getSlope(otherBall));
-            otherResolvedSpeed = otherBall.resolveSpeed(otherBall.getSlope(this));
+            ballSpeedRotated = Ball.rotateSpeedAxis(ballSpeedRotated,-alpha);  // get the speed back to original speed
+            otherSpeedRotated = Ball.rotateSpeedAxis(otherSpeedRotated,-alpha);
 
-            this.speedX = thisResolvedSpeed.speedNewX;
-            this.speedY = thisResolvedSpeed.speedNewY;
-            otherBall.speedX = otherResolvedSpeed.speedNewX;
-            otherBall.speedY = otherResolvedSpeed.speedNewY;
+            ball.speedX = ballSpeedRotated.speedX;
+            ball.speedY = ballSpeedRotated.speedY;
+            otherBall.speedX = otherSpeedRotated.speedX;
+            otherBall.speedY = otherSpeedRotated.speedY;
         }
     }
 
-    getSlope(otherBall) {
+    getAngle(otherBall) {
         let dx = otherBall.x - this.x;
         let dy = otherBall.y - this.y;
         return Math.atan2(dy,dx);
     }
 
-    resolveSpeed(angle) {
-        let magnitude = Math.sqrt(Math.pow(this.speedX,2)+Math.pow(this.speedY,2));
-        let alpha = Math.atan2(this.y,this.x) - angle;
+    static rotateSpeedAxis(ball,theta) {
+        let speedMag = Math.sqrt(ball.speedX*ball.speedX + ball.speedY*ball.speedY);
+        let theta0 = Math.atan2(ball.speedY, ball.speedX);
         return {
-            speedNewX : magnitude * Math.cos(alpha),
-            speedNewY : magnitude * Math.sin(alpha),
+            speedX: speedMag*Math.cos(theta0-theta),
+            speedY: speedMag*Math.sin(theta0-theta),
         }
     }
-/*
-    resolveCollideBall(otherBall) {
-        let newSpeed = this.resolveSpeed(this.getSlope(otherBall));
 
-        Draw.drawLine(this.x,this.y,this.x+newSpeed.speedNewX*10,otherBall.y,2);
-    }*/
+    static eqnSolver(matrix) {
+        let a = matrix[0][0];
+        let b = matrix[0][1];
+        let m = matrix[0][2];
+        let c = matrix[1][0];
+        let d = matrix[1][1];
+        let n = matrix[1][2];
+
+        if(a*d==b*c) {
+            if(a*n==c*m) {
+                return 'Infinite number of solutions';
+            } else return 'No solution found';
+        } else {
+            return {
+                x: (m*d-n*b)/(a*d-b*c),
+                y: (m*c-n*a)/(b*c-a*d),
+            }
+        }
+    }
 
     resolveCollideBullet(bulletArray) {
         let ball = this;
@@ -323,6 +331,8 @@ class Game {
         
         let minSpeedMagnitude = 1;
         let maxSpeedMagnitude = 5;
+
+        let density = 1;
     
         for (let i = 0; i < nb; i++) {
             let preRadius = Random.generateRandom(minRadius,maxRadius);
@@ -332,8 +342,15 @@ class Game {
                                     preRadius,
                                     Random.getRandomColor(),
                                     Random.generateRandom(minSpeedMagnitude, maxSpeedMagnitude, true),
-                                    Random.generateRandom(minSpeedMagnitude, maxSpeedMagnitude, true)));
-                            
+                                    Random.generateRandom(minSpeedMagnitude, maxSpeedMagnitude, true),
+                                    density*preRadius*preRadius*preRadius));
+            
+            for(let j = 0; j < i; j++) {  // check if the new ball overlapse any other balls
+                if(Collide.collideBallBall(ballResult[j],ballResult[i])) {
+                    ballResult.splice(i,1);
+                    i--;
+                }
+            }            
         }
         return ballResult;
     }
@@ -350,7 +367,7 @@ class Game {
         let size = balls.length;
         for(let i = size-1; i>=0; i--) {
             for(let j = 0; j<i; j++) {
-                //balls[i].resolveCollideBall(balls[j]);
+                balls[i].resolveCollideBall(balls[j]);
             }
         }
     }
@@ -369,6 +386,7 @@ class Game {
         player.draw();
         //player2.draw();
         Game.updateBullets();
+        numberOfBullets = 5;
     }
     
     static mainLoop() {
@@ -447,6 +465,7 @@ window.onload = function init() {
     showNBullets = document.querySelector('#nBullets');
     showMaxR = document.querySelector('#maxR');
     showMinR = document.querySelector('#minR');
+    showRestitution = document.querySelector('#restitution');
 
     Game.startGame(numberOfBalls);
     Game.mainLoop();
@@ -484,4 +503,9 @@ function updateMinSize(value) {
 function updateMaxSize(value) {
     maxRadius = parseInt(value);
     showMaxR.innerHTML = 'Max ball size: ' + maxRadius;
+}
+
+function updateRestitution(value) {
+    restitution = parseFloat(value);
+    showRestitution.innerHTML = 'Coefficient of restitution: ' + restitution;
 }
