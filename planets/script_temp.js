@@ -133,11 +133,6 @@ class Ball {
             ball.speedY = ballSpeedRotated.speedY;
             otherBall.speedX = otherSpeedRotated.speedX;
             otherBall.speedY = otherSpeedRotated.speedY;
-
-            ball.x += ball.speedX;
-            ball.y += ball.speedY;
-            otherBall.x += otherBall.speedX;
-            otherBall.y += otherBall.speedY;
         }
     }
 
