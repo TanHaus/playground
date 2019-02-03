@@ -2,14 +2,14 @@
 let canvas, ctx;
 let w,h;
 let vOffset = 50, hOffset = 100;
-let pendulumn;
+let pendulum;
 let gravity = 9.81;
 let documentWidth;
 let requestID;
 let gameState = 0;
 let timer;
 
-class Pendulumn {
+class Pendulum {
     constructor(theta,mass,moInertia,length) {
         this.theta = theta;
         this.thetaSpeed = 0;
@@ -62,12 +62,14 @@ class Timer {
     start() {
         this.count = 0;
         this.ifCounting = true;
+        let showTimer = document.querySelector('#timer');
+        showTimer.innerHTML = 'Timer: 0';
     }
 
     stop() {
         this.ifCounting = false;
-        let monitor = document.querySelector('#monitor');
-        monitor.innerHTML += timer.getTime().toFixed(5) + '<br>';
+        let showTimer = document.querySelector('#timer');
+        showTimer.innerHTML = 'Timer: ' + timer.getTime().toFixed(5);
     }
 
     update() {
@@ -104,27 +106,28 @@ class Draw {
 
 class Game {
     static start(angle=45) {
-        pendulumn = new Pendulumn(Pendulumn.degToRad(angle),100,10,100);
+        if(pendulum===undefined) pendulum = new Pendulum(Pendulum.degToRad(angle),50,20,200);
+        else pendulum = new Pendulum(Pendulum.degToRad(angle),pendulum.mass,pendulum.moInertia,pendulum.length);
         
         // set the sliders to correct value
         let form = document.querySelector('form');
-        form.elements['mass'].value = pendulumn.mass;
-        form.elements['moInertia'].value = pendulumn.moInertia;
-        form.elements['penLength'].value = pendulumn.length;
-        form.elements['theta0'].value = Pendulumn.radToDeg(pendulumn.theta0);
+        form.elements['mass'].value = pendulum.mass;
+        form.elements['moInertia'].value = pendulum.moInertia;
+        form.elements['penLength'].value = pendulum.length;
+        form.elements['theta0'].value = Pendulum.radToDeg(pendulum.theta0);
 
         if(gameState==0) {
             gameState = 1;
             ctx.clearRect(0,0,w,h);
-            pendulumn.draw();
+            pendulum.draw();
             Game.mainloop();
         }
     }
 
     static mainloop() {
         ctx.clearRect(0,0,w,h);
-        pendulumn.update();
-        pendulumn.draw();
+        pendulum.update();
+        pendulum.draw();
         show();
         timer.update();
 
@@ -157,15 +160,15 @@ window.onresize = function(){
 function update(value,type) {
     switch(type) {
         case 'mass':
-            pendulumn.mass = parseInt(value);
+            pendulum.mass = parseInt(value);
             break;
         case 'moInertia':
-            pendulumn.moInertia = parseInt(value);
+            pendulum.moInertia = parseInt(value);
             break;
         case 'length':
-            pendulumn.length = parseInt(value);
+            pendulum.length = parseInt(value);
             ctx.clearRect(0,0,w,h);
-            pendulumn.draw();
+            pendulum.draw();
             break;
     }
     show();
@@ -184,14 +187,16 @@ function resizeCanvas() {
 function show() {
     let variables = document.querySelector('#variables');
     variables.innerHTML = '<tbody>'+
-                            '<tr>   <th>Angular position (rad)</th>   <td>'+pendulumn.theta.toExponential(2)+'</td>    </tr>'+
-                            '<tr>   <th>Angular velocity (rad/s)</th>   <td>'+pendulumn.thetaSpeed.toExponential(2)+'</td>    </tr>'+
-                            '<tr>   <th>Angular acceleration (rad/s2)</th>   <td>'+pendulumn.thetaAccel.toExponential(2)+'</td>    </tr>'+
-                            '<tr>   <th>Mass</th>   <td>'+pendulumn.mass+'</td>   </tr>'+
-                            '<tr>   <th>Moment of Inertia</th>   <td>'+pendulumn.moInertia+'</td>   </tr>'+
-                            '<tr>   <th>Length</th>   <td>'+pendulumn.length+'</td>   </tr>'+
+                            '<tr>   <th>Angular position (rad)</th>   <td>'+pendulum.theta.toExponential(2)+'</td>    </tr>'+
+                            '<tr>   <th>Angular velocity (rad/s)</th>   <td>'+pendulum.thetaSpeed.toExponential(2)+'</td>    </tr>'+
+                            '<tr>   <th>Angular acceleration (rad/s2)</th>   <td>'+pendulum.thetaAccel.toExponential(2)+'</td>    </tr>'+
+                            '<tr>   <th>Mass</th>   <td>'+pendulum.mass+'</td>   </tr>'+
+                            '<tr>   <th>Moment of Inertia</th>   <td>'+pendulum.moInertia+'</td>   </tr>'+
+                            '<tr>   <th>Length</th>   <td>'+pendulum.length+'</td>   </tr>'+
                           '</tbody>';
     let monitor = document.querySelector('#monitor');
-    monitor.children[1].innerHTML = '<li>Period (simple pendulumn): '+pendulumn.getSimplePeriod().toFixed(5)+'</li>';
-    if(timer.getTime()%1==0 && timer.getTime()!=0) monitor.innerHTML += timer.getTime() + '<br>';
+    monitor.children[1].children[0].innerHTML = 'Period (small oscillation): '+pendulum.getSimplePeriod().toFixed(5);
+    
+    let showTimer = document.querySelector('#timer');
+    if(timer.getTime()%1==0 && timer.getTime()!=0) showTimer.innerHTML = 'Timer: ' + timer.getTime().toFixed();
 }

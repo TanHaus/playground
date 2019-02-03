@@ -38,3 +38,7 @@ table {
 td {
     border-style: solid;
 }
+
+ul {
+    list-style: none;
+}
