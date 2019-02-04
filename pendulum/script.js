@@ -4,7 +4,6 @@ let w,h;
 let vOffset = 50, hOffset = 100;
 let pendulum;
 let gravity = 9.81;
-let documentWidth;
 let requestID;
 let gameState = 0;
 let timer;
@@ -175,9 +174,17 @@ function update(value,type) {
 }
 
 function resizeCanvas() {
-    documentWidth = document.documentElement.clientWidth;
-    if(documentWidth>=1000) canvas.width = documentWidth/2;
-    else canvas.width = documentWidth;
+    let documentWidth = document.documentElement.clientWidth;
+    let documentHeight = document.documentElement.clientHeight;
+    
+    if(documentWidth>=1000) {
+        canvas.width = documentWidth/2;
+        canvas.height = documentHeight*0.9;
+    } else {
+        canvas.width = documentWidth;
+        canvas.height = documentHeight*0.5;
+    }
+
     w = canvas.clientWidth;
     h = canvas.clientHeight;
     hOffset = w/2;

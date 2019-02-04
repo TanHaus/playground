@@ -121,7 +121,7 @@ class Ball {
             let eqn = [[        1,             -1,                          otherSpeedRotated.speedX-ballSpeedRotated.speedX],  // solve for new normal speed
                        [ball.mass, otherBall.mass, ball.mass*ballSpeedRotated.speedX+otherBall.mass*otherSpeedRotated.speedX]];
 
-            eqn[1][2] *= restitution;
+            eqn[1][2] *= restitution*restitution;   // account for energy loss
             let eqnSolved = Ball.eqnSolver(eqn);
             ballSpeedRotated.speedX = eqnSolved.x;
             otherSpeedRotated.speedX = eqnSolved.y;
