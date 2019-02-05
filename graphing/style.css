@@ -1,0 +1,45 @@
+canvas {
+    border: 1px solid black;
+}
+
+body {
+    font-size: 1em;
+    font-family: sans-serif;
+}
+
+#control {
+    position: fixed;
+    bottom: 10%;
+    right: 1%;
+    z-index: 1;
+}
+
+#monitor {
+    position: fixed;
+    top: 1%;
+    right: 10%;
+}
+
+body {
+    overflow-x: hidden;
+}
+
+#variables {
+    position: fixed;
+    right: 10%;
+    top: 50%;
+}
+
+table {
+    border-width: 1px;
+    border-style: solid;
+    border-collapse: collapse;
+}
+
+td {
+    border-style: solid;
+}
+
+ul {
+    list-style: none;
+}
