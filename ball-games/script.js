@@ -1,4 +1,4 @@
-let canvas,ctx;
+let canvas,ctx,draw;
 let mouse;
 let w,h;
 let balls = [];
@@ -24,11 +24,11 @@ class Player {
     }
 
     draw() {
-        Draw.filledRectangle(this);
+        draw.filledRectangle(this,this,this.color);
     }
 
     moveMouse(mouse,evt) {
-        let mousePos = mouse.getMousePositionRelative(evt);
+        let mousePos = mouse.getRelativePosition(evt);
         this.x = mousePos.x - this.width/2;
         this.y = mousePos.y - this.height/2;
     }
@@ -54,13 +54,6 @@ class Player {
             }
         }
     }
-
-    resolveCollideBall(balls) {
-        let player = this;
-        balls.forEach(function(ball) {
-            if(Collide.collideBallBox(ball,player)) console.log('touch!');
-        });
-    }
 }
 
 class Ball {
@@ -81,7 +74,7 @@ class Ball {
     }
 
     draw() {
-        Draw.filledCircle(this);
+        draw.filledCircle(this,this.radius,this.color);
     }
 
     resolveCollideWall() {
@@ -104,16 +97,9 @@ class Ball {
         }
     }
 
-    resolveCollidePlayer(player) {
-        let ball = this;
-        if(Collide.collideBallBox(ball,player)) {
-            ball.remove();
-        }
-    }
-
     resolveCollideBall(otherBall) {
         let ball = this;
-        if(Collide.collideBallBall(ball,otherBall)) { // check if two balls collide
+        if(CollideDetect.ballBall(ball,otherBall)) { // check if two balls collide
             let alpha = ball.getAngle(otherBall);  // get the normal direction
             let ballSpeedRotated = Ball.rotateSpeedAxis(ball,alpha);  // resolve speed into the direction of normal
             let otherSpeedRotated = Ball.rotateSpeedAxis(otherBall,alpha);
@@ -122,7 +108,7 @@ class Ball {
                        [ball.mass, otherBall.mass, ball.mass*ballSpeedRotated.speedX+otherBall.mass*otherSpeedRotated.speedX]];
 
             eqn[1][2] *= restitution*restitution;   // account for energy loss
-            let eqnSolved = Ball.eqnSolver(eqn);
+            let eqnSolved = Solver.sim2(eqn);
             ballSpeedRotated.speedX = eqnSolved.x;
             otherSpeedRotated.speedX = eqnSolved.y;
 
@@ -141,9 +127,9 @@ class Ball {
         }
     }
 
-    getAngle(otherBall) {
-        let dx = otherBall.x - this.x;
-        let dy = otherBall.y - this.y;
+    getAngle(other) {
+        let dx = other.x - this.x;
+        let dy = other.y - this.y;
         return Math.atan2(dy,dx);
     }
 
@@ -156,30 +142,10 @@ class Ball {
         }
     }
 
-    static eqnSolver(matrix) {
-        let a = matrix[0][0];
-        let b = matrix[0][1];
-        let m = matrix[0][2];
-        let c = matrix[1][0];
-        let d = matrix[1][1];
-        let n = matrix[1][2];
-
-        if(a*d==b*c) {
-            if(a*n==c*m) {
-                return 'Infinite number of solutions';
-            } else return 'No solution found';
-        } else {
-            return {
-                x: (m*d-n*b)/(a*d-b*c),
-                y: (m*c-n*a)/(b*c-a*d),
-            }
-        }
-    }
-
     resolveCollideBullet(bulletArray) {
         let ball = this;
         bulletArray.forEach(function(bullet) {
-            if(Collide.collideBallBox(ball,bullet)) {
+            if(CollideDetect.ballBox(ball,bullet)) {
                 ball.remove(balls);
                 bullet.remove(bullets);
             }
@@ -231,7 +197,7 @@ class Bullet {
     }
 
     draw() {
-        Draw.filledRectangle(this);
+        draw.filledRectangle(this,this,this.color);
     }
 
     move() {
@@ -251,85 +217,6 @@ class Bullet {
     }
 }
 
-class Draw {
-    static filledCircle(ob) {
-        ctx.save();
-        
-        ctx.translate(ob.x,ob.y);
-        ctx.beginPath();
-        ctx.arc(0,0,ob.radius,0,2*Math.PI);
-        ctx.fillStyle = ob.color;
-        ctx.fill();
-        
-        ctx.restore();
-    }
-    
-    static filledRectangle(ob) {
-        ctx.save();
-    
-        ctx.translate(ob.x,ob.y);
-        ctx.fillStyle = ob.color;
-        ctx.fillRect(0,0,ob.width,ob.height);
-    
-        ctx.restore();
-    }
-
-    static line(x1,y1,x2,y2,weight=2) {
-        ctx.save();
-
-        ctx.translate(x1,y1);
-        ctx.beginPath();
-        ctx.moveTo(0,0);
-        ctx.lineTo(x2-x1,y2-y1);
-        ctx.lineWidth = weight;
-        ctx.stroke();
-
-        ctx.restore();
-    }
-}
-
-class Random {
-    static generateRandom(min,max,signed=false) {
-        let range = max-min;
-        let value = min+Math.round(Math.random()*range)
-        if(signed==false) return value;
-        
-        let a = 1;
-        if(Math.random()>0.5) a = -a;
-        return value*a;
-    }
-    
-    static getRandomColor() {
-        let colors = ['red', 'green', 'blue'];
-        let size = colors.length;
-        return colors[Random.generateRandom(0,size-1)];
-    }
-}
-
-class Mouse {
-    constructor(x,y,object) {
-        this.x = x;
-        this.y = y;
-        this.object = object;
-    }
-    
-    getMousePositionRelative(evt) {
-        let rect = this.object.getBoundingClientRect();
-        if(evt.type == 'touchmove'){
-            this.x = evt.changedTouches.item(0).clientX - rect.left;
-            this.y = evt.changedTouches.item(0).clientY - rect.top;
-        } else {
-            this.x = evt.clientX - rect.left;
-            this.y = evt.clientY - rect.top;    
-        }
-        
-        return {
-            x: evt.clientX - rect.left,
-            y: evt.clientY - rect.top,
-        }
-    }
-}
-
 class Game {
     static createBalls(nb) {
         let ballResult = [];
@@ -340,18 +227,18 @@ class Game {
         let density = 1;
     
         for (let i = 0; i < nb; i++) {
-            let preRadius = Random.generateRandom(minRadius,maxRadius);
+            let preRadius = Random.generateInt(minRadius,maxRadius);
             
-            ballResult.push(new Ball(Random.generateRandom(preRadius,w-preRadius),
-                                    Random.generateRandom(preRadius,h-preRadius),
+            ballResult.push(new Ball(Random.generateInt(preRadius,w-preRadius),
+                                    Random.generateInt(preRadius,h-preRadius),
                                     preRadius,
-                                    Random.getRandomColor(),
-                                    Random.generateRandom(minSpeedMagnitude, maxSpeedMagnitude, true),
-                                    Random.generateRandom(minSpeedMagnitude, maxSpeedMagnitude, true),
+                                    Random.generateColor(),
+                                    Random.generateInt(minSpeedMagnitude, maxSpeedMagnitude, true),
+                                    Random.generateInt(minSpeedMagnitude, maxSpeedMagnitude, true),
                                     density*preRadius*preRadius*preRadius));
             
             for(let j = 0; j < i; j++) {  // check if the new ball overlapse any other balls
-                if(Collide.collideBallBall(ballResult[j],ballResult[i])) {
+                if(CollideDetect.ballBall(ballResult[j],ballResult[i])) {
                     ballResult.splice(i,1);
                     i--;
                 }
@@ -404,33 +291,8 @@ class Game {
 
         Game.updateBullets();
         //player2.moveMouseSlow(mouse);
-        player.resolveCollideBall(balls);
         Game.ballsCollide();
         requestAnimationFrame(Game.mainLoop);
-    }
-}
-
-class Collide {
-    static collideBallBox(ball,box) {
-        let x = ball.x;
-        let y = ball.y;
-        if(x < box.x) x = box.x;
-        else if(x > box.x+box.width) x = box.x+box.width;
-        if(y < box.y) y = box.y;
-        else if(y > box.y+box.height) y = box.y+box.height;
-
-        return (Math.pow(ball.x-x,2)+Math.pow(ball.y-y,2) < Math.pow(ball.radius,2));
-    }
-
-    static collideBallBall(ball1, ball2) {
-        let radiusSum = ball1.radius + ball2.radius;
-        let distanceSquared = Math.pow((ball1.x-ball2.x),2) + Math.pow((ball1.y-ball2.y),2);
-        if (distanceSquared>Math.pow(radiusSum,2)) return false;
-        return true;
-    }
-
-    static collideBoxBox(box1, box2) {
-
     }
 }
 
@@ -453,6 +315,8 @@ window.onload = function init() {
 
     ctx = canvas.getContext('2d');
     mouse = new Mouse(10,10,canvas);
+
+    draw = new Draw(ctx);
     
     canvas.addEventListener('mousemove', function(evt) {
         player.moveMouse(mouse,evt);

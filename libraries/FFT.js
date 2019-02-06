@@ -1,45 +1,12 @@
-let count = 0;
-class ComplexNumber {
-    constructor(re,im) {
-        this.re = re;
-        this.im = im;
-    }
-    clone(other) {
-        this.re = other.re;
-        this.im = other.im;
-        return this;
-    }
-    isEqual(other) {
-        if(this.re==other.re && this.im==other.im) return true;
-        return false;
-    }
-    add(other) {
-        return ComplexNumber.ADD(this,other);
-    }
-    multiply(other) {
-        return ComplexNumber.MULTIPLY(this,other);
-    }
-    multiplyScalar(scalar) {
-        return new ComplexNumber(this.re*scalar,this.im*scalar);
-    }
-    static CLONE(no) {
-        return new ComplexNumber(no.re,no.im);
-    }
-    static EQUAL(no1,no2) {
-        if(no1.re==no2.re && no1.im==no2.im) return true;
-        return false
-    }
-    static ADD(no1,no2) {
-        return new ComplexNumber(no1.re+no2.re,
-                                 no1.im+no2.im);
-    }
-    static MULTIPLY(no1,no2) {
-        return new ComplexNumber(no1.re*no2.re - no1.im*no2.im,
-                                 no1.re*no2.im + no1.im*no2.re);
-    }
-}
+/* Classes that use from misc.js
+ *     - ComplexNumber
+ *
+ */
 
-// Set up nth Root of Unity. Not efficient, but constant time
+/* Set up nth Root of Unity
+ * Not efficient, but constant time
+ * Give exact values for some cases. Else use formula to generate
+ */
 let nRootUnity = [];
 let base = 1;
 for(let i=1;i<14;i++) {  // 2 → 8192
@@ -75,19 +42,16 @@ for(let i=1;i<14;i++) {  // 2 → 8192
     }
 }
 
-/*for(let i=13;i<14;i++) {
-    base = Math.pow(2,i);
-    let temp;
-    for(let j=0;j<base;j++) {
-        temp = nRootUnity[base][j];
-        console.log('nRootUnity['+base+']['+j+'] = new ComplexNumber('+temp.re.toFixed(53)+','+temp.im.toFixed(53)+');');
-    }
-}*/
-
-
 class FFT {
     // this implementation is designed to work for real signal only, size = power of 2
     static FFT(timeSignal) {
+        /* Main recursion function
+         * INPUT: an array of ComplexNumber objects. Its size is a power of 2
+         * Break down the signal into 2 smaller signals: Even signal and Odd signal
+         * Call FFT itself on these smaller signals
+         * Base case is when size = 4. Call FFT4, which has direct implementation
+         * RETURN: an array of ComplexNumber objects
+         */
         if(timeSignal.length==4) return FFT.FFT4(timeSignal);
         let size = timeSignal.length;
         let signalEven = [];
@@ -114,29 +78,65 @@ class FFT {
         return freqSignal;
     }
     static FFT2(timeSignal) {
+        /* Direct implementation for fft size = 2
+         * INPUT: an array of ComplexNumber ofjects of size 2
+         * RETURN: an array of ComplexNumber objects of size 2
+         */
         return [new ComplexNumber(timeSignal[0].re+timeSignal[1].re,0),
                 new ComplexNumber(timeSignal[0].re-timeSignal[1].re,0)];
     }
     static FFT4(timeSignal) {
+        /* Direct implementation for fft size = 4
+         * INPUT: an array of ComplexNumber ofjects of size 4
+         * RETURN: an array of ComplexNumber objects of size 4
+         */
         return [new ComplexNumber(timeSignal[0].re+timeSignal[2].re+timeSignal[1].re+timeSignal[3].re,0),
                 new ComplexNumber(timeSignal[0].re-timeSignal[2].re                                  ,timeSignal[3].re-timeSignal[1].re),
                 new ComplexNumber(timeSignal[0].re+timeSignal[2].re-timeSignal[1].re-timeSignal[3].re,0),
                 new ComplexNumber(timeSignal[0].re-timeSignal[2].re                                  ,+timeSignal[1].re-timeSignal[3].re)];
     }
 
-    static fft(realSignal,fftSize) {
-        if(Math.log2(fftSize)%1!=0) throw 'FFT size is not a power of 2';
-        if(fftSize==2 && realSignal.length==2) return FFT.FFT2(FFT.parseReal(realSignal));
-        let realSignal_padded;
-        if((fftSize==undefined || fftSize==realSignal.length) && (Math.log2(realSignal.length)%1==0)) {
-            realSignal_padded = realSignal;
-        } else realSignal_padded = FFT.zeroPadding(realSignal,fftSize);
-        return FFT.FFT(FFT.parseReal(realSignal_padded));
+    static fft(realSignal,fftSizeRef) {
+        /* Main function to call from outside
+         * INPUT: realSignal: an array of numbers
+         *        fftSize: a number
+         * This function first tests certain conditions and handle them if possible. Otherwise, throw an error
+         *     - Check if the signal is an array of numbers (only first element). If not, throw an error
+         *     - Check if fftSize is given. If not → fftSize = signal size
+         *     - Check if fftSize is a power of 2. If not, throw an error
+         *     - Check if signal is shorter than expected fftSize, do zero padding on the signal
+         * This function also warps the number array into a ComplexNumber array to feed into method FFT.FFT()
+         * RETURN: an array of ComplexNumber objects
+         */
+        if(typeof fftSizeRef != 'number') throw 'FFT size is not a number';
+        if(typeof realSignal[0] != 'number') throw 'Signal is not an array of numbers';
+        
+        let fftSize;
+        if(fftSizeRef==undefined) {
+            // If fftSize is not provided, take the fftSize to be the signal size
+            // If the signal size is not a power of 2, fftSize will the the smallest power of 2 that is larger than the signal size
+            fftSize = realSignal.length; 
+            if(Math.log2(fftSizeRef)%1!=0) fftSize = Math.pow(2,Math.ceil(Math.log2(fftSizeRef)));
+        } else {
+            if(fftSizeRef<realSignal.length) throw 'fftSize is smaller than size of the signal';
+            if(Math.log2(fftSizeRef)%1!=0) throw 'FFT size is not a power of 2';
+            fftSize = fftSizeRef;
+        }
+        
+        if(realSignal.length==2 && fftSize==2) return FFT.FFT2(FFT.parseReal(realSignal));
+        
+        if(realSignal.length==fftSize) return FFT.FFT(FFT.parseReal(realSignal));
+        
+        return FFT.FFT(FFT.parseReal(FFT.zeroPadding(realSignal,fftSize)));
     }
     
     static ifft(freqSignal) {
     }
     static parseReal(realSignal) {
+        /* Turn a number array into a ComplexNumber array
+         * INPUT: a number array
+         * RETURN: a ComplexNumber array
+         */
         let result = [];
         for(let i=0;i<realSignal.length;i++) {
             result.push(new ComplexNumber(realSignal[i],0));
@@ -144,11 +144,58 @@ class FFT {
         return result;
     }
     static zeroPadding(realSignal,fftSize) {
-        if(fftSize < realSignal.length) throw 'FFT size is smaller than sample size';
+        /* Pad zeros to a number array until its size is a power of 2
+         * INPUT: a number array, a number
+         * OUtPUT: a number array with size is a power of 2
+         */
         let result = [];
-        while(result.length<fftSize) {
+        while(result.length<=fftSize) {
             result.push(0);
         }
+        return result;
+    }
+    static getRealArray(signal) {
+        /* Extract the real components from a ComplexNumber array
+         * INPUT: a ComplexNumber array
+         * RETURN: a number array of real components
+         */
+        let result = [];
+        signal.forEach(function(complexNumber) {
+            result.push(complexNumber.re);
+        });
+        return result;
+    }
+    static getComplexArray(signal) {
+        /* Extract the imaginary components from a ComplexNumber array
+         * INPUT: a ComplexNumber array
+         * RETURN: a number array of imaginary components
+         */
+        let result = [];
+        signal.forEach(function(complexNumber) {
+            result.push(complexNumber.im);
+        });
+        return result;
+    }
+    static getMagnitudeArray(signal) {
+        /* Extract the magnitudes from a ComplexNumber array
+         * INPUT: a ComplexNumber array
+         * RETURN: a number array of magnitudes
+         */
+        let result = [];
+        signal.forEach(function(complexNumber) {
+            result.push(Math.sqrt(complexNumber.re*complexNumber.re + complexNumber.im*complexNumber.im));
+        });
+        return result;
+    }
+    static getPhaseArray(signal) {
+        /* Extract the phases from a ComplexNumber array
+         * INPUT: a ComplexNumber array
+         * RETURN: a number array of phases in radian
+         */
+        let result = [];
+        signal.forEach(function(complexNumber) {
+            result.push(Math.atan2(complexNumber.im,complexNumber.re));
+        });
         return result;
     }
 }
