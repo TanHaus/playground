@@ -1,9 +1,11 @@
 // Declare global variables
-let canvas, ctx;
+let canvas;
 let w,h;
 let vOffset = 50, hOffset = 100;
+
+// Game variables
 let pendulum;
-let gravity = 9.81;
+const GRAVITY = 9.81;
 let requestID;
 let gameState = 0;
 let timer;
@@ -21,16 +23,24 @@ class Pendulum {
     }
 
     update() {
-        this.torque = -this.mass * gravity/3600 * this.length * Math.sin(this.theta);  // gravity is m/s2 → need to divide by 60^2 to account for fps
-        this.thetaAccel = this.torque / this.moInertia;  // torque is accounted for fps. Moment of Inertia is not dependent of fps
-        this.thetaSpeed += this.thetaAccel/60;  // each update is at 1/60s → acceleration times time. acceleration is accounted for fps
-        this.theta += this.thetaSpeed/60;  // each update is at 1/60s → acceleration times time. speed is accounted for fps
+        this.torque      = -this.mass*(GRAVITY/3600)*this.length*Math.sin(this.theta);  // gravity is m/s2 → need to divide by 60^2 to account for fps
+        this.thetaAccel  = this.torque / this.moInertia;                                // torque is accounted for fps. Moment of Inertia is not dependent of fps
+        this.thetaSpeed += this.thetaAccel/60;                                          // each update is at 1/60s → acceleration times time. acceleration is accounted for fps
+        this.theta      += this.thetaSpeed/60;                                          // each update is at 1/60s → acceleration times time. speed is accounted for fps
     }
 
     draw() {
+        // draw relative to the offset
         let linearPos = this.getLinearPos();
-        Draw.line(hOffset,vOffset,linearPos.x+hOffset,linearPos.y+vOffset);
-        Draw.filledCircle(linearPos.x+hOffset,linearPos.y+vOffset);
+        
+        let ctx = canvas.getContext('2d');
+        ctx.save();
+        ctx.translate(hOffset,vOffset);
+        
+        Draw.line(0,0,linearPos.x,linearPos.y,undefined,undefined,canvas);
+        Draw.filledCircle(linearPos.x,linearPos.y,20,'red',canvas);
+        
+        ctx.restore();
     }
 
     getLinearPos() {
@@ -40,15 +50,8 @@ class Pendulum {
         };
     }
 
-    static degToRad(degree) {
-        return degree*Math.PI/180;
-    }
-    static radToDeg(rad) {
-        return rad/Math.PI*180;
-    }
-
     getSimplePeriod() {
-        return 2*Math.PI*Math.sqrt(this.moInertia/this.mass/(gravity/3600)/this.length);
+        return 2*Math.PI*Math.sqrt(this.moInertia/(this.mass*(GRAVITY/3600)*this.length));
     }
 }
 
@@ -59,6 +62,7 @@ class Timer {
     }
 
     start() {
+        // when start the timer, reset count to zero, set the state to counting
         this.count = 0;
         this.ifCounting = true;
         let showTimer = document.querySelector('#timer');
@@ -72,64 +76,43 @@ class Timer {
     }
 
     update() {
+        // count per frame
         if(this.ifCounting==true) this.count++;
     }
 
     getTime() {
+        // since fps = 60, actual time have to be divided by 60
         return this.count/60;
-    }
-}
-
-class Draw {
-    static filledCircle(x,y,radius=20,color='red') {
-        ctx.save();
-        ctx.translate(x,y);
-        ctx.beginPath();
-        ctx.arc(0,0,radius,0,2*Math.PI);
-        ctx.fillStyle = color;
-        ctx.fill();
-        ctx.restore();
-    }
-    static line(x1,y1,x2,y2,weight=2,color='black') {
-        ctx.save();
-        ctx.translate(x1,y1);
-        ctx.beginPath();
-        ctx.moveTo(0,0);
-        ctx.lineTo(x2-x1,y2-y1);
-        ctx.lineWidth = weight;
-        ctx.strokeStyle = color;
-        ctx.stroke();
-        ctx.restore();
     }
 }
 
 class Game {
     static start(angle=45) {
-        if(pendulum===undefined) pendulum = new Pendulum(Pendulum.degToRad(angle),50,20,200);
-        else pendulum = new Pendulum(Pendulum.degToRad(angle),pendulum.mass,pendulum.moInertia,pendulum.length);
+        if(pendulum===undefined) pendulum = new Pendulum(Compute.degToRad(angle),50,20,200);
+        else pendulum = new Pendulum(Compute.degToRad(angle),pendulum.mass,pendulum.moInertia,pendulum.length);
         
         // set the sliders to correct value
         let form = document.querySelector('form');
-        form.elements['mass'].value = pendulum.mass;
+        form.elements['mass'].value      = pendulum.mass;
         form.elements['moInertia'].value = pendulum.moInertia;
         form.elements['penLength'].value = pendulum.length;
-        form.elements['theta0'].value = Pendulum.radToDeg(pendulum.theta0);
+        form.elements['theta0'].value    = Compute.radToDeg(pendulum.theta0);
 
+        // if game is not running, start the game
         if(gameState==0) {
             gameState = 1;
-            ctx.clearRect(0,0,w,h);
+            canvas.getContext('2d').clearRect(0,0,w,h);
             pendulum.draw();
             Game.mainloop();
         }
     }
 
     static mainloop() {
-        ctx.clearRect(0,0,w,h);
+        canvas.getContext('2d').clearRect(0,0,w,h);
         pendulum.update();
+        timer.update();
         pendulum.draw();
         show();
-        timer.update();
-
         requestID = requestAnimationFrame(Game.mainloop);
     }
 
@@ -144,7 +127,6 @@ class Game {
 window.onload = function init() {
     // Set up global variables
     canvas = document.querySelector('#myCanvas');
-    ctx = canvas.getContext('2d');
     resizeCanvas();
 
     timer = new Timer();
@@ -166,10 +148,14 @@ function update(value,type) {
             break;
         case 'length':
             pendulum.length = parseInt(value);
-            ctx.clearRect(0,0,w,h);
-            pendulum.draw();
+            // redraw when game is stopped
+            if(gameState==0) {
+                canvas.getContext('2d').clearRect(0,0,w,h);
+                pendulum.draw();
+            }
             break;
     }
+    // update parameters
     show();
 }
 
@@ -205,5 +191,6 @@ function show() {
     monitor.children[1].children[0].innerHTML = 'Period (small oscillation): '+pendulum.getSimplePeriod().toFixed(5);
     
     let showTimer = document.querySelector('#timer');
-    if(timer.getTime()%1==0 && timer.getTime()!=0) showTimer.innerHTML = 'Timer: ' + timer.getTime().toFixed();
+    // when timer is counting, only show when the time is a whole number (excluding zero)
+    if(timer.ifCounting==true && timer.getTime()%1==0) showTimer.innerHTML = 'Timer: ' + timer.getTime().toFixed();
 }

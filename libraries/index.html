@@ -7,7 +7,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" type="text/css" media="screen" href="main.css" />
     <script src="misc.js"></script>
-    <script src="FFT.js"></script>
 </head>
 <body>
     <canvas id="myCanvas" width="1500" height="800"></canvas>
@@ -37,7 +36,7 @@
             });
             graph.plot(Graph.applySequence(time,signal));
             
-            let freq = FFT.getMagnitudeArray(FFT.fft(signal,pow));
+            let freq = Signal.fft(signal,pow).getReArray();
             console.log(freq);
             // max at index = 26 
             graph.plot(Graph.applySequence(time,freq),'red');
@@ -48,7 +47,7 @@
 
             let pow = 512;
 
-            graph = new Graph(xRange={min:0,max:pow},yRange={min:-1,max:65},canvas);
+            graph = new Graph(xRange={min:0,max:pow},yRange={min:-1,max:10},canvas);
             graph.drawAxis();
             
             let seq = Graph.generateX(0,pow-1,1);
@@ -62,10 +61,10 @@
             });
             graph.plot(Graph.applySequence(time,signal));
             
-            let freq = FFT.getMagnitudeArray(FFT.fft(signal,pow));
+            let freq = Signal.fft(signal,pow);
             console.log(freq);
             // max at index = 26 
-            graph.plot(Graph.applySequence(time,freq),'red');
+            graph.plot(Graph.applySequence(time,freq.getReArray()),'red');
         }
     </script>
 </body>

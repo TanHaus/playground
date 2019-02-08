@@ -1,18 +1,22 @@
-let canvas,ctx,draw;
-let mouse;
-let w,h;
-let balls = [];
-let numberOfBalls = 10;
-let showNBalls, showNBullets, showMinR, showMaxR, showRestitution;
-let player, player2;
-let bullets = [];
-let numberOfBullets = 5;
-let viewportWidth, viewportHeight;
+// General elements
+let canvas;       // to draw
+let w,h;          // global width and height of the canvas
+let mouse;   // mouse to get current mouse position, draw to draw on canvas
 let sizeFactor = 0.5;
 let margin = 10;
-let minRadius = 30;
+
+// Game elements
+let numberOfBalls = 10;
+let balls = [];
+let player;
+let numberOfBullets = 5;
+let bullets = [];
+let minRadius = 10;
 let maxRadius = 40;
-let restitution = 0.5;
+let restitution = 0.9;
+
+// To update information
+let showNBalls, showNBullets, showMinR, showMaxR, showRestitution;
 
 class Player {
     constructor(x,y,width,height,color) {
@@ -24,23 +28,18 @@ class Player {
     }
 
     draw() {
-        draw.filledRectangle(this,this,this.color);
+        Draw.filledRectangle(this.x,this.y,this.width,this.height,this.color,canvas);
     }
 
     moveMouse(mouse,evt) {
+        // move the player with mouse position. account for the rectangle shape
         let mousePos = mouse.getRelativePosition(evt);
         this.x = mousePos.x - this.width/2;
         this.y = mousePos.y - this.height/2;
     }
 
-    moveMouseSlow(mouse) {
-        let speed = 10;
-        let angle = Math.atan2(this.y-mouse.y+this.height/2,this.x-mouse.x+this.width/2);
-        this.x -= speed*Math.cos(angle);
-        this.y -= speed*Math.sin(angle);
-    }
-
     fire(evt) {
+        // fire bullet based on the event triggered
         if(numberOfBullets>0) {
             switch(evt.code) {
                 case 'ArrowUp':
@@ -67,14 +66,14 @@ class Ball {
         this.mass = mass;
     }
 
-    move() {
+    update() {
         this.x += this.speedX;
         this.y += this.speedY;
         this.resolveCollideWall();
     }
 
     draw() {
-        draw.filledCircle(this,this.radius,this.color);
+        Draw.filledCircle(this.x,this.y,this.radius,this.color,canvas);
     }
 
     resolveCollideWall() {
@@ -97,33 +96,33 @@ class Ball {
         }
     }
 
-    resolveCollideBall(otherBall) {
+    resolveCollideBall(other) {
         let ball = this;
-        if(CollideDetect.ballBall(ball,otherBall)) { // check if two balls collide
-            let alpha = ball.getAngle(otherBall);  // get the normal direction
-            let ballSpeedRotated = Ball.rotateSpeedAxis(ball,alpha);  // resolve speed into the direction of normal
-            let otherSpeedRotated = Ball.rotateSpeedAxis(otherBall,alpha);
 
-            let eqn = [[        1,             -1,                          otherSpeedRotated.speedX-ballSpeedRotated.speedX],  // solve for new normal speed
-                       [ball.mass, otherBall.mass, ball.mass*ballSpeedRotated.speedX+otherBall.mass*otherSpeedRotated.speedX]];
+        // check if two balls collide
+        if(Collide.detectBallBall(ball,other)) { 
+            // get the normal direction
+            let alpha = ball.getAngle(other);
 
-            eqn[1][2] *= restitution*restitution;   // account for energy loss
-            let eqnSolved = Solver.sim2(eqn);
-            ballSpeedRotated.speedX = eqnSolved.x;
+            // resolve speed into the direction of normal
+            let ballSpeedRotated  = Ball.rotateSpeedAxis(ball,alpha);
+            let otherSpeedRotated = Ball.rotateSpeedAxis(other,alpha);
+
+            let eqnSolved = Collide.resolve1D(ball.mass,ballSpeedRotated.speedX,other.mass,otherSpeedRotated.speedX,restitution);
+
+            ballSpeedRotated.speedX  = eqnSolved.x;
             otherSpeedRotated.speedX = eqnSolved.y;
 
-            ballSpeedRotated = Ball.rotateSpeedAxis(ballSpeedRotated,-alpha);  // get the speed back to original speed
+            // get the speed back to original speed
+            ballSpeedRotated  = Ball.rotateSpeedAxis(ballSpeedRotated,-alpha);  
             otherSpeedRotated = Ball.rotateSpeedAxis(otherSpeedRotated,-alpha);
 
-            ball.speedX = ballSpeedRotated.speedX;
-            ball.speedY = ballSpeedRotated.speedY;
-            otherBall.speedX = otherSpeedRotated.speedX;
-            otherBall.speedY = otherSpeedRotated.speedY;
+            ball.speedX  = ballSpeedRotated.speedX;       ball.speedY  = ballSpeedRotated.speedY;
+            other.speedX = otherSpeedRotated.speedX;      other.speedY = otherSpeedRotated.speedY;
 
-            ball.x += ball.speedX;
-            ball.y += ball.speedY;
-            otherBall.x += otherBall.speedX;
-            otherBall.y += otherBall.speedY;
+            // to avoid problems with high speed collision
+            ball.x  += ball.speedX;      ball.y  += ball.speedY;  
+            other.x += other.speedX;     other.y += other.speedY;
         }
     }
 
@@ -134,7 +133,7 @@ class Ball {
     }
 
     static rotateSpeedAxis(ball,theta) {
-        let speedMag = Math.sqrt(ball.speedX*ball.speedX + ball.speedY*ball.speedY);
+        let speedMag = Compute.magnitude(ball.speedX,ball.speedY);
         let theta0 = Math.atan2(ball.speedY, ball.speedX);
         return {
             speedX: speedMag*Math.cos(theta0-theta),
@@ -145,7 +144,7 @@ class Ball {
     resolveCollideBullet(bulletArray) {
         let ball = this;
         bulletArray.forEach(function(bullet) {
-            if(CollideDetect.ballBox(ball,bullet)) {
+            if(Collide.detectBallBox(ball,bullet)) {
                 ball.remove(balls);
                 bullet.remove(bullets);
             }
@@ -161,10 +160,14 @@ class Ball {
 
 class Bullet {
     constructor(playerName, direction) {
+        // speed is only describe magnitude. Given the direction (from which key was pressed), speed will be updated with direction
+        // short and long dimension. Given the direction (from which key was press), the actual dimensions will be updated
         this.speed = 5;
         this.short = 15;
         this.long = 30;
+        this.color = 'black';
         this.direction = direction;
+
         switch(direction) {
             case 'ArrowUp':
                 this.speedX = 0;
@@ -191,16 +194,16 @@ class Bullet {
                 this.height = this.short;
                 break;
         }
+        // the bullet is created at the center of the player
         this.x = playerName.x + playerName.width/2 - this.width/2;
         this.y = playerName.y + playerName.height/2 - this.height/2;
-        this.color = 'black';
     }
 
     draw() {
-        draw.filledRectangle(this,this,this.color);
+        Draw.filledRectangle(this.x,this.y,this.width,this.height,this.color,canvas);
     }
 
-    move() {
+    update() {
         this.x += this.speedX;
         this.y += this.speedY;
     }
@@ -222,35 +225,37 @@ class Game {
         let ballResult = [];
         
         let minSpeedMagnitude = 1;
-        let maxSpeedMagnitude = 5;
-
+        let maxSpeedMagnitude = 7;
         let density = 1;
     
         for (let i = 0; i < nb; i++) {
             let preRadius = Random.generateInt(minRadius,maxRadius);
             
             ballResult.push(new Ball(Random.generateInt(preRadius,w-preRadius),
-                                    Random.generateInt(preRadius,h-preRadius),
-                                    preRadius,
-                                    Random.generateColor(),
-                                    Random.generateInt(minSpeedMagnitude, maxSpeedMagnitude, true),
-                                    Random.generateInt(minSpeedMagnitude, maxSpeedMagnitude, true),
-                                    density*preRadius*preRadius*preRadius));
+                                     Random.generateInt(preRadius,h-preRadius),
+                                     preRadius,
+                                     Random.generateColor(),
+                                     Random.generateInt(minSpeedMagnitude, maxSpeedMagnitude, true),
+                                     Random.generateInt(minSpeedMagnitude, maxSpeedMagnitude, true),
+                                     density*preRadius*preRadius));
             
-            for(let j = 0; j < i; j++) {  // check if the new ball overlapse any other balls
-                if(CollideDetect.ballBall(ballResult[j],ballResult[i])) {
+            // check if the new ball overlapse any other balls
+            // if overlapse, delete that ball. minus 1 from i to repeat that iteration
+            for(let j = 0; j < i; j++) { 
+                if(Collide.detectBallBall(ballResult[j],ballResult[i])) {
                     ballResult.splice(i,1);
                     i--;
                 }
             }            
         }
+
         return ballResult;
     }
 
     static updateBalls() {
         balls.forEach(function(ball) {
+            ball.update();
             ball.draw();
-            ball.move();
             ball.resolveCollideBullet(bullets);
         });
     }
@@ -266,8 +271,8 @@ class Game {
 
     static updateBullets() {
         bullets.forEach(function(bullet) {
+            bullet.update();
             bullet.draw();
-            bullet.move();
             bullet.resolveCollideWall();
         })
     }
@@ -276,7 +281,6 @@ class Game {
         balls = Game.createBalls(nb);
         Game.updateBalls();
         player.draw();
-        //player2.draw();
         Game.updateBullets();
         numberOfBullets = 5;
     }
@@ -284,13 +288,11 @@ class Game {
     static mainLoop() {
         Update.nBalls();
         Update.nBullets();
-        ctx.clearRect(0,0,w,h);
-        Game.updateBalls();
+        canvas.getContext('2d').clearRect(0,0,w,h);
         player.draw();
-        //player2.draw();
 
+        Game.updateBalls();
         Game.updateBullets();
-        //player2.moveMouseSlow(mouse);
         Game.ballsCollide();
         requestAnimationFrame(Game.mainLoop);
     }
@@ -306,34 +308,27 @@ class Update {
 }
 
 player = new Player(10,10,50,50,'red');
-player2 = new Player(100,100,50,50,'blue');
 
 window.onload = function init() {
     canvas = document.querySelector("#myCanvas");
-    
     setCanvas(canvas);
 
-    ctx = canvas.getContext('2d');
     mouse = new Mouse(10,10,canvas);
-
-    draw = new Draw(ctx);
     
+    // player will move with mouse cursor
     canvas.addEventListener('mousemove', function(evt) {
         player.moveMouse(mouse,evt);
     });
 
-    canvas.addEventListener('touchmove', function(evt) {
-        player.moveMouse(mouse,evt);
-    });
-
+    // listen to keypress to fire bullet
     window.addEventListener("keyup", function(evt) {
         player.fire(evt);
     });
 
-    showNBalls = document.querySelector('#nBalls');
-    showNBullets = document.querySelector('#nBullets');
-    showMaxR = document.querySelector('#maxR');
-    showMinR = document.querySelector('#minR');
+    showNBalls      = document.querySelector('#nBalls');
+    showNBullets    = document.querySelector('#nBullets');
+    showMaxR        = document.querySelector('#maxR');
+    showMinR        = document.querySelector('#minR');
     showRestitution = document.querySelector('#restitution');
 
     Game.startGame(numberOfBalls);
@@ -345,11 +340,8 @@ window.onresize = function onresize() {
 }
 
 function setCanvas(canvas) {
-    viewportWidth = document.documentElement.clientWidth;
-    viewportHeight = document.documentElement.clientHeight;
-
-    canvas.width = viewportWidth;
-    canvas.height = viewportHeight*sizeFactor;
+    canvas.width = document.documentElement.clientWidth;
+    canvas.height = document.documentElement.clientHeight*sizeFactor;
 
     w = canvas.width;
     h = canvas.height;
@@ -361,6 +353,7 @@ function changeNb(nb) {
 
 function set(value) {
     sizeFactor = value;
+    document.querySelector('form').elements['canvasSize'].value = sizeFactor;
     setCanvas(canvas);
 }
 

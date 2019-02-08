@@ -1,7 +1,10 @@
-let canvas, ctx, draw;
+//
+let canvas, draw;
 let w,h;
+
+//
 let planets = [];
-let GRAVITY = Math.pow(Math.E,5);
+const GRAVITY = 6.67408e-11;
 let mouse;
 let selectedPlanet;
 let requestID;
@@ -9,6 +12,8 @@ let gameState = 0;
 let cM = {x: 0, y:0,};
 let control = 'range';
 let restitution = 1;
+let timeScale = 1e6;
+let spaceScale = 3.84402e8/100;
 
 class Planet {
     constructor(x,y,speedX,speedY,mass,radius,color) {
@@ -16,6 +21,8 @@ class Planet {
         this.y = y;
         this.speedX = speedX;
         this.speedY = speedY;
+        this.accelX = 0;
+        this.accelY = 0;
         this.mass = mass;
         this.radius = radius;
         this.color = color;
@@ -24,21 +31,23 @@ class Planet {
     }
 
     update() {
-        this.speedX += this.forceX/this.mass;
-        this.speedY += this.forceY/this.mass;
-        this.x += this.speedX;
-        this.y += this.speedY;
+        this.accelX  = (this.forceX)/this.mass;
+        this.accelY  = (this.forceY)/this.mass;
+        this.speedX += this.accelX/60*timeScale;      // time = 1/60s
+        this.speedY += this.accelY/60*timeScale;
+        this.x      += this.speedX/60*timeScale;
+        this.y      += this.speedY/60*timeScale;
     }
 
-    gravity(otherPlanet) {
-        let gravity = -GRAVITY * (this.mass*otherPlanet.mass)/(Math.pow(this.distance(otherPlanet),2));
-        let angle = this.slope(otherPlanet);
+    gravity(other) {
+        let gravity = -Planet.getGravity(this,other);
+        let angle = this.slope(other);
         this.forceX += gravity * Math.cos(angle);
         this.forceY += gravity * Math.sin(angle);
     }
 
-    distance(otherPlanet) {
-        return Math.sqrt(Math.pow(this.x-otherPlanet.x,2)+Math.pow(this.y-otherPlanet.y,2));
+    static getGravity(ob1,ob2) {
+        return GRAVITY * (ob1.mass*ob2.mass)/Math.pow(Compute.distance(ob1,ob2),2);  // magnitude only
     }
 
     slope(otherPlanet) {
@@ -48,28 +57,15 @@ class Planet {
     }
 
     draw() {
-        draw.filledCircle(this,this.radius,this.color);
+        let toDraw = {
+            x: this.x/spaceScale,
+            y: this.y/spaceScale,
+        }
+        draw.filledCircle(toDraw,this.radius,this.color);
     }
 
     drawSpeed() {
         draw.line(this,{x:this.x+this.speedX*10,y:this.y+this.speedY*10});
-    }
-
-    static selectPlanet(mouse,evt) {
-        let mousePos = mouse.getRelativePosition(evt);
-        
-        for(let i=0; i<planets.length; i++) {
-            if(draw.getDistance(planets[i],mousePos) < planets[i].radius) {
-                selectedPlanet = planets[i];
-                let form = document.querySelector('#control > form');
-                form.elements['x'].value = selectedPlanet.x;
-                form.elements['y'].value = selectedPlanet.y;
-                form.elements['speedMagnitude'].value = selectedPlanet.speedMagnitude();
-                form.elements['speedAngle'].value = Math.atan2(-selectedPlanet.speedY,selectedPlanet.speedX);
-                form.elements['color'].value = selectedPlanet.color;
-                break;
-            }
-        }
     }
 
     drawForce() {
@@ -93,33 +89,29 @@ class Planet {
         return 'x: ' + this.x + '\ny: ' + this.y;
     }
 
-    resolveCollidePlanet(otherPlanet) {
+    resolveCollidePlanet(other) {
         let planet = this;
-        if(CollideDetect.collideBallBall(planet,otherPlanet)) { // check if two planetss collide
-            let alpha = planet.slope(otherPlanet);  // get the normal direction
-            let planetSpeedRotated = Planet.rotateSpeedAxis(planet,alpha);  // resolve speed into the direction of normal
-            let otherSpeedRotated = Planet.rotateSpeedAxis(otherPlanet,alpha);
 
-            let eqn = [[        1,             -1,                          otherSpeedRotated.speedX-planetSpeedRotated.speedX],  // solve for new normal speed
-                       [planet.mass, otherPlanet.mass, planet.mass*planetSpeedRotated.speedX+otherPlanet.mass*otherSpeedRotated.speedX]];
+        // check if two balls collide
+        if(Collide.detectBallBall(planet,other)) { 
+            // get the normal direction
+            let alpha = planet.slope(other);
 
-            eqn[1][2] *= restitution;
-            let eqnSolved = Planet.eqnSolver(eqn);
+            // resolve speed into the direction of normal
+            let planetSpeedRotated = Planet.rotateSpeedAxis(planet,alpha);
+            let otherSpeedRotated  = Planet.rotateSpeedAxis(other,alpha);
+
+            let eqnSolved = Collide.resolve1D(planet.mass,planetSpeedRotated.speedX,other.mass,otherSpeedRotated.speedX,restitution);
+
             planetSpeedRotated.speedX = eqnSolved.x;
-            otherSpeedRotated.speedX = eqnSolved.y;
+            otherSpeedRotated.speedX  = eqnSolved.y;
 
-            planetSpeedRotated = Planet.rotateSpeedAxis(planetSpeedRotated,-alpha);  // get the speed back to original speed
+            // get the speed back to original speed
+            planetSpeedRotated  = Planet.rotateSpeedAxis(planetSpeedRotated,-alpha);  
             otherSpeedRotated = Planet.rotateSpeedAxis(otherSpeedRotated,-alpha);
 
-            planet.speedX = planetSpeedRotated.speedX;
-            planet.speedY = planetSpeedRotated.speedY;
-            otherPlanet.speedX = otherSpeedRotated.speedX;
-            otherPlanet.speedY = otherSpeedRotated.speedY;
-
-            planet.x += planet.speedX;
-            planet.y += planet.speedY;
-            otherPlanet.x += otherPlanet.speedX;
-            otherPlanet.y += otherPlanet.speedY;
+            planet.speedX = planetSpeedRotated.speedX;       planet.speedY = planetSpeedRotated.speedY;
+            other.speedX  = otherSpeedRotated.speedX;      other.speedY  = otherSpeedRotated.speedY;
         }
     }
 
@@ -128,37 +120,16 @@ class Planet {
         let planet = this;
         energy += 0.5 * planet.mass * (Math.pow(planet.speedX,2)+Math.pow(planet.speedY,2)); // kinertic energy
         planets.forEach(function(other){
-            if(planet!==other) energy += -GRAVITY * (planet.mass*other.mass)/planet.distance(other); // gravitational potential energy
+            if(planet!==other) energy += -GRAVITY * (planet.mass*other.mass)/Compute.distance(planet,other); // gravitational potential energy
         });
         return energy;
     }
 
     static rotateSpeedAxis(ball,theta) {
-        let speedMag = Math.sqrt(ball.speedX*ball.speedX + ball.speedY*ball.speedY);
-        let theta0 = Math.atan2(ball.speedY, ball.speedX);
+        let result = Compute.rotateVector({x:ball.speedX,y:ball.speedY},theta);
         return {
-            speedX: speedMag*Math.cos(theta0-theta),
-            speedY: speedMag*Math.sin(theta0-theta),
-        }
-    }
-
-    static eqnSolver(matrix) {
-        let a = matrix[0][0];
-        let b = matrix[0][1];
-        let m = matrix[0][2];
-        let c = matrix[1][0];
-        let d = matrix[1][1];
-        let n = matrix[1][2];
-
-        if(a*d==b*c) {
-            if(a*n==c*m) {
-                return 'Infinite number of solutions';
-            } else return 'No solution found';
-        } else {
-            return {
-                x: (m*d-n*b)/(a*d-b*c),
-                y: (m*c-n*a)/(b*c-a*d),
-            }
+            speedX: result.x,
+            speedY: result.y,
         }
     }
 
@@ -167,6 +138,32 @@ class Planet {
         this.x = mousePos.x;
         this.y = mousePos.y;
         Game.drawAll();
+    }
+}
+
+class Configuration {
+    static SunEarth() {
+
+    }
+    static Binary() {
+
+    }
+    static Circular() {
+        planets = [];
+        let mass1 = 5.972e24;
+        let mass2 = 7.348e22;
+        let distance = 3.84402e8;
+
+        let earth = new Planet(w/2*spaceScale,h/2*spaceScale,0,0,mass1,20,'green')
+        let moon = new Planet(w/2*spaceScale+distance,h/2*spaceScale,0,0,mass2,10,'gray')
+
+        planets.push(earth);
+        planets.push(moon);
+
+        earth.draw();
+        moon.draw();
+
+        moon.speedY = Math.sqrt(GRAVITY*earth.mass/distance);
     }
 }
 
@@ -179,8 +176,8 @@ class Game {
             for(let j=0; j<i; j++) {
                 planets[i].gravity(planets[j]);
                 planets[j].gravity(planets[i]);
-                if(CollideDetect.collideBallBall(planets[i],planets[j])) {
-                    planets[i].resolveCollidePlanet(planets[j]);
+                if(Collide.detectBallBall(planets[i],planets[j])) {
+                    //planets[i].resolveCollidePlanet(planets[j]);
                 }
             }
         }
@@ -250,7 +247,7 @@ class Game {
     }
 
     static drawAll() {
-        ctx.clearRect(0,0,w,h);
+        canvas.getContext('2d').clearRect(0,0,w,h);
         updateCM();
         Game.drawPlanets(planets);
         drawCM();
@@ -272,15 +269,13 @@ class Game {
 
 window.onload = function init() {
     canvas = document.querySelector('#myCanvas');
-    ctx = canvas.getContext('2d');
     w = canvas.clientWidth;
     h = canvas.clientHeight;
+
     mouse = new Mouse(10,10,canvas);
-    draw = new Draw(ctx);
-    
-    canvas.addEventListener('mousedown', function(evt){
-        Planet.selectPlanet(mouse,evt);
-    });
+    draw = new Draw(canvas);
+
+    Configuration.Circular();
     
     let form = document.querySelector('#control > form');
     form.elements['x'].max = w;
@@ -377,8 +372,8 @@ function printVariables(listPlanet) {
     for(let i=0; i<size; i++) {
         table.innerHTML += '<tr>'+
                                 '<td>'+(i+1)                      +'</td>'+
-                                '<td>'+Math.round(listPlanet[i].x)+'</td>'+
-                                '<td>'+Math.round(listPlanet[i].y)+'</td>'+
+                                '<td>'+Math.round(listPlanet[i].x/spaceScale)+'</td>'+
+                                '<td>'+Math.round(listPlanet[i].y/spaceScale)+'</td>'+
                                 '<td>'+listPlanet[i].mass         +'</td>'+
                                 '<td>'+listPlanet[i].forceMagnitude().toExponential(2)+'</td>'+
                                 '<td>'+listPlanet[i].getEnergy().toExponential(2)+'</td>'+
