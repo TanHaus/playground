@@ -1,3 +1,3 @@
-# JS-ball-game
+# Web apps
 
-This ball game is inspired by W3Cx courses on Front-end Web Development. More features are being implemented
+I write small applications that run directly in web browsers. Most of them are simple physics simulations and topics that I am intersted in.
