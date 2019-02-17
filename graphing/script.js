@@ -1,26 +1,23 @@
-let canvas,ctx,w,h,graph;
+import { Signal, Graph } from '../libraries/math.js';
 
-    window.onload = function init() {
-        canvas = document.querySelector('#myCanvas');
-        ctx = canvas.getContext('2d');
-        w = canvas.clientWidth;
-        h = canvas.clientHeight;
+const canvas = document.querySelector('#myCanvas');
+const ctx = canvas.getContext('2d');
+const w = canvas.clientWidth;
+const h = canvas.clientHeight;
+let pow = 512;
+let f = 0.1
 
-        let pow = 512;
-        let f = 0.1
+let xRange = [0,pow];
+let yRange = [-1,65];
 
-        let xRange = [0,pow];
-        let yRange = [-1,65];
+let xSeq = Signal.generatexSeq(xRange,1);
+let signal = Signal.generateFn(function(x){return Math.sin(f*x)},xSeq);
+Graph.plot(xSeq,signal,xRange,yRange,canvas);
 
-        let xSeq = Signal.generatexSeq(xRange,1);
-        let signal = Signal.generateFn(function(x){return Math.sin(f*x)},xSeq);
-        Graph.plot(xSeq,signal,xRange,yRange,canvas);
-    
-        let freq = Signal.get.MagnitudeArray(Signal.fft(signal,pow));
-        Graph.plot(xSeq,freq,xRange,yRange,canvas,'red');
-    }
+let freq = Signal.get.MagnitudeArray(Signal.fft(signal,pow));
+Graph.plot(xSeq,freq,xRange,yRange,canvas,'red');
 
-function updatef(value) {
+window.updatef = function(value) {
     ctx.clearRect(0,0,w,h);
 
     let pow = 512;
@@ -35,4 +32,4 @@ function updatef(value) {
 
     let freq = Signal.get.MagnitudeArray(Signal.fft(signal,pow));
     Graph.plot(xSeq,freq,xRange,yRange,canvas,'red');
-}
+};

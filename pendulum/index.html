@@ -5,10 +5,10 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <title>Simple Game</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" media="screen" href="../style.css" />
     <link rel="stylesheet" type="text/css" media="screen" href="style.css" />
-    <script src="../libraries/misc.js"></script>
-    <script src="script.js"></script>
     <script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML' async></script>
+    <script type="module" src="./script.js" defer></script>
 </head>
 <body>
     <canvas id="myCanvas" width="1000" height="800"></canvas>
@@ -25,7 +25,7 @@
             Mass                                    <input type="range"  oninput="update(this.value,'mass')"      name="mass"      min=1  max=100 step=0.1><br>
             Moment of Inertia                       <input type="range"  oninput="update(this.value,'moInertia')" name="moInertia" min=1  max=50 step=1><br>
             Length                                  <input type="range"  oninput="update(this.value,'length')"    name="penLength" min=10 max=500 step=1><br>
-            Initial angular position (in degrees)   <input type="number" oninput="Game.start(this.value)"         name="theta0"    min=0  max=180 step=1><br>
+            Initial angular position (in degrees)   <input type="number" oninput="startGame(this.value)"         name="theta0"    min=0  max=180 step=1><br>
             
         </form>
     </div>

@@ -1,22 +1,20 @@
+import { Draw, Mouse, Collide } from '../libraries/misc.js';
+import { Random, Compute } from '../libraries/math.js';
+
 // General elements
-let canvas;       // to draw
+const canvas = document.querySelector("#myCanvas");
 let w,h;          // global width and height of the canvas
-let mouse;   // mouse to get current mouse position, draw to draw on canvas
 let sizeFactor = 0.5;
 let margin = 10;
 
 // Game elements
 let numberOfBalls = 10;
 let balls = [];
-let player;
 let numberOfBullets = 5;
 let bullets = [];
 let minRadius = 10;
 let maxRadius = 40;
 let restitution = 0.9;
-
-// To update information
-let showNBalls, showNBullets, showMinR, showMaxR, showRestitution;
 
 class Player {
     constructor(x,y,width,height,color) {
@@ -307,33 +305,31 @@ class Update {
     }
 }
 
-player = new Player(10,10,50,50,'red');
+let player = new Player(10,10,50,50,'red');
 
-window.onload = function init() {
-    canvas = document.querySelector("#myCanvas");
-    setCanvas(canvas);
+setCanvas(canvas);
 
-    mouse = new Mouse(10,10,canvas);
-    
-    // player will move with mouse cursor
-    canvas.addEventListener('mousemove', function(evt) {
-        player.moveMouse(mouse,evt);
-    });
+let mouse = new Mouse(10,10,canvas);
 
-    // listen to keypress to fire bullet
-    window.addEventListener("keyup", function(evt) {
-        player.fire(evt);
-    });
+// player will move with mouse cursor
+canvas.addEventListener('mousemove', function(evt) {
+    player.moveMouse(mouse,evt);
+});
 
-    showNBalls      = document.querySelector('#nBalls');
-    showNBullets    = document.querySelector('#nBullets');
-    showMaxR        = document.querySelector('#maxR');
-    showMinR        = document.querySelector('#minR');
-    showRestitution = document.querySelector('#restitution');
+// listen to keypress to fire bullet
+window.addEventListener("keyup", function(evt) {
+    player.fire(evt);
+});
 
-    Game.startGame(numberOfBalls);
-    Game.mainLoop();
-}
+const showNBalls      = document.querySelector('#nBalls');
+const showNBullets    = document.querySelector('#nBullets');
+const showMaxR        = document.querySelector('#maxR');
+const showMinR        = document.querySelector('#minR');
+const showRestitution = document.querySelector('#restitution');
+
+Game.startGame(numberOfBalls);
+Game.mainLoop();
+
 
 window.onresize = function onresize() {
     setCanvas(canvas);
@@ -347,27 +343,31 @@ function setCanvas(canvas) {
     h = canvas.height;
 }
 
-function changeNb(nb) {
+window.changeNb = function (nb) {
     numberOfBalls = nb;
-}
+};
 
-function set(value) {
+window.set = function (value) {
     sizeFactor = value;
     document.querySelector('form').elements['canvasSize'].value = sizeFactor;
     setCanvas(canvas);
-}
+};
 
-function updateMinSize(value) {
+window.updateMinSize = function (value) {
     minRadius = parseInt(value);
     showMinR.innerHTML = 'Min ball size: ' + minRadius;
 }
 
-function updateMaxSize(value) {
+window.updateMaxSize = function (value) {
     maxRadius = parseInt(value);
     showMaxR.innerHTML = 'Max ball size: ' + maxRadius;
 }
 
-function updateRestitution(value) {
+window.updateRestitution = function (value) {
     restitution = parseFloat(value);
     showRestitution.innerHTML = 'Coefficient of restitution: ' + restitution;
 }
+
+window.startGame = function() {
+    Game.startGame();
+};

@@ -1,5 +1,8 @@
+import { Compute } from '../libraries/math.js';
+import { Draw } from '../libraries/misc.js';
+
 // Declare global variables
-let canvas;
+const canvas = document.querySelector('#myCanvas');
 let w,h;
 let vOffset = 50, hOffset = 100;
 
@@ -8,7 +11,6 @@ let pendulum;
 const GRAVITY = 9.81;
 let requestID;
 let gameState = 0;
-let timer;
 
 class Pendulum {
     constructor(theta,mass,moInertia,length) {
@@ -124,21 +126,20 @@ class Game {
     }
 }
 
-window.onload = function init() {
-    // Set up global variables
-    canvas = document.querySelector('#myCanvas');
-    resizeCanvas();
-
-    timer = new Timer();
-
-    Game.start();
+window.startGame = function(value) {
+    Game.start(value);
 };
+
+// main program
+let timer = new Timer();
+resizeCanvas();
+Game.start();
 
 window.onresize = function(){
     resizeCanvas();
 }
 
-function update(value,type) {
+window.update = function(value,type) {
     switch(type) {
         case 'mass':
             pendulum.mass = parseInt(value);
@@ -157,7 +158,7 @@ function update(value,type) {
     }
     // update parameters
     show();
-}
+};
 
 function resizeCanvas() {
     let documentWidth = document.documentElement.clientWidth;

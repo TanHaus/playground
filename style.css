@@ -1,0 +1,9 @@
+body { margin: 0; font-family: Calibri, Helvetica, Arial, sans-serif; background-color: #2F333B; color: whitesmoke; }
+header, footer, section { padding-left: 30vw; padding-right: 30vw; }
+p { color: #F2B06B; }
+li { list-style: none; }
+a { text-decoration: none; }
+a:link { color: whitesmoke; }
+a:visited { color: whitesmoke; }
+a:hover { color: #B05F20; }
+canvas { border: 1px solid whitesmoke; }

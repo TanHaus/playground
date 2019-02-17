@@ -1,15 +1,19 @@
-let canvas, ctx;
 const ANGLE60 = Math.PI/3;
 let iteration = 6;
 let scale = 1;
-let w,h;
+const canvas = document.querySelector('#myCanvas');
+const ctx = canvas.getContext('2d');
+const w = canvas.clientWidth;
+const h = canvas.clientHeight;
+
+drawKoch();
 
 function KochFull(x,y,angle,distance,iteration,scale) {
     distance *= scale;
     Koch(x,y,angle,distance,iteration,scale);
     x += distance*Math.cos(-angle);
     y += distance*Math.sin(-angle);
-    Koch(x,y,angle-ANGLE60*2,distance,iteration,scale);
+    if(distance < w) Koch(x,y,angle-ANGLE60*2,distance,iteration,scale);
     x += distance*Math.cos(ANGLE60*2-angle);
     y += distance*Math.sin(ANGLE60*2-angle);
     Koch(x,y,angle+ANGLE60*2,distance,iteration,scale);
@@ -58,14 +62,6 @@ function Koch(x,y,angle,distance,iteration,scale) {
         return undefined;
     }
 }
-
-window.onload = function() {
-    canvas = document.querySelector('#myCanvas');
-    ctx = canvas.getContext('2d');
-    w = canvas.clientWidth;
-    h = canvas.clientHeight;
-    drawKoch();
-};
 
 function drawKoch(i,s) {
     ctx.clearRect(0,0,w,h);
