@@ -80,22 +80,28 @@ export let Graph = (function() {
     let pub = {};
 
     // private methods
-    function drawAxis() {
-        let xScale = canvas.clientWidth/(this.xRange.max-this.xRange.min);
-        let yScale = canvas.clientHeight/(this.yRange.max-this.yRange.min);
+    pub.drawAxis = function(xRange,yRange,canvas) {
+        let context = canvas.getContext('2d');
+        let bigX = Math.max(xRange[0],xRange[1]);
+        let smallX = Math.min(xRange[0],xRange[1]);
+        let bigY = Math.max(yRange[0],yRange[1]);
+        let smallY = Math.min(yRange[0],yRange[1]);
+
+        let xScale = canvas.clientWidth/(bigX-smallX);
+        let yScale = canvas.clientHeight/(bigY-smallY);
 
         context.save();  // this is for normal encapsulation
         context.save();  // this is for stroke
-        context.translate(-this.xRange.min*xScale,this.yRange.max*yScale);
+        context.translate(-smallX*xScale,bigY*yScale);
         
         context.scale(xScale,yScale)
 
         context.beginPath();
-        context.moveTo(this.xRange.min,0);
-        context.lineTo(this.xRange.max,0);
+        context.moveTo(smallX,0);
+        context.lineTo(bigX,0);
 
-        context.moveTo(0,this.yRange.min);
-        context.lineTo(0,this.yRange.max);
+        context.moveTo(0,smallY);
+        context.lineTo(0,bigY);
         context.lineWidth *= xScale/yScale;
         
         context.restore();  // stroke won't be affected by scale()
