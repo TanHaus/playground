@@ -29,26 +29,26 @@ function draw() {
     let num1 = omega0*omega0-omega*omega,
         num2 = gamma*omega;
     let C = force0/Math.sqrt(Math.pow(num1,2)+Math.pow(num2,2));
-    let phase = -Math.atan2(-num2,num1);
-    let transX0 = C*Math.cos(-phase);
-    let transY0 = -omega*C*Math.sin(-phase);
+    let phase = Math.atan2(-num2,num1);
+    let transX0 = C*Math.cos(phase);
+    let transY0 = -omega*C*Math.sin(phase);
 
     console.log('C = ' + C);
     if(delta==0) {
         let A = x0-transX0;
         let B = v0+gamma/2*x0-transY0;
         solution = Object.assign(function(t) {
-            return C*Math.cos(omega*t-phase) + 
+            return C*Math.cos(omega*t+phase) + 
                    (A+B*t)*Math.exp(-gamma*t/2);
         });
         envelope = Object.assign(function(t) { return undefined; });
         console.log('delta = 0');
     } else if(delta>0) {
         let f = Math.sqrt(delta)/2;
-        let A = (v0+x0*(gamma/2+f)-transX0*f-transY0)/(2*f);
-        let B = (x0*(f-gamma/2)-transX0*f-v0+transY0)/(2*f);
+        let A = ((x0-transX0)*(f+gamma/2)+v0-transY0)/(2*f);
+        let B = ((x0-transX0)*(f-gamma/2)-v0+transY0)/(2*f);
         solution = Object.assign(function(t) {
-            return C*Math.cos(omega*t-phase) + 
+            return C*Math.cos(omega*t+phase) + 
                    (A*Math.exp(f*t)+B*Math.exp(-f*t))*Math.exp(-gamma*t/2);
         });
         envelope = Object.assign(function(t) { return undefined; });
@@ -56,9 +56,9 @@ function draw() {
     } else if(delta<0) {
         let f = Math.sqrt(-delta)/2;
         let A = x0-transX0;
-        let B = -(v0+gamma/2*x0+transY0)/f;
+        let B = (transY0-v0-gamma/2*A)/f;
         solution = Object.assign(function(t) {
-            return C*Math.cos(omega*t-phase) + 
+            return C*Math.cos(omega*t+phase) + 
                    (A*Math.cos(f*t)-B*Math.sin(f*t))*Math.exp(-gamma*t/2);
         });
         envelope = Object.assign(function(t) { return Math.sqrt(A*A+B*B)*Math.exp(-gamma*t/2); });
@@ -84,7 +84,7 @@ window.updateValue = function(value,what) {
           gamma=parseFloat(value);
           break;
         case 'maxX':
-          xRange[1]=parseFloat(value);
+          xRange[1]=Math.exp(parseFloat(value));
           break;
         case 'force0':
           force0=parseFloat(value);
@@ -124,5 +124,5 @@ function show() {
     showomega0.textContent = omega0;
     showgamma.textContent = gamma;
     showforce0.textContent = force0;
-    showmaxX.textContent = xRange[1];
+    showmaxX.textContent = xRange[1].toFixed(2);
 }
