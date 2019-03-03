@@ -5,4 +5,4 @@ let Colors = {
     color4: '#594F4C',
     color5: '#2F333B',
 }
-export {Colors};
+export { Colors };

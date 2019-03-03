@@ -5,14 +5,28 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <title>Double pendulum</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" media="screen" href="../stylesheets/style.css">
     <link rel="stylesheet" type="text/css" media="screen" href="style.css">
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML' async></script>
+    <script type="text/x-mathjax-config">
+        MathJax.Hub.Config({
+          tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}
+        });
+    </script>
     <script type="module" src="script.js" defer></script>
 </head>
 <body>
     <canvas width=500 height=500 id="myCanvas"></canvas>
-    <button onclick=>One pendulum</button>
-    <button onclick-></button>
-    <button onclick="showTop()">Show</button>
-    <button onclick="noShowTop()">Don't show</button>
+
+    <section id="control">
+        <button onclick=>One pendulum</button>
+        <button onclick-></button>
+        <button onclick="showTop()">Show</button>
+        <button onclick="noShowTop()">Don't show</button>
+    </section>
+
+    <section>
+        <p>Double pendulum</p>
+    </section>
 </body>
 </html>

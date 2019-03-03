@@ -1,0 +1,20 @@
+:root {
+  --color-1: #FCE9D9;
+  --color-2: #F2B06B;
+  --color-3: #B05F20;
+  --color-4: #594F4C;
+  --color-5: #2F333B;
+}
+
+body {
+  background-color: var(--color-2);
+  font-family: Calibri, Helvetica, sans-serif;
+}
+
+section {
+  padding: 0 20vw;
+}
+
+canvas {
+  padding: 0;
+}

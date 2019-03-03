@@ -5,14 +5,30 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <title>Lissajous curves</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" media="screen" href="../stylesheets/style.css" />
     <link rel="stylesheet" type="text/css" media="screen" href="style.css">
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML' async></script>
+    <script type="text/x-mathjax-config">
+        MathJax.Hub.Config({
+          tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}
+        });
+    </script>
     <script src="script.js" defer></script>
 </head>
 <body>
     <canvas width=700 height=700 id="myCanvas"></canvas><br>
-    Omega x<input type="range" oninput="updateVal(this.value,'oX')" min=0.01 max=10 step=0.01><br>
-    Omega y<input type="range" oninput="updateVal(this.value,'oY')" min=0.01 max=10 step=0.01><br>
-    Phase x<input type="range" oninput="updateVal(this.value,'pX')" min=0.0314159 max=6.28318 step=0.0314159><br>
-    Phase x<input type="range" oninput="updateVal(this.value,'pY')" min=0.0314159 max=6.28318 step=0.0314159><br>
+
+    <section id="control">
+        $\omega_x$<input type="range" oninput="updateVal(this.value,'oX')" min=0.01 max=10 step=0.01><br>
+        $\omega_y$<input type="range" oninput="updateVal(this.value,'oY')" min=0.01 max=10 step=0.01><br>
+        $\phi_x$<input type="range" oninput="updateVal(this.value,'pX')" min=0.0314159 max=6.28318 step=0.0314159><br>
+        $\phi_y$<input type="range" oninput="updateVal(this.value,'pY')" min=0.0314159 max=6.28318 step=0.0314159><br>
+    </section>
+
+    <section>
+        <p>The graph above follows this parametric equations:</p>
+        <p>$$x = \cos(\omega_x t + \phi_x)$$</p>
+        <p>$$y = \cos(\omega_y t + \phi_y)$$</p>
+    </section>
 </body>
 </html>

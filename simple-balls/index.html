@@ -5,12 +5,13 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <title>Simple Game</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" media="screen" href="../stylesheets/style.css" />
     <link rel="stylesheet" type="text/css" media="screen" href="style.css" />
     <script type="module" src="./script.js" defer></script>
 </head>
 <body>
     <canvas id="myCanvas" width="1500" height="800"></canvas>
-    <div id="control">
+    <section id="control">
         <form>
             Update number of balls <input type="number" min=1 max=30 value=20 name="nb" oninput="changeNb(this.value)">
             <br>
@@ -32,8 +33,8 @@
             <input type="button" onclick="startGame()" value="New Game">
             <br>
         </form>
-    </div>
-    <div id="monitor">
+    </section>
+    <section id="monitor">
         <h2>Monitor variables</h2>
         <ul>
             <li id="nBalls">Number of balls: 20</li>
@@ -42,7 +43,7 @@
             <li id="maxR">Max ball size: 40</li>
             <li id="restitution">Coefficient of restitution: 0.5</li>
         </ul>
-    </div>
+    </section>
 
 </body>
 </html>

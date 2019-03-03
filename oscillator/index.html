@@ -5,22 +5,39 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <title>Harmonic Oscillator</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" media="screen" href="../stylesheets/style.css" />
     <link rel="stylesheet" type="text/css" media="screen" href="style.css">
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML' async></script>
+    <script type="text/x-mathjax-config">
+        MathJax.Hub.Config({
+          tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}
+        });
+    </script>
     <script src="script.js" type="module" defer></script>
 </head>
 <body>
     <canvas id="myCanvas" width=600 height=600></canvas><br>
     Show exact solution<input type="checkbox" oninput="updateValue(this.checked,'exactSol')" checked=true>
     Show estimated solution<input type="checkbox" oninput="updateValue(this.checked,'estimatedSol')" checked=true><br>
-    omega0<input type="range" oninput="updateValue(this.value,'omega0')" min=0 max=15 step=0.01>
-    gamma<input type="range" oninput="updateValue(this.value,'gamma')" min=0 max=15 step=0.01>
-    maxX<input type="range" oninput="updateValue(this.value,'maxX')" min=0 max=7 step=0.01>
-    force0<input type="range" oninput="updateValue(this.value,'force0')" min=0 max=20 step=0.01>
+    $\omega_0$<input type="range" oninput="updateValue(this.value,'omega0')" min=0 max=15 step=0.01>
+    $\gamma$<input type="range" oninput="updateValue(this.value,'gamma')" min=0 max=15 step=0.01>
+    $\max X$<input type="range" oninput="updateValue(this.value,'maxX')" min=0 max=7 step=0.01>
+    $F_0$<input type="range" oninput="updateValue(this.value,'force0')" min=0 max=20 step=0.01>
+    <br>
+
     <div>
-        omega0: <span id="omega0"></span><br>
-        gamma: <span id="gamma"></span><br>
-        maxX: <span id="maxX"></span><br>
-        force0: <span id="force0"></span><br>
+        $\omega_0$: <span id="omega0"></span><br>
+        $\gamma$: <span id="gamma"></span><br>
+        $\max X$: <span id="maxX"></span><br>
+        $F_0$: <span id="force0"></span><br>
     </div>
+
+    <p>The graph aboves shows the solution $x(t)$ to the following second-order differential equation:</p>
+    <p>$$\frac{d^2x}{dt^2} = -\omega_0 x - \gamma \frac{dx}{dt} + F_0 \cos(\omega t)$$</p>
+
+    <p>You can adjust the parameters with the sliders above to observe the behavior of the solution when the parameters are changed. Initial values are</p>
+    <p>$$x(0) = 0; \frac{dx}{dt}(0) = 0$$</p>
+
+    <p>Note: checkbox does not work with Edge</p>
 </body>
 </html>
