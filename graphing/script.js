@@ -1,35 +1,73 @@
-import { Signal, Graph } from '../libraries/math.js';
+import { Signal, Graph, Polynomial } from '../libraries/math.js';
 
-const canvas = document.querySelector('#myCanvas');
+window.canvas = document.querySelector('#myCanvas');
 const ctx = canvas.getContext('2d');
 const w = canvas.clientWidth;
 const h = canvas.clientHeight;
-let pow = 512;
-let f = 0.1
 
-let xRange = [0,pow];
-let yRange = [-1,65];
+const showFn = document.querySelector('#Fn');
 
-let xSeq = Signal.generatexSeq(xRange,1);
-let signal = Signal.generateFn(function(x){return Math.sin(f*x)},xSeq);
-Graph.plot(xSeq,signal,xRange,yRange,canvas);
+let xRange = [-5,5];
+let yRange = [-5,5];
 
-let freq = Signal.get.MagnitudeArray(Signal.fft(signal,pow));
-Graph.plot(xSeq,freq,xRange,yRange,canvas,'red');
+const polySection = document.querySelector('#poly');
+const sineSection = document.querySelector('#sine');
+const cosineSection = document.querySelector('#cosine');
+const showError = document.querySelector('#error');
 
-window.updatef = function(value) {
+window.currentFn = polySection;
+let poly;
+
+Graph.drawAxis(xRange,yRange,canvas);
+
+window.update = function(type,value) {
+    switch(type) {
+        case 'poly':
+            let temp = value.split(',');
+            let coeff = [];
+            for(let i=0; i<temp.length; i++) {
+                coeff[i] = parseFloat(temp[i]);
+            }
+            poly = new Polynomial(coeff);
+            showFn.innerHTML = '$' + poly.toString() + '$';
+            MathJax.Hub.Queue(["Typeset",MathJax.Hub]);
+            if(isNaN(poly.eval(0))) error.innerHTML = 'There is an ERROR. Please type the coefficients correctly'; else error.innerHTML = '';
+            break;
+        case 'xMin':
+            xRange[0] = parseFloat(value);
+            break;
+        case 'xMax':
+            xRange[1] = parseFloat(value);
+            break;
+        case 'yMin':
+            yRange[0] = parseFloat(value);
+            break;
+        case 'yMax':
+            yRange[1] = parseFloat(value);
+            break;
+    }
     ctx.clearRect(0,0,w,h);
+    Graph.drawAxis(xRange,yRange,canvas);
+    console.log(xRange,yRange,canvas);
+    console.log(poly);
+    poly.plot(canvas,xRange,yRange,'blue',0.01);
+    console.log(poly.eval(1));
+}
 
-    let pow = 512;
-    let f = value;
-
-    let xRange = [0,pow];
-    let yRange = [-1,65];
-
-    let xSeq = Signal.generatexSeq(xRange,1);
-    let signal = Signal.generateFn(function(x){return Math.sin(f*x)},xSeq);
-    Graph.plot(xSeq,signal,xRange,yRange,canvas);
-
-    let freq = Signal.get.MagnitudeArray(Signal.fft(signal,pow));
-    Graph.plot(xSeq,freq,xRange,yRange,canvas,'red');
-};
+window.changeFn = function(type) {
+    currentFn.classList.add('hidden');
+    switch(type) {
+        case 'poly':
+            currentFn = polySection;
+            currentFn.classList.remove('hidden');
+            break;
+        case 'sine':
+            currentFn = sineSection;
+            currentFn.classList.remove('hidden');
+            break;
+        case 'cosine':
+            currentFn = cosineSection;
+            currentFn.classList.remove('hidden');
+            break;
+    }
+}

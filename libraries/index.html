@@ -6,66 +6,19 @@
     <title>Page Title</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" type="text/css" media="screen" href="main.css" />
-    <script src="misc.js"></script>
 </head>
 <body>
     <canvas id="myCanvas" width="1500" height="800"></canvas>
     <input type="range" oninput="updatef(this.value)" value=0.1 step=0.01 min=0.1 max=5>
-    <script>
-        let canvas,ctx,w,h,graph;
-
-        window.onload = function init() {
-            canvas = document.querySelector('#myCanvas');
-            ctx = canvas.getContext('2d');
-            w = canvas.clientWidth;
-            h = canvas.clientHeight;
-
-            let pow = 512;
-
-            graph = new Graph(xRange={min:0,max:pow},yRange={min:-1,max:65},canvas);
-            graph.drawAxis();
-            
-            let seq = Graph.generateX(0,pow-1,1);
-            seq = Graph.applyFunction(seq,Math.sin);
-            //graph.plot(seq);
-
-            let time = Graph.generateX(0,pow-1,1);
-            let signal = Graph.getFnSeq(time,function(x) {
-                let f = 0.1;
-                return Math.sin(f*x);
-            });
-            graph.plot(Graph.applySequence(time,signal));
-            
-            let freq = Signal.fft(signal,pow).getReArray();
-            console.log(freq);
-            // max at index = 26 
-            graph.plot(Graph.applySequence(time,freq),'red');
-        }
-
-        function updatef(value) {
-            ctx.clearRect(0,0,w,h);
-
-            let pow = 512;
-
-            graph = new Graph(xRange={min:0,max:pow},yRange={min:-1,max:10},canvas);
-            graph.drawAxis();
-            
-            let seq = Graph.generateX(0,pow-1,1);
-            seq = Graph.applyFunction(seq,Math.sin);
-            //graph.plot(seq);
-
-            let time = Graph.generateX(0,pow-1,1);
-            let signal = Graph.getFnSeq(time,function(x) {
-                let f = value;
-                return Math.sin(f*x);
-            });
-            graph.plot(Graph.applySequence(time,signal));
-            
-            let freq = Signal.fft(signal,pow);
-            console.log(freq);
-            // max at index = 26 
-            graph.plot(Graph.applySequence(time,freq.getReArray()),'red');
-        }
+    <script type="module">
+        import { Polynomial, Graph } from './math.js';
+        const canvas = document.querySelector('#myCanvas');
+        let test = new Polynomial(1,2,1);
+        let test2 = new Polynomial(1,2,3,4);
+        console.log(test+'');
+        console.log(test.diff(5)+'');
+        console.log('Hello');
+        test.plot(canvas,[-5,5],[-5,5],'black');
     </script>
 </body>
 </html>

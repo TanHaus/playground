@@ -7,24 +7,19 @@
 }
 
 @media only screen and (min-width: 600px) {
-    :root {
-        --padding: 30vw;
-    }
+    :root { --padding: 30vw; }
 }
 @media only screen and (max-width: 600px) {
-    :root {
-        --padding: 15vw;
-    }
+    :root { --padding: 15vw; }
 }
 
 body { margin: 0; font-family: Calibri, Helvetica, Arial, sans-serif; background-color: var(--color-5); color: whitesmoke; }
 header, footer, section { padding: 0 var(--padding); }
 h1 { margin-left: 1.5vw; }
-p { color: var(--color-2); }
+p { color: whitesmoke; }
 ul { padding-left: 3vw; }
 li { list-style: none; }
 a { text-decoration: none; }
-a:link { color: whitesmoke; }
-a:visited { color: whitesmoke; }
+a { color: var(--color-2); }
 a:hover { color: var(--color-3); }
 canvas { border: 1px solid whitesmoke; }

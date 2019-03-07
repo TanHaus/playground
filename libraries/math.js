@@ -24,6 +24,9 @@ export class ComplexNumber {
         this.re = re;
         this.im = im;
     }
+    toString() {
+        return '' + this.re + ' + ' + this.im + 'i';
+    }
     clone(other) {
         this.re = other.re;
         this.im = other.im;
@@ -39,7 +42,7 @@ export class ComplexNumber {
     multiply(other) {
         return ComplexNumber.MULTIPLY(this,other);
     }
-    multiplyScalar(scalar) {
+    scale(scalar) {
         return new ComplexNumber(this.re*scalar,this.im*scalar);
     }
     static CLONE(no) {
@@ -57,6 +60,108 @@ export class ComplexNumber {
         return new ComplexNumber(no1.re*no2.re - no1.im*no2.im,
                                  no1.re*no2.im + no1.im*no2.re);
     }
+}
+
+export class Polynomial {
+    constructor(coeff) {
+        let temp;
+        if(typeof coeff == 'object') temp = coeff; else temp = arguments;
+        if(temp.length>1 && temp[0]==0) throw 'Leading coefficient cannot be zero';
+        this.deg = temp.length - 1;
+        this.coefficient = [];
+        for(let i=0; i<temp.length; i++) {
+            this.coefficient[i] = temp[temp.length-i-1];
+        }
+    }
+    toString() {
+        let result = '';
+        for(let i=this.deg; i>1; i--) {
+            if(this.coefficient[i]!=1) result += this.coefficient[i];
+            result += 'x^' + i + ' + ';
+        }
+        if(this.coefficient[1]!=undefined) {
+            if(this.coefficient[1]!=1) result += this.coefficient[1];
+            result += 'x + ';
+        }
+        result += this.coefficient[0];
+        return result;
+    }
+    eval(x) {
+        let result = 0;
+        for(let i = this.deg; i>0; i--) {
+            result = (result + this.coefficient[i]) * x;
+        }
+        result = result + this.coefficient[0];
+        return result;
+    }
+    add(other) {
+        let coefficient = [];
+        for(let i = 0; i<=this.deg; i++) {
+            coefficient[i] = this.coefficient[i];
+        }
+        for(let i = 0; i<=other.deg; i++) {
+            if(coefficient[i]==undefined) coefficient[i] = other.coefficient[i];
+            else coefficient[i] += other.coefficient[i];
+        }
+        return new Polynomial(coefficient);
+    }
+    multiply(other) {
+        let coefficient = [];
+        let deg = this.deg + other.deg;
+        for(let i = this.deg; i>=0; i--) {
+            for(let j = other.deg; j>=0; j--) {
+                let index = deg-(i+j);
+                if(coefficient[index]==undefined) coefficient[index] = this.coefficient[i]*other.coefficient[j];
+                else coefficient[index] += this.coefficient[i]*other.coefficient[j];
+            }
+        }
+        return new Polynomial(coefficient);
+    }
+    plot(canvas,xRange,yRange,color,step) {
+        let poly = this;
+        Graph.plotFn(function(x) { return poly.eval(x) },xRange,yRange,step,canvas,color);
+    }
+    diff(n = 1) {
+        let coefficient = [];
+        for(let i=this.deg; i>0; i--) {
+            coefficient[this.deg-i] = this.coefficient[i]*i;
+        }
+        n--;
+        if(this.deg==0) return new Polynomial(0);
+        if(n==0) return new Polynomial(coefficient);
+        return new Polynomial(coefficient).diff(n);
+    }
+}
+
+export class Rational {
+    constructor(numerator,denominator) {
+        this.num = new Polynomial(numerator);
+        this.den = new Polynomial(denominator);
+    }
+}
+
+export let Calculus = {
+    diff: function(func,x,dx) {
+        if(typeof func != 'function') throw '' + func + ' is not a function';
+        if(dx==undefined) dx = x*1e-5;
+        return (func(x+dx)-func(x-dx))/(2*dx);
+    },
+    integrate: function(func,x1,x2,dx) {
+        if(typeof func != 'function') throw '' + func + ' is not a function';
+        if(dx==undefined) dx = (x2-x1)*1e-5;
+        let result = 0;
+        let index = x1;
+        while(index + dx < x2) {
+            result += func(index)*dx;
+            index += dx;
+        }
+        result += func(index)*(x2-index);
+        return result;
+    }
+}
+
+export let Matrix = {
+    
 }
 
 export let Solver = {
