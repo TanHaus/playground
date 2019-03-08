@@ -129,9 +129,12 @@ class Game {
 window.startGame = function(value) {
     Game.start(value);
 };
+window.stopGame = function() {
+    Game.stop();
+}
 
 // main program
-let timer = new Timer();
+window.timer = new Timer();
 resizeCanvas();
 Game.start();
 
