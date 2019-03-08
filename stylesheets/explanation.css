@@ -1,0 +1,23 @@
+:root {
+    --color-1: #FCE9D9;
+    --color-2: #F2B06B;
+    --color-3: #B05F20;
+    --color-4: #594F4C;
+    --color-5: #2F333B;
+}
+
+@media only screen and (min-width: 600px) {
+    :root { --padding: 30vw; }
+}
+@media only screen and (max-width: 600px) {
+    :root { --padding: 15vw; }
+}
+
+body { margin: 0; font-family: Calibri, Helvetica, Arial, sans-serif; }
+header { background-color: var(--color-5); color: whitesmoke; }
+section { background-color: var(--color-2); color: black; }
+header, footer, section { padding: 10px var(--padding); }
+a { text-decoration: none; }
+a { color: var(--color-2); }
+a:hover { color: var(--color-3); }
+.math { padding: 0; }

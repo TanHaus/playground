@@ -3,6 +3,8 @@ Web apps
 
 I write small applications that run directly in web browsers. Most of them are simple physics simulations and topics that I am intersted in.
 
+This site is written in HTML, CSS and JavaScript.
+
 # math.js
 
 This is a math library I write for my own use. All of the math functions used in my web apps are written in this math.js library.

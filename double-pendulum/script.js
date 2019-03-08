@@ -32,12 +32,12 @@ class DoublePendulum {
     update() {
         let sin1 = Math.sin(this.theta1), sin2 = Math.sin(this.theta2),
             cos1 = Math.cos(this.theta1), cos2 = Math.cos(this.theta2),
-            A = cos1*cos2 + sin1*sin2,
-            B = cos1*sin2 - sin1*cos2,
+            A = Math.cos(this.theta1-this.theta2),
+            B = Math.sin(this.theta1-this.theta2),
             angular = -GRAVITY/this.length, divide = 2-A*A;
         
-        this.alpha1 = (angular*(2*sin1-A*sin2)+B*(this.omega2*this.omega2+A*this.omega1*this.omega1))/divide;
-        this.alpha2 = (angular*2*(A*sin1-sin2)+B*(A*this.omega2*this.omega2+2*this.omega1*this.omega1))/-divide;
+        this.alpha1 = (angular*(2*sin1-A*sin2)-B*(this.omega2*this.omega2+A*this.omega1*this.omega1))/divide;
+        this.alpha2 = (angular*2*(A*sin1-sin2)-B*(A*this.omega2*this.omega2+2*this.omega1*this.omega1))/-divide;
         this.omega1 += this.alpha1/60*speed; this.theta1 += this.omega1/60*speed;
         this.omega2 += this.alpha2/60*speed; this.theta2 += this.omega2/60*speed;
     
