@@ -336,11 +336,10 @@ window.onresize = function onresize() {
 }
 
 function setCanvas(canvas) {
-    canvas.width = document.documentElement.clientWidth;
-    canvas.height = document.documentElement.clientHeight*sizeFactor;
-
-    w = canvas.width;
-    h = canvas.height;
+    w = canvas.clientWidth;
+    h = canvas.clientHeight;
+    canvas.height = h;
+    canvas.width = w;
 }
 
 window.changeNb = function (nb) {

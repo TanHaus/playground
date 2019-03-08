@@ -2,8 +2,16 @@ import { Signal, Graph, Polynomial } from '../libraries/math.js';
 
 window.canvas = document.querySelector('#myCanvas');
 const ctx = canvas.getContext('2d');
-const w = canvas.clientWidth;
-const h = canvas.clientHeight;
+let w = canvas.clientWidth;
+let h = canvas.clientHeight;
+canvas.height = h; canvas.width = w;
+window.onresize = function() {
+    w = canvas.clientWidth;
+    h = canvas.clientHeight;
+    canvas.height = h;
+    canvas.width = w;
+    draw();
+}
 
 const showFn = document.querySelector('#Fn');
 
@@ -46,12 +54,7 @@ window.update = function(type,value) {
             yRange[1] = parseFloat(value);
             break;
     }
-    ctx.clearRect(0,0,w,h);
-    Graph.drawAxis(xRange,yRange,canvas);
-    console.log(xRange,yRange,canvas);
-    console.log(poly);
-    poly.plot(canvas,xRange,yRange,'blue',0.01);
-    console.log(poly.eval(1));
+    draw();
 }
 
 window.changeFn = function(type) {
@@ -70,4 +73,10 @@ window.changeFn = function(type) {
             currentFn.classList.remove('hidden');
             break;
     }
+}
+
+function draw() {
+    ctx.clearRect(0,0,w,h);
+    Graph.drawAxis(xRange,yRange,canvas);
+    poly.plot(canvas,xRange,yRange,'blue',0.01);
 }

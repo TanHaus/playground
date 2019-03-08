@@ -1,14 +1,27 @@
 const canvas = document.querySelector('#myCanvas');
 const ctx = canvas.getContext('2d');
 
-const w = canvas.clientWidth,
-      h = canvas.clientHeight;
-
-const xOffset = w/2,
-      yOffset = h/2;
-
-let X0 = 300,
+let w = canvas.clientWidth,
+    h = canvas.clientHeight,
+    xOffset = w/2,
+    yOffset = h/2,
+    X0 = 300,
     Y0 = 300;
+
+canvas.width = w;
+canvas.height = h;
+
+window.onresize = function() {
+  w = canvas.clientWidth;
+  h = canvas.clientHeight;
+  xOffset = w/2;
+  yOffset = h/2;
+  canvas.width = w;
+  canvas.height = h;
+  X0 = w/3;
+  Y0 = w/3;
+  draw();
+}
 
 let x,y;
 

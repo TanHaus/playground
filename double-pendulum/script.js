@@ -10,6 +10,18 @@ let w = canvas.clientWidth,
     offsetX = w/2,
     offsetY = h/3;
 
+canvas.width = w;
+canvas.height = h;
+
+window.onresize = function() {
+    w = canvas.clientWidth;
+    h = canvas.clientHeight;
+    canvas.width = w;
+    canvas.height = h;
+    offsetX = w/2;
+    offsetY = h/3;
+}
+
 class DoublePendulum {
     constructor(theta1,theta2,length,radius) {
         this.theta1 = theta1; this.omega1 = 0; this.alpha1 = 0;

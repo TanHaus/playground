@@ -3,8 +3,20 @@ let iteration = 6;
 let scale = 1;
 const canvas = document.querySelector('#myCanvas');
 const ctx = canvas.getContext('2d');
-const w = canvas.clientWidth;
-const h = canvas.clientHeight;
+let w = canvas.clientWidth;
+let h = canvas.clientHeight;
+
+canvas.width = w;
+canvas.height = h;
+
+window.onresize = function() {
+    w = canvas.clientWidth;
+    h = canvas.clientHeight;
+    canvas.width = w;
+    canvas.height = h;
+    ctx.clearRect(0,0,w,h);
+    drawKoch();
+}
 
 drawKoch();
 

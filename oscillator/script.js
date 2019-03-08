@@ -2,12 +2,26 @@ import {Graph} from '../libraries/math.js';
 
 const canvas = document.querySelector('#myCanvas');
 const ctx = canvas.getContext('2d');
-const w = canvas.clientWidth;
-const h = canvas.clientHeight;
+let w = canvas.clientWidth,
+    h = canvas.clientHeight;
 const showomega0 = document.querySelector('#omega0'),
 showgamma = document.querySelector('#gamma'),
 showforce0 = document.querySelector('#force0'),
 showmaxX = document.querySelector('#maxX');
+
+canvas.width = w;
+canvas.height = h;
+
+window.onresize = function() {
+  w = canvas.clientWidth;
+  h = canvas.clientHeight;
+  canvas.width = w;
+  canvas.height = h;
+  ctx.clearRect(0,0,w,h);
+  Graph.drawAxis(xRange,yRange,canvas);
+  draw();
+  draw2();
+}
 
 let solution = function(t){ return 0; },
     envelope = function(t){ return 0; };
@@ -66,7 +80,7 @@ function draw() {
     }
     
     Graph.plotFn(solution,xRange,yRange,0.01,canvas); 
-    Graph.plotFn(envelope,xRange,yRange,0.01,canvas,'orange');
+    Graph.plotFn(envelope,xRange,yRange,0.01,canvas,'red');
 }
 
 show();

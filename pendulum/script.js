@@ -4,7 +4,7 @@ import { Draw } from '../libraries/misc.js';
 // Declare global variables
 const canvas = document.querySelector('#myCanvas');
 let w,h;
-let vOffset = 50, hOffset = 100;
+let vOffset = 50, hOffset = 0.3;
 
 // Game variables
 let pendulum;
@@ -161,19 +161,10 @@ window.update = function(value,type) {
 };
 
 function resizeCanvas() {
-    let documentWidth = document.documentElement.clientWidth;
-    let documentHeight = document.documentElement.clientHeight;
-    
-    if(documentWidth>=1000) {
-        canvas.width = documentWidth/2;
-        canvas.height = documentHeight*0.9;
-    } else {
-        canvas.width = documentWidth;
-        canvas.height = documentHeight*0.5;
-    }
-
     w = canvas.clientWidth;
     h = canvas.clientHeight;
+    canvas.width = w;
+    canvas.height = h;
     hOffset = w/2;
     vOffset = h/3;
 }
