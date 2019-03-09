@@ -21,3 +21,4 @@ a { text-decoration: none; }
 a { color: var(--color-2); }
 a:hover { color: var(--color-3); }
 .math { padding: 0; }
+div.math { overflow-y: auto; margin-left: -10vw; margin-right: -10vw; }
