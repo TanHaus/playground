@@ -3,16 +3,23 @@
 <head>
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>Simple Game</title>
+    <title>Pendulum</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" type="text/css" media="screen" href="../stylesheets/style.css" />
-    <link rel="stylesheet" type="text/css" media="screen" href="style.css" />
-    <script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML' async></script>
+    <!-- Load KaTeX -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.10.1/dist/katex.min.css" integrity="sha384-dbVIfZGuN1Yq7/1Ocstc1lUEm+AT+/rCkibIcC/OmWo5f0EA48Vf8CytHzGrSwbQ" crossorigin="anonymous">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.10.1/dist/katex.min.js" integrity="sha384-2BKqo+exmr9su6dir+qCw08N2ZKRucY4PrGQPPWU1A7FtlCGjmEGFqXCv5nyM5Ij" crossorigin="anonymous"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.10.1/dist/contrib/auto-render.min.js" integrity="sha384-kWPLUVMOks5AQFrykwIup5lo0m3iMkkHrD0uJ4H5cjeGihAutqP0yW0J6dpFiVkI" crossorigin="anonymous" onload="renderMathInElement(document.body)"></script>
+
     <script type="module" src="./script.js" defer></script>
 </head>
 <body>
     <canvas id="myCanvas"></canvas>
-    <div id="control">
+    <header>
+        <h1>Pendulum</h1>
+        <p>To read more about Harmonic Oscillator, please visit <a href="../oscillator/explanation.html">here</a>.</p>
+    </header>
+    <section id="control">
         <form>
             <input type="button" value="Start" onclick="startGame()">
             <input type="button" value="Stop" onclick="stopGame()">
@@ -28,43 +35,43 @@
             Initial angular position (in degrees)   <input type="number" oninput="startGame(this.value)"         name="theta0"    min=0  max=180 step=1><br>
             
         </form>
-    </div>
-    <div id="monitor">
+    </section>
+    <section id="monitor">
         <h2>Monitor</h2>
         <ul>
-            <li>Period (small oscillation): </li>
+            <li>Period (small oscillation): <span id="period"></span></li>
             <li> $$P=2\pi \sqrt{\frac{L}{g}}$$ </li>
-            <li id="timer">Timer: 0</li>
+            <li>Timer: <span id="timer"></span></li>
         </ul>
-    </div>
-    <div id="instruction">
+    </section>
+    <section id="instruction">
 
-    </div>
+    </section>
     <table id="variables">
         <tbody>
             <tr>
                 <th>Angular position (rad)</th>
-                <td>x</td>
+                <td><span id="theta"></span></td>
             </tr>
             <tr>
                 <th>Angular velocity (rad/s)</th>
-                <td>x</td>
+                <td><span id="omega"></span></td>
             </tr>
             <tr>
                 <th>Angular acceleration (rad/s2)</th>
-                <td>x</td>
+                <td><span id="alpha"></span></td>
             </tr>
             <tr>
                 <th>Mass</th>
-                <td>x</td>
+                <td><span id="mass"></span></td>
             </tr>
             <tr>
                 <th>Moment of Inertia</th>
-                <td>x</td>
+                <td><span id="I"></span></td>
             </tr>
             <tr>
                 <th>Length</th>
-                <td>x</td>
+                <td><span id="length"></span></td>
             </tr>
         </tbody>
 

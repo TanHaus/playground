@@ -66,11 +66,10 @@ export class Polynomial {
     constructor(coeff) {
         let temp;
         if(typeof coeff == 'object') temp = coeff; else temp = arguments;
-        if(temp.length>1 && temp[0]==0) throw 'Leading coefficient cannot be zero';
         this.deg = temp.length - 1;
         this.coefficient = [];
         for(let i=0; i<temp.length; i++) {
-            this.coefficient[i] = temp[temp.length-i-1];
+            this.coefficient[i] = temp[i];
         }
     }
     toString() {
@@ -141,10 +140,27 @@ export class Rational {
 }
 
 export let Calculus = {
-    diff: function(func,x,dx) {
+    diff: function(func,x,dx,n) {
         if(typeof func != 'function') throw '' + func + ' is not a function';
-        if(dx==undefined) dx = x*1e-5;
-        return (func(x+dx)-func(x-dx))/(2*dx);
+        if(dx==undefined) {
+            if(x!=0) dx = x*1e-2;
+            else dx=1e-2;
+        }
+        if(n==undefined) n=1;
+        if(n==0) return func(x);
+        if(n==1) return (-func(x+2*dx)+8*func(x+dx)-8*func(x-dx)+func(x-2*dx))/(12*dx);
+        if(n==2) return (-func(x+2*dx)+16*func(x+dx)-30*func(x)+16*func(x-dx)-func(x-2*dx))/(12*Math.pow(dx,2));
+
+        if(n==3) return (-func(x+3*dx)+8*func(x+2*dx)-13*func(x+dx)+13*func(x-dx)-8*func(x-2*dx)+func(x-3*dx))/(8*Math.pow(dx,3));
+        if(n==4) return (-func(x+3*dx)+12*func(x+2*dx)-39*func(x+dx)+ 56*func(x)-39*func(x-dx)+12*func(x-2*dx)-func(x-3*dx))/(6*Math.pow(dx,4));
+
+        if(n==5) return (-func(x+4*dx)+9*func(x+3*dx)-26*func(x+2*dx)+29*func(x+dx)-29*func(x-dx)+26*func(x-2*dx)-9*func(x-3*dx)+func(x-4*dx))/(6*Math.pow(dx,5));
+        if(n==6) return (-func(x+4*dx)+12*func(x+3*dx)-52*func(x+2*dx)+116*func(x+dx)-150*func(x)+116*func(x-dx)-52*func(x-2*dx)+12*func(x-3*dx)-func(x-4*dx))/(4*Math.pow(dx,6));
+
+        while(n>6) {
+            console.warn('Numerical differentiation of order higher than 6 is not accurate');
+            return Calculus.diff(function(y) { return Calculus.diff(func,y,dx,n-6); },x,dx,6);
+        }
     },
     integrate: function(func,x1,x2,dx) {
         if(typeof func != 'function') throw '' + func + ' is not a function';
@@ -160,9 +176,11 @@ export let Calculus = {
     }
 }
 
-export let Matrix = {
-    
-}
+/*export let Matrix = {
+    multiply = function(matrix1,matrix2) {
+         if(matrix1[0].length!=matrix2.length) throw 'Incompatible matrix dimensions';
+    },
+}*/
 
 export let Solver = {
     sim2: function(matrix) {  // simultaneous equation, 2 unknowns. size of matrix is 2x3
@@ -224,7 +242,7 @@ export let Graph = (function() {
 
         let bigX = Math.max(xRange[0],xRange[1]);
         let smallX = Math.min(xRange[0],xRange[1]);
-        if(step==undefined) step = (bigX-smallX)/100;
+        if(step==undefined) step = (bigX-smallX)/canvas.clientWidth;
         let xSeq = []
         let ySeq = [];
         let index = 0;

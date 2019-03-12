@@ -18,7 +18,8 @@ header { background-color: var(--color-5); color: whitesmoke; }
 section { background-color: var(--color-2); color: black; }
 header, footer, section { padding: 10px var(--padding); }
 a { text-decoration: none; }
-a { color: var(--color-2); }
-a:hover { color: var(--color-3); }
+header a { color: var(--color-2); }
+header a:hover { color: var(--color-3); }
 .math { padding: 0; }
 div.math { overflow-y: auto; margin-left: -10vw; margin-right: -10vw; }
+.illustration { max-width: 400px; }

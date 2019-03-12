@@ -6,6 +6,15 @@ const canvas = document.querySelector('#myCanvas');
 let w,h;
 let vOffset = 50, hOffset = 0.3;
 
+let periodShow = document.querySelector('#period'),
+    thetaShow = document.querySelector('#theta'),
+    omegaShow = document.querySelector('#omega'),
+    alphaShow = document.querySelector('#alpha'),
+    massShow = document.querySelector('#mass'),
+    inertiaShow = document.querySelector('#I'),
+    lengthShow = document.querySelector('#length'),
+    showTimer = document.querySelector('#timer');
+
 // Game variables
 let pendulum;
 const GRAVITY = 9.81;
@@ -67,14 +76,12 @@ class Timer {
         // when start the timer, reset count to zero, set the state to counting
         this.count = 0;
         this.ifCounting = true;
-        let showTimer = document.querySelector('#timer');
-        showTimer.innerHTML = 'Timer: 0';
+        showTimer.innerText = 0;
     }
 
     stop() {
         this.ifCounting = false;
-        let showTimer = document.querySelector('#timer');
-        showTimer.innerHTML = 'Timer: ' + timer.getTime().toFixed(5);
+        showTimer.innerText = timer.getTime().toFixed(5);
     }
 
     update() {
@@ -173,19 +180,16 @@ function resizeCanvas() {
 }
 
 function show() {
-    let variables = document.querySelector('#variables');
-    variables.innerHTML = '<tbody>'+
-                            '<tr>   <th>Angular position (rad)</th>   <td>'+pendulum.theta.toExponential(2)+'</td>    </tr>'+
-                            '<tr>   <th>Angular velocity (rad/s)</th>   <td>'+pendulum.thetaSpeed.toExponential(2)+'</td>    </tr>'+
-                            '<tr>   <th>Angular acceleration (rad/s2)</th>   <td>'+pendulum.thetaAccel.toExponential(2)+'</td>    </tr>'+
-                            '<tr>   <th>Mass</th>   <td>'+pendulum.mass+'</td>   </tr>'+
-                            '<tr>   <th>Moment of Inertia</th>   <td>'+pendulum.moInertia+'</td>   </tr>'+
-                            '<tr>   <th>Length</th>   <td>'+pendulum.length+'</td>   </tr>'+
-                          '</tbody>';
-    let monitor = document.querySelector('#monitor');
-    monitor.children[1].children[0].innerHTML = 'Period (small oscillation): '+pendulum.getSimplePeriod().toFixed(5);
-    
-    let showTimer = document.querySelector('#timer');
+
+    thetaShow.innerText = pendulum.theta.toExponential(2);
+    omegaShow.innerText = pendulum.thetaSpeed.toExponential(2);
+    alphaShow.innerText = pendulum.thetaAccel.toExponential(2);
+    massShow.innerText = pendulum.mass;
+    inertiaShow.innerText = pendulum.moInertia;
+    lengthShow.innerText = pendulum.length;
+
+    periodShow.innerText = pendulum.getSimplePeriod().toFixed(5);
+
     // when timer is counting, only show when the time is a whole number (excluding zero)
-    if(timer.ifCounting==true && timer.getTime()%1==0) showTimer.innerHTML = 'Timer: ' + timer.getTime().toFixed();
+    if(timer.ifCounting==true && timer.getTime()%1==0) showTimer.innerText = timer.getTime().toFixed();
 }

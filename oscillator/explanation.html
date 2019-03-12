@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Harmonic Oscillator: Explanation</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" type="text/css" media="screen" href="../stylesheets/explanation.css">
+	<link rel="stylesheet" type="text/css" media="print" href="../stylesheets/print.css">
+
+    <!-- Load KaTeX -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.10.1/dist/katex.min.css" integrity="sha384-dbVIfZGuN1Yq7/1Ocstc1lUEm+AT+/rCkibIcC/OmWo5f0EA48Vf8CytHzGrSwbQ" crossorigin="anonymous">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.10.1/dist/katex.min.js" integrity="sha384-2BKqo+exmr9su6dir+qCw08N2ZKRucY4PrGQPPWU1A7FtlCGjmEGFqXCv5nyM5Ij" crossorigin="anonymous"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.10.1/dist/contrib/auto-render.min.js" integrity="sha384-kWPLUVMOks5AQFrykwIup5lo0m3iMkkHrD0uJ4H5cjeGihAutqP0yW0J6dpFiVkI" crossorigin="anonymous" onload="renderMathInElement(document.body)"></script>
+
+    <script defer src="../libraries/inlineKatex.js" type="module"></script> <!-- load inline math --> 
+</head>
+<body>
+	<header>
+		<h1>Harmonic Oscillator</h1>
+		<p>To view the demo, please visit the following links:</p>
+		<ul>
+			<li><b>Simple pendulum:</b> click <a href="../pendulum">here</a></li>
+			<li><b>Harmonic oscillator solution graph:</b> click <a href="./">here</a></li>
+		</ul>
+	</header>
+	<section>
+		<h1>Simple Harmonic Motion (SHM)</h1>
+		<p>Simple Harmonic Motion is characterised by the following equation:</p>
+		$$\frac{d^2x}{dt^2} = - \omega ^2 x$$
+	
+		<p>There are some interesting properties of the above equation:</p>
+		<ul>
+			<li><b>Second order ODE:</b> This implies that the full solution requires at least 2 adjustable constants (or parameters).</li>
+			<li><b>The equation is real:</b> <span class="math">x</span> is a real physical quantity (usually position), thus we should solve this equation in real domain <span class="math">\mathbb{R}</span></li>
+			<li><b>Linearity:</b> If <span class="math">x_1</span> and <span class="math">x_2</span> are two distinct solutions, <span class="math">ax_1 + bx_2</span> is also a solution. This is also known as <em>superposition</em>.</li>
+		</ul>
+		
+		<p>The full solution to this differential equation is: </p>
+			$$x(t) = A \cos(\omega t + \beta)$$
+			$$x(t) = A \cos \omega t + B \sin \omega t$$
+	
+		<p>where <span class="math">A</span>, <span class="math">B</span> and <span class="math">\beta</span> are real constants.</p>
+	</section>
+	
+	<section>
+		<h1>Energy consideration</h1>
+		<p>Total energy of an oscillating system usually exists in two forms: potential energy, a function of position, and kinetic energy, a function of velocity. If we consider a mass-spring system, potential energy and kinetic energy can be expressed as the following:</p>
+		$$V(x) = \frac{1}{2}kx^2 = \frac{1}{2}k A^2 \cos^2 \omega t$$
+		$$T(v) = \frac{1}{2}mv^2 = \frac{1}{2}m \omega ^2 A^2 \sin^2 \omega t$$
+
+		<p>Total energy of the system: <span class="math">E(x,v) = kA^2</span>. Energy is conserved, as expected. And this total energy is equal to maximum kinetic energy and maximum potential energy.</p>
+		<p><b>NOTE:</b> <span class="math">m\omega^2 = k</span></p>
+
+		<p>The oscillating system can be viewed as exchanging potential and kinetic energy periodically, via a force derived from a conservative field. In the case of mass-spring system, kinetic energy is from the moving mass (spring is considered massless, so it doesn't have kineic energy), potential energy is stored in the spring (elastic potential energy) and the force is the spring force.</p>
+	</section>
+
+	<section>
+		<h1>Why study SHM?</h1>
+		<p>Any system carrying out small oscillation around an equilibrium position is said to be in SHM. This can be shown by considering an arbitrary one dimensional potential, which is a function of position <span class="math">V(x)</span>.</p>
+		<img src="./assets/potential.png" class="illustration">
+
+		<p>Suppose the function is convex at a particular poitn <span class="math">x=a</span>. By evaluating the Taylor series of <span class="math">V(x)</span> at <span class="math">x=a</span> we obtain:</p>
+		$$V(x) = V(a) + \frac{1}{1!} \frac{d}{dx} V(a) . (x-a) + \frac{1}{2!} \frac{d^2}{dx^2} V(a) . (x-a)^2 + ...$$
+
+		<p>When the oscillation about <span class="math">x=a</span> is small, higher order of <span class="math">(x-a)^n</span> is negligible. Also note that because <span class="math">\frac{d}{dx}V(a) = 0</span>, we will have:</p>
+		$$V(x) - V(a) = k(x-a)^2$$
+		$$F(x) = -\frac{dV}{dx} = -2k(x-a)$$
+		$$\frac{d^2x}{dt^2} = -\frac{2k}{m} (x-a)$$
+
+		<p>If we choose <span class="math">(a,0)</span> as the new origin, <span class="math">(x-a)</span> will become <span class="math">x</span> while the second time derivative of <span class="math">x</span> stays the same.</p>
+		$$\frac{d^2x}{dt^2} = -\frac{2k}{m} x$$
+		<p>which is the equation of motion for SHM.</p>
+	</section>
+
+	<section>
+		<h1>Some typical oscillating systems</h1>
+		<h2>Mass-spring</h2>
+		<p>A mass <span class="math">m</span> is attached to a massless spring with a spring constant <span class="math">k</span>. The spring obeys Hooke's Law in both extension and contraction.</p>
+		<img class="illustration" src="./assets/mass_spring.png">
+
+		<h2>Pendulum</h2>
+		<p>To view a demonstration for a simple pendulum system, please visit <a href="../pendulum">here</a>.</p>
+		<p>A point mass <span class="math">m</span> is attached to one end of an massless, inelastic string (or a solid rod) of lenght <span class="math">L</span>. The mass is displaced and released from rest from a certain height.</p>
+		<img class="illustration" src="./assets/pendulum.png">
+
+		<h2>Floating object</h2>
+		<p>A cylinder of diamter <span class="math">d</span> floats with <span class="math">l</span> of its length submerged. The total height is <span class="math">L</span>. The cylinder is pushed down by a distance of <span class="math">A</span> and released.</p>
+		<img class="illustration" src="./assets/floating_object.png">
+
+		<h2>Spring of air</h2>
+		<p>A vertical tube with a cross-sectional area of <span class="math">A</span> is filled with air of density <span class="math">\rho</span>, under adiabatic condition (no heat transfer), is closed at one end and fitted with a freely-moving piston of mass <span class="math">m</span>. The piston is pushed down and released.</p>
+		<p>NOTE: under adiabatic condition, the first law of thermodynamics shows that:</p>
+		$$dU = -PdV$$
+		<img class="illustration" src="./assets/spring_of_air.png">
+
+		<h2>LC circuit</h2>
+		<p>An LC circuit is composed of an ideal capacitor with capacitance <span class="math">C</span> and an ideal inductor with inductance <span class="math">L</span>. The two components are connected to each other (shown below). The capacitor is initially charged to a voltage <span class="math">V_0</span>. Find the current in the circuit as a function of time.</p>
+		<img class="illustration" src="./assets/LC_circuit2.png">
+	</section>
+<!--
+\section{Problems}
+
+\begin{enumerate}
+	\item \textbf{Sphere in a sphere} A solid sphere with radius $r$ and mass $m$ rotates inside a hollow sphere of radius $R$ as shown below. The solid sphere rolls without slipping. Calculate the period of small oscillations about the equilibrium. Moment of inertia of a sphere is $\frac{2}{5}mr^2$.
+	
+	\begin{figure}[!hbt]
+		\centering
+		\includegraphics[width=0.2\textheight]{sphere_in_sphere.png}
+		\caption{\label{fig:sphere_in_sphere}Solid sphere rolls inside a hollow sphere}
+	\end{figure}
+	
+	\item \textbf{Pendulum bob} A pendulum bob is constructed by taking a thin, uniform-density circular ring of mass $M$ and radius $R$ and affixing a straight, thin, uniform density rod of mass $m$ and length $2R$ across its diameter as shown in the diagram. The pendulum hangs in a vertical plane from a frictionless pivot that can be attached to the ring at any point. The pivot allows the bob to swing either in the plane of the bob or in the plane perpendicular to the bob. Assume the angular amplitude is small. Find the configurations that give maximum and minimum period.
+	
+	\begin{figure}[!hbt]
+		\centering
+		\includegraphics[width=0.14\textheight]{ring_and_rod.png}
+		\caption{\label{fig:ring_and_rod}A pendulum bob.}
+	\end{figure}
+	
+	\item \textbf{Hydrogen atom} An early but unfortunate incorrect model of the hydrogen atom suggested by J.J. Thomson postulated that the hydrogen atom is a positive cloud of charge $+e$ uniformly distributed throughout a volume of a sphere of radius $R$ with the elctron represented by an equal magnitude but negative point charge $-e$ at the centre of the sphere. Suppose the electron is displaced by a small distance. Find the frequency of the oscillation of the electron.
+	
+	\begin{figure}[!hbt]
+		\centering
+		\includegraphics[width=0.15\textheight]{electron.png}
+		\caption{\label{fig:electron}A Hydrogen atom model.}
+	\end{figure}
+
+	\item \textbf{Binary system} Two stars, each of mass $M$ and separated by a distance $d$, orbit about their centre of mass. A planetoid of mass $m$ much smaller than $M$ moves along the axis of this system perpendicular to the orbital plane. Find the ratio of the period of the planetoid's oscillation to the orbital period of the stars.
+	
+	\begin{figure}[!hbt]
+		\centering
+		\includegraphics[width=0.17\textheight]{stars.png}
+		\caption{\label{fig:stars}Binary stars system and a small mass.}
+	\end{figure}
+	
+	\item \textbf{Particle in a bowl} A particle is constrained to move on the inner surface of a frictionless parabolic bowl whose cross-section has equation $z=kr^2$. The particle begins at the height $z_0$ above the bottom of the bowl with an initial velocity $v_0=0$. The acceleartion due to gravity is $g$. Find the period of oscillation for small $z_0$. Assume $z_0$ is not small, compare the actual period of motion and the SHM approximated period for small $z_0$.
+	
+	\begin{figure}[!hbt]
+		\centering
+		\includegraphics[width=0.28\textheight]{kx2.png}
+		\caption{\label{fig:kx2}The bowl}
+	\end{figure}
+
+	\item \textbf{Water tube} A U-tube has vertical arms of radii $r$ and $2r$, connected by a horizontal tube of length $l$ whose radius increases linearly from $r$ to $2r$. The U-tube contains liquid up to a height $h$ in each arm. The liquid is set oscillating, and at a given instant the liquid in the narrower arm is a distance $y$ above the equilibrium level.
+	
+	\begin{figure}[!hbtt]
+		\centering
+		\includegraphics[width=0.4\textheight]{u_tube.png}
+		\caption{\label{fig:u_tube}U-tube}
+	\end{figure}
+	
+	(a) Show that the potential energy of the liquid is given by $U=\frac{5}{8}g\rho \pi r^2y^2$.
+	
+	(b) Show that the kinetic energy of a small slice of liquid in the horizontal arm (see the diagram) is given by
+	$$dK=\frac{1}{2}\rho \frac{\pi r^2 dx}{(1+x/l)^2} \bigg(\frac{dy}{dt}\bigg)^2$$
+	
+	(c) Using the result of part (b), show that the total kinetic energy of all the moving liquid is given by
+	$$K=\frac{1}{4}\rho \pi r^2\big(l+\frac{5}{2}h\big)\bigg(\frac{dy}{dt}\bigg)^2$$
+	(Ignore any nastiness at the corners)
+	
+	(d) From (a) and (c), calculate period of oscillations if $l=5h/2$
+	
+	\item \textbf{Lennard-Jonnes} A commonly used potential energy function to describe the interaction between two atoms is the Lennard-Jones potential. It is described by the equation below
+	$$U=\epsilon\Bigg[\Big(\frac{r_0}{r}\Big)^{12}-2\Big(\frac{r_0}{r}\Big)^6\Bigg]$$
+	\begin{figure}[!hbt]
+		\centering
+		\includegraphics[width=0.6\textheight]{Lennard-Jones.png}
+		\caption{\label{fig:LJ}Lennard-Jones potential.}
+	\end{figure}
+
+	Assume an atom is trapped in this potential well. Find the period of small oscillation.
+
+	\item \textbf{Particle in a box} The one-dimension time-independent Schrondinger equation writes
+
+	$$\hat{H} \psi(x) = E \psi(x)$$
+
+	$\hat{H}$ is the Hamiltonian operator, defined as $\hat{H} = -\dfrac{\hbar^2}{2m} \dfrac{d^2}{dx^2} + V(x)$. It is corresponding to the total energy in classical mechanics $\dfrac{p^2}{2m} + V(x)$.
+	
+	$E$ is the energy of the system. You can treat it as a constant.
+	
+	$\psi(x)$ is the (time-independent) wave function, defined in the real domain. The integration of its amplitude squared from $x=a$ to $x=a+\Delta a$ gives the probability of finding the particle from $x=a$ to $x=a+\Delta a$
+	
+	$$P(a \,\ \text{to} \,\ a+\Delta a) = \int_{a}^{a+\Delta a}\big| \psi(x) \big| ^2 dx$$
+
+	Consider an infinite potential well $V(x)$ defined as following:
+
+	
+\[	V(x) = 
+	\begin{cases}
+		0 & \text{if } -\frac{a}{2} \leq x \leq \frac{a}{2}\\
+		\infty & \text{otherwise}
+	\end{cases}
+\]
+
+	It turns out that not any real and positive values of $E$ yields a solvable equation. You can assume that the wave equation $\psi(x)$ vanishes to zero outside the well, and the wave equation is continuous everywhere (there is no sudden jump). 
+
+	By solving the time-independent Schrondinger equation above, and considering the boundary conditions, find the wave equation $\psi(x)$. Therefore, deduce the allowed values of $E$. These values of $E$ are called \textit{Eigenenergies}.
+	
+	\begin{figure}[!hbt]
+		\centering
+		\includegraphics[width=0.6\textheight]{infty_well.png}
+		\caption{\label{fig:LJ}Infinite potential well.}
+	\end{figure}
+
+	\textit{Note:} You can read about Quantum harmonic oscillator if interested. It considers a parabolic potential $V(x) = \frac{1}{2} m \omega^2 x^2$, which is analogous to the spring potential in classical sense. 
+
+\end{enumerate}
+
+\vspace{2cm}
+
+1. $\omega^2 = \frac{g(R-r)}{\frac{14}{5}R^2 - \frac{8}{5}Rr + \frac{4}{5} r^2}$
+\\
+
+2. $I_{max}=2MR^2+\frac{4}{3}mR^2 \,\ I_{min}=\frac{3}{2}MR^2+mR^2$
+\\
+
+3. $P=\frac{4 \sqrt{\pi^3 \epsilon_0 m R^3}}{e}$
+\\
+
+4. $1:1$
+\\
+
+5. $P=\frac{\sqrt{2}\pi}{\sqrt{gk}}$
+\\
+
+7. $P = 2\pi r_0 \frac{\sqrt{m}}{6 \sqrt{2\epsilon}}$
+\\
+
+8. $E_n = \frac{n^2 \pi^2 \hbar^2}{2ma^2}$
+\\
+
+Content from A.P. French Waves and Oscillations. Problems from A.P French and Physics Olympiad past year papers.
+-->
+
+\section{Damped oscillation}
+
+\subsection{Introduction}
+
+Real oscillating systems must dissipate energy and come to a stop. In many situations, the resistive force is proportional to the velocity of the oscillator. We will include a resistive term $F = -\gamma \frac{dx}{dt}$ in the equation of motion.
+$$\frac{d^2x}{dt^2}=-\omega_0^2x-\gamma\frac{dx}{dt}$$
+
+where $\gamma$ is a positive, real constant. It determines the strength the resistive force. $\omega_0$ is the angular frequency when there is no damping.
+\\
+
+Let's again consider some of important features of this ODE:
+
+\begin{enumerate}
+	\item \textbf{This is a second order ODE} with first order term ($\frac{dx}{dt}$).
+	\item \textbf{The equation is real}.
+	\item \textbf{Linearity}: If we have two distinct solutions $x_1$ and $x_2$, the full solution is $ax_1+bx_2$.
+\end{enumerate}
+
+\subsection{Solving the ODE}
+
+Although the equation is in real domain, it turns out that it's much easier to solve the ODE if we do it in complex domain $\mathbb{C}$. Thus we now assume $x$ and its derivatives are complex functions of time (note: time is still in real domain). The physical quantity that corresponds to them is simply their real part.
+\\
+
+One function that appears similar to its derivatives is the exponential function. Let's try $x=Ae^{pt}$, where $A,p \in \mathbb{C}$. Note that $\frac{dx}{dt} = px$ and $\frac{d^2x}{dt^2} = p^2 x$.
+
+$$p^2x=-\omega_0^2x-\gamma px$$
+$$p^2+\gamma p+\omega_0^2=0$$
+
+This is a quadratic equation of $p$. Consider its discriminant: $\Delta = \gamma^2-4\omega_0^2$
+\\
+
+\textbf{Case 1:} $\Delta=0$
+$$p=-\gamma/2$$
+$$x=Ae^{-\tfrac{\gamma}{2}t}$$
+
+$p$ is real (it has no imanginary part). Although we say $A$ is complex, we can choose $A$ to be real, since we can just take the real part of $A$. Thus this is both a real and complex solution. However, we only have one adjustable constant $A$. The other solution turns out to be $te^{-\frac{\gamma}{2}t}$. The full complex and real solution is:
+$$x=(A+Bt)e^{-\frac{\gamma}{2}t}$$
+
+This situation is called \textit{critical damping}. There is no oscillation, as the system decays exponentially. Damping is just right for the system not oscillates.
+\\
+
+\textbf{Case 2:} $\Delta>0$
+$$p=-\gamma/2 \pm \sqrt{\gamma^2/4-\omega_0^2}$$
+$$x=\big(Ae^{\omega t}+Be^{-\omega t}\big)e^{-\tfrac{\gamma}{2}t}$$
+
+where $\omega = \sqrt{\gamma^2/4-\omega_0^2}$. Again, $p$ here is real. We have two values of $p$, thus the full solution is their linear combination. $A$ and $B$ can be chosen to be real, as already discussed above, so this is the real and complex solution.
+\\
+
+This situation is called \textit{over-damping}. There is also no oscillation, but the system decays slowlier than exponential decay. Damping is too great that even the system returns to the equilibrium position slowly.
+\\
+
+\textbf{Case 3:} $\Delta<0$
+$$p=-\gamma/2\pm i\sqrt{\omega_0^2-\gamma^2/4}$$
+$$x=\big(Ae^{i\omega t}+Be^{-i\omega t}\big)e^{-\tfrac{\gamma}{2}t}$$
+
+where $\omega = \sqrt{\omega_0^2-\gamma^2/4}$. This is the full complex solution. (Note that $A$ and $B$ are complex)
+\\
+
+We know that $e^{i \theta}$ is a complex number from Euler's identity $e^{i\theta} = \cos \theta + i \sin \theta$, and $A,B$ can be written as $a+bi$, where $a,b \in \mathbb{R}$. Taking the real part of the complex solution, we obtain the full real solution:
+
+$$x = (A \cos \omega t + B \sin \omega t)e^{-\tfrac{\gamma}{2}t}$$
+
+This is the only situation where there is oscillation, called \textit{under-damping}. There is a exponential decay envelope $e^{-\tfrac{\gamma}{2}t}$ over the oscillation. The system losses its energy until it returns to rest at equilibrium position.
+\\
+
+Let's plot the three cases for comparisons. For all cases, the system is solved for $x(0)=1$ and $\frac{d}{dt}x(0)=0$. Free oscillation without damping $\gamma=0$ is also plotted.
+
+\begin{figure}[!hbt]
+	\centering
+	\includegraphics[width=0.5\textheight]{Damping.png}
+	\caption{\label{fig:decay}Oscillations with different values of $\gamma$ ($\omega_0=3$).}
+\end{figure}
+
+\begin{figure}[!hbt]
+	\centering
+	\includegraphics[width=0.5\textheight]{damping_tgt.png}
+	\caption{\label{fig:decay}Oscillations with different values of $\gamma$ ($\omega_0=3$).}
+\end{figure}
+
+\subsection{Energy consideration}
+
+The general solution of damped oscillation has the form $x=x_1 e^{-\frac{\gamma}{2}t}$ where $x_1$ is some function of time. Generally the total energy of the system decays exponentially with time. You can confirm this by yourself.
+
+\section{Driven oscillation without damping}
+
+\subsection{Introduction}
+
+All the cases we have considered so far do not involve an external driving force. Suppose we want to use a force to drive the oscillator. This force will be of the form $F=F_0 \cos \omega t$, where $\omega$ is the angular frequency of the driving force.
+
+$$\frac{d^2x}{dt^2}=-\omega_0^2x+\frac{F_0}{m}\cos \omega t$$
+
+This ODE does not have linearity property because of the external force term. In mathematics, it's called non-linear ODE. Even if we find two distinct solutions of the equation, we still cannot obtain the full solution. 
+\\
+
+However, we notice that if $x_0$ is a solution to the free oscillation equation, and $x_1$ is a solution to the driven oscillation equation, $x_1 + x_0$ is also a solution of the driven oscillation equation. This can be shown as following:
+
+$$\frac{d^2x_1}{dt^2}=-\omega_0^2x_1+\frac{F_0}{m}\cos\omega t$$
+$$\frac{d^2x_0}{dt^2}=-\omega_0^2x_0$$
+$$\frac{d^2}{dt^2}(x_1+x_0)=-\omega_0^2(x_1+x_0)+F_0\cos\omega t$$
+
+If we substitute $x_0$ with the full solution of free oscillation equation, we get the full solution of the driven oscillation equation $x = x_1 + A\cos \omega_0t + B\sin \omega_0t$. The remaining work is to find $x_1$.
+
+\subsection{Solving the ODE}
+
+Although this equation is in real domain, again, it's much easier to analyse and solve it in complex domain. Instead of expressing the driving force as a cosine term, we will use Euler's identity to express it as an exponential.
+
+$$\frac{d^2x}{dt^2}=-\omega_0^2x+\frac{F_0}{m}e^{i\omega t}$$
+
+We guess a solution to be an exponential of $i\omega t$ in the form $x=Ae^{i \omega t}$. The rationale behind this is that we can cancel out the term $e^{i \omega t}$ in the equation. (Note that $A$ is a complex number)
+
+$$-\omega^2Ae^{i \omega t}=-\omega_0^2Ae^{i \omega t}+\frac{F_0}{m}e^{i\omega t}$$
+$$(\omega_0^2-\omega^2)A=F_0/m$$
+$$A = \frac{F_0/m}{\omega_0^2-\omega^2}$$
+
+We have established that $A$ is a complex number. We will interpret the magnitude of $A$ ($|A|$) as the amplitude of oscillation, and phase angle, or argument, of $A$ ($\arg(A)$) as the phase lag of oscillation behind the driving force. 
+\\
+
+We will plot a graph called \textbf{Frequency response} of the oscillator. It plots amplitude $|A|$ and phase lag $\arg(A)$ against the driving frequency $\omega$. The graph shows how the oscillator responds to different frequencies of the driving force, hence the name \textit{Frequency response}.
+
+\begin{figure}[!hbt]
+	\centering
+	\includegraphics[width=0.55\textheight]{freq_resp_no_damp.png}
+	\caption{\label{fig:driven_osc}Frequency response graph.}
+\end{figure}
+
+At $\omega = \omega_0$, \textbf{resonance} ocurred, where the amplitude approaches infinity. When $\omega < \omega_0$, the oscillator is in phase with the driving force. When $\omega > \omega_0$, the oscillator is lagging behind the driving force by a phase of $\pi$.
+\\
+
+We have obtained the solution $x_1 = Ae^{i\omega t}$ where $A = \dfrac{F_0/m}{\omega_0^2-\omega^2}$. The full complex and real solution of driven oscillation without damping:
+
+$$x = \dfrac{F_0/m}{\omega_0^2-\omega^2}e^{i\omega t} + Ae^{i\omega_0t} + Be^{-i\omega_0t}$$
+$$x = C \cos (\omega t -\delta) + A\cos\omega_0t + B\sin\omega_0t$$
+\\
+
+where $C = \Bigg| \dfrac{F_0/m}{\omega_0^2-\omega^2} \Bigg|$ and $\delta = 0$ when $\omega < \omega_0$ or $\delta = \pi$ when $\omega < \omega_0$.
+
+\subsection{Energy consideration}
+
+By considering the steady-state solution (go to Section 4 to read more about steady-state), it can be shown that the rate of work done by the driving force is a sinusoid. There is no net work done by the driving force on the system.
+
+\section{Driven oscillation with damping}
+
+Let's consider an oscillator being driven by an external force in the presence of damping.
+
+$$\frac{d^2x}{dt^2}=-\omega_0^2 x - \gamma \frac{dx}{dt} + \frac{F_0}{m}\cos \omega t$$
+
+Using similar argument, we know that the full solution to this ODE is $x_1+x_0$, where $x_0$ is the full solution to free oscillation with damping. We only need to find $x_1$.
+
+Solving the equation in complex domain, we propose a solution $x=Ae^{i\omega t}$.
+
+$$\frac{d^2x}{dt^2}=-\omega_0^2 x - \gamma \frac{dx}{dt} + \frac{F_0}{m}e^{i\omega t}$$
+
+$$-\omega^2 Ae^{i\omega t} = -\omega_0^2 Ae^{i\omega t} - \gamma \omega i Ae^{i\omega t} + \frac{F_0}{m} e^{i\omega t}$$
+$$(\omega_0^2-\omega^2 + \gamma \omega i)A = \frac{F_0}{m}$$ 
+$$A = \frac{F_0/m}{\omega_0^2-\omega^2+\gamma \omega i}$$
+
+To obtain amplitude and phase lag of the oscillator, we calculate the magnitude and argument (phase angle) of $A$. Note that $A$ is in either third or fourth quadrant on Argand diagram, so its argument is negative. However phase lag is positive, thus we take phase lag to be $-\arg(A)$.
+
+$$C = |A| = \frac{F_0/m}{\sqrt{(\omega_0^2-\omega^2)^2+\gamma^2 \omega^2}}$$
+$$\delta = -\arg(A) = \arctan \big(-\frac{\gamma \omega}{\omega_0^2-\omega^2}\big)$$
+
+\begin{figure}[!hbt]
+	\centering
+	\includegraphics[width=0.6\textheight]{freq_resp_damp.png}
+	\caption{\label{fig:driven_osc}Frequency response graph.}
+\end{figure}
+
+Maximum amplitude occurs when driving frequency is slightly lower than $\omega_0$. However, for convenience, we still say that resonance occurs when $\omega = \omega_0$. At resonance, there is a large, but finite, response. The larger the damping coefficient $\gamma$, the less responsive the oscillator is to the driving force.
+
+The full complex solution to driven oscillation with damping:
+
+$$x = \frac{F_0/m}{\omega_0^2-\omega^2+\gamma \omega i} e^{i\omega t} + x_0$$
+
+$x_0$ will take the form of underdamped, critically damped or overdamped oscillation depending on damping coefficient $\gamma$. The two adjustable constants thus come from $x_0$. If we convert the solution to real domain:
+
+$$x = C\cos(\omega t - \delta) + x_0$$
+
+where $C$ and $\delta$ are amplitude and phase lag.
+
+\subsection{Energy consideration}
+
+Again, by considering the steady-state solution, you can obtain an expression for the rate of work done by the driving force as a function of time. If you average are to average the power over one period, you can show that the net power is constant. This implies that there is energy input from the external force, and this energy is equal to the energy lost by the resistive force.
+
+\section{Transient and Steady-state of driven oscillation}
+
+When an external force is trying to drive the system, the system has a tendency to resist this change, called \textit{transient} effect. Transient response is represented by the free oscillation (with or without damping) part of the solution. The type of transient is thus characterised by the type of free oscillation that it would carry out. People often use the quantity $Q=\frac{\omega_0}{\gamma}$, called \textit{Quality factor}, to determine the type of transient.
+\\
+
+Steady-state is when the system enters a stable phase, which is described by a sinusoid $x_1 = A\cos(\omega t - \delta)$. For driven oscillation with damping, the oscillator will reach steady-state after some time as the transient effect decays exponentially with time. For driven oscillation without damping, the oscillator will generally do not reach steady-state because the transient effect does not decay with time.
+\\
+
+Driven oscillation with damping: $x = A \cos (\omega t - \delta) + x_1 e^{-\frac{\gamma}{2}t}$
+\\
+
+Driven oscillation without damping: $x = A \cos (\omega t - \delta) + A \cos (\omega t + \beta)$
+
+\section{Example: AC circuit}
+In AC circuit analysis, impedance is equivalent to resistance in DC circuit. 
+
+$$Z = \frac{V(t)}{i(t)}$$
+
+Impedance is a complex number. In AC, $V(t)$ and $i(t)$ are sinusoids. The magnitude of impedance is the ratio of magnitude of voltage and current, while the argument of impedance is the phase difference between voltage and current.
+
+$$Z = R+jX$$
+
+The real part $R$ is called resistance, while the imaginary part $X$ is called reactance. Impedance is useful because it helps people use DC formulas in AC circuit (electrical components in series, parallel, potential divider...). \textit{Note:} frequency in this context is used interchangeably with angular frequency.
+
+\begin{enumerate}
+	\item \textbf{Impedance} We will treat voltage source as a driver $V=V_0 \cos \omega t$ and current as an oscillator $i(t)=i_0 \cos (\omega t - \delta)$. By considering a capacitor and an inductor separately, solve for their steady-state solutions, and derive their impedance.
+
+	\item \textbf{Driven RLC circuit} Consider a RLC circuit (a resistor R, an inductor L and a capacitor C in series connected to an AC power source). Find the resonance frequency $\omega_0$, damping factor $\gamma$ and quality factor $Q$ of the circuit in terms of $R,L,C$. Find the steady-state current $i(t)$ at resonance, and thus calculate the average rate of heat lost $\langle P \rangle$ by the resistor.
+
+	\item \textbf{Transient effect} Estimate the time when the RLC system reaches steady-state for $R=1\text{k}\Omega, L=10\mu \text{H}, C = 100\text{nF}$.
+
+	\item \textbf{High-pass, low-pass filter} A low-pass filter is a circuit that reduces amplitude of high frequency signal, allowing only low frequency signal to pass through. A high-pass filter works the opposite, allowing high frequency signal to pass through but not low frequency one. Low-pass filter is usually used to remove unwanted high-frequency noise in the signal. High-pass filter can be used to remove DC signal ($\omega = 0$).
+
+	Using only resistor, capacitor and inductor, design low-pass and high-pass circuit
+	
+	\textit{Hint:} Use potential divider formula to find output voltage as a function of input voltage frequency. 
+
+	\item \textbf{Cut-off frequency and band-pass, band-stop filter} Cut-off frequency is defined as the frequency at which the response is $\frac{1}{\sqrt{2}}$ or $0.707$. Band-pass and band-stop filters are combinations of low-pass and high-pass filter. Band-pass filter allows signal with frequencies within a frequency range, while band-stop filter blocks signal with frequencies within a frequency range.
+	
+	Find cut-off frequency of your designed circuits above and design a band-pass filter that allows frequencies from $\omega_1$ to $\omega_2$. \textit{Fact:} the difference between $\omega_1$ and $\omega_2$ in this case is called bandwidth.
+
+\end{enumerate}
+
+\vspace{1.4cm}
+
+If interested, you can try Vietnam APhO 2018 Theory question 1 about \textit{Optical trap of neutral atoms}. http://apho2018.vn/theory-q1-n90.html
+
+\vspace{3cm}
+
+\textbf{Fun Facts} Consider an arbitrary, real and periodic signal $S(t)$ of period $P$. By Fourier's theorem, we can decompose the signal into linear combination of sinusoids.
+
+$$S(t) = a_0 + a_1 \cos \omega_1 t + a_2 \cos \omega_2 t + \dots + b_1 \sin \omega_1 t + b_2 \sin \omega_2 t + \dots$$
+$$S(t) = a_0 + \sum_{i=1}^\infty a_i \cos \omega_i t + \sum_{i=1}^\infty b_i \sin \omega_i t$$
+
+where $\omega_1 = \frac{2\pi}{P}$ and $\omega_n = n\omega_1$. $\omega_1$ is called \textit{fundamental frequency}. $\omega_n$ are overtones, or \textit{harmonics}. $a_0$ is called the \textit{bias}, or DC, signal. If we use this signal as the driver term:
+
+$$\frac{d^2x}{dt^2}=-\omega_0^2 x - \gamma \frac{dx}{dt} + S(t)$$
+
+Consider the following ODEs:
+
+$$\frac{d^2x}{dt^2}=-\omega_0^2 x - \gamma \frac{dx}{dt} + a_0$$
+$$\frac{d^2x}{dt^2}=-\omega_0^2 x - \gamma \frac{dx}{dt} + a_1 \cos \omega_1 t$$
+$$\frac{d^2x}{dt^2}=-\omega_0^2 x - \gamma \frac{dx}{dt} + b_1 \sin \omega_1 t$$
+
+We soon realize the full solution to the ODE with the original signal is:
+
+$$x = x_{a_0} + x_{a_1} + x_{a_2} + \dots + x_{b_1} + x_{b_2} + \dots = x_{a_0} + \sum_{i=1}^\infty x_{a_i} + x_{b_i}$$
+
+where $x_{a_0}$ is the solution to the equation with bias term, $x_{a_i}$ and $x_{b_i}$ is the solution to the equation with cosine and sine term respectively. Thus, by understanding how the oscillator behaves in response to a sinusoidal driver, we can extend the theory to an arbitrary periodic driver. Note that it is possible to extend the analysis to non-periodic signal.
+\\
+
+\vspace{3cm}
+
+Content from A.P. French Waves and Oscillations.
+
+	<footer>
+		Reference: A.P. French Waves and Oscillations
+	</footer>
+</body>
+</html>

@@ -7,37 +7,37 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" type="text/css" media="screen" href="../stylesheets/style.css" />
     <link rel="stylesheet" type="text/css" media="screen" href="style.css">
-    <script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML' async></script>
-    <script type="text/x-mathjax-config">
-        MathJax.Hub.Config({
-          tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}
-        });
-    </script>
+    <!-- Load KaTeX -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.10.1/dist/katex.min.css" integrity="sha384-dbVIfZGuN1Yq7/1Ocstc1lUEm+AT+/rCkibIcC/OmWo5f0EA48Vf8CytHzGrSwbQ" crossorigin="anonymous">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.10.1/dist/katex.min.js" integrity="sha384-2BKqo+exmr9su6dir+qCw08N2ZKRucY4PrGQPPWU1A7FtlCGjmEGFqXCv5nyM5Ij" crossorigin="anonymous"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.10.1/dist/contrib/auto-render.min.js" integrity="sha384-kWPLUVMOks5AQFrykwIup5lo0m3iMkkHrD0uJ4H5cjeGihAutqP0yW0J6dpFiVkI" crossorigin="anonymous" onload="renderMathInElement(document.body)"></script>
+    <script defer src="../libraries/inlineKatex.js" type="module"></script> <!-- load inline math --> 
+
     <script src="script.js" type="module" defer></script>
 </head>
 <body>
-    <canvas id="myCanvas"></canvas>    
-    Show exact solution<input type="checkbox" oninput="updateValue(this.checked,'exactSol')" checked=true><br>
-    Show estimated solution<input type="checkbox" oninput="updateValue(this.checked,'estimatedSol')" checked=true><br>
-    $\omega_0$<input type="range" oninput="updateValue(this.value,'omega0')" min=0 max=15 step=0.01>
-    $\gamma$<input type="range" oninput="updateValue(this.value,'gamma')" min=0 max=15 step=0.01>
-    $\max X$<input type="range" oninput="updateValue(this.value,'maxX')" min=0 max=7 step=0.01>
-    $F_0$<input type="range" oninput="updateValue(this.value,'force0')" min=0 max=20 step=0.01>
-    <br>
-
-    <div>
-        $\omega_0$: <span id="omega0"></span><br>
-        $\gamma$: <span id="gamma"></span><br>
-        $\max X$: <span id="maxX"></span><br>
-        $F_0$: <span id="force0"></span><br>
-    </div>
-
-    <p>The graph aboves shows the solution $x(t)$ to the following second-order differential equation:</p>
-    <p>$$\frac{d^2x}{dt^2} = -\omega_0 x - \gamma \frac{dx}{dt} + F_0 \cos(\omega t)$$</p>
-
-    <p>You can adjust the parameters with the sliders above to observe the behavior of the solution when the parameters are changed. Initial values are</p>
-    <p>$$x(0) = 0; \frac{dx}{dt}(0) = 0$$</p>
-
-    <p>Note: checkbox does not work with Edge</p>
+    <canvas id="myCanvas"></canvas>  
+    <header>
+        <h1>Harmonic Oscillator solution graph</h1>
+        <p>To view explanation, please click <a href="./explanation.html">here</a>.</p>
+    </header>
+    <section id="control">
+        Show exact solution<input type="checkbox" oninput="updateValue(this.checked,'exactSol')" checked=true><br>
+        Show estimated solution<input type="checkbox" oninput="updateValue(this.checked,'estimatedSol')" checked=true><br>
+        <span class="math">\omega_0</span><input type="range" oninput="updateValue(this.value,'omega0')" min=0 max=15 step=0.01><span id="omega0"></span><br>
+        <span class="math">\gamma</span><input type="range" oninput="updateValue(this.value,'gamma')" min=0 max=15 step=0.01><span id="gamma"></span><br>
+        <span class="math">\max x</span><input type="range" oninput="updateValue(this.value,'maxX')" min=0 max=7 step=0.01><span id="maxX"></span><br>
+        <span class="math">F_0</span><input type="range" oninput="updateValue(this.value,'force0')" min=0 max=20 step=0.01><span id="force0"></span><br>
+    </section>
+    <section>
+        <p>The graph aboves shows the solution <span class="math">x(t)</span> to the following second-order differential equation:</p>
+        <p>$$\frac{d^2x}{dt^2} = -\omega_0 x - \gamma \frac{dx}{dt} + F_0 \cos(\omega t)$$</p>
+    
+        <p>You can adjust the parameters with the sliders above to observe the behavior of the solution when the parameters are changed. Initial conditions are</p>
+        <p>$$x(0) = 0; \frac{dx}{dt}(0) = 0$$</p>
+    </section>
+    <footer>
+        <p>Note: checkbox does not work with Edge</p>
+    </footer>
 </body>
 </html>

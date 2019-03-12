@@ -37,9 +37,13 @@ window.update = function(type,value) {
                 coeff[i] = parseFloat(temp[i]);
             }
             poly = new Polynomial(coeff);
-            showFn.innerHTML = '$' + poly.toString() + '$';
-            MathJax.Hub.Queue(["Typeset",MathJax.Hub]);
-            if(isNaN(poly.eval(0))) error.innerHTML = 'There is an ERROR. Please type the coefficients correctly'; else error.innerHTML = '';
+            if(isNaN(poly.eval(0))) {
+                error.innerHTML = 'There is an ERROR. Please type the coefficients correctly';
+                showFn.innerText = '';
+            } else {
+                error.innerHTML = '';
+                katex.render(poly.toString(),showFn);
+            }
             break;
         case 'xMin':
             xRange[0] = parseFloat(value);

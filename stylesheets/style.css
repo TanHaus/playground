@@ -6,31 +6,24 @@
   --color-5: #2F333B;
 }
 
-body {
-  background-color: var(--color-2);
-  font-family: Calibri, Helvetica, sans-serif;
-}
-
-section {
-  padding: 0;
-}
-
-canvas {
-  padding: 0;
-  border: solid 1px;
-  float: left;
-}
+body { background-color: var(--color-2); font-family: Calibri, Helvetica, sans-serif; margin: 0; }
+section { padding: 10px 1vw; }
+canvas { padding: 0; border: solid 1px; }
+header { background-color: var(--color-5); color: whitesmoke; padding: 10px 1vw; }
+header > h1 { margin-top: 0; }
+a { text-decoration: none; }
+a { color: var(--color-2); }
+a:hover { color: var(--color-3); }
+ul, li { list-style: none; }
+.hidden { display: none; }
 
 @media only screen and (min-width: 600px) {
-  canvas {
-    width: 70%;
-    height: 95vh;
-  }
+  canvas { float: left; width: 70%; height: 95vh; }
+  section { margin-left: 70%; }
+  header { margin-left: 70%; }
+  footer { margin-left: 70%; }
 }
 
 @media only screen and (max-width: 600px) {
-  canvas {
-    width: 100%;
-    height: 50vh;
-  }
+  canvas { width: 100%; height: 50vh; }
 }
