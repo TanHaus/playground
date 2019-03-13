@@ -277,8 +277,8 @@ export let Graph = {
         let bigY = Math.max(yRange[0],yRange[1]);
         let smallY = Math.min(yRange[0],yRange[1]);
 
-        let xScale = canvas.clientWidth/(bigX-smallX);
-        let yScale = canvas.clientHeight/(bigY-smallY);
+        let xScale = canvas.width/(bigX-smallX);
+        let yScale = canvas.height/(bigY-smallY);
 
         context.save();  // this is for normal encapsulation
         context.save();  // this is for stroke
@@ -307,7 +307,7 @@ export let Graph = {
 
         let bigX = Math.max(xRange[0],xRange[1]);
         let smallX = Math.min(xRange[0],xRange[1]);
-        if(step==undefined) step = (bigX-smallX)/canvas.clientWidth;
+        if(step==undefined) step = (bigX-smallX)/canvas.width;
         let xSeq = []
         let ySeq = [];
         let index = 0;
@@ -325,8 +325,8 @@ export let Graph = {
         if(xRange.length != 2) throw 'Invalid xRange. xRange must contain only 2 numbers';
         if(yRange.length != 2) throw 'Invalid yRange. yRange must contain only 2 numbers';
         
-        let xScale = canvas.clientWidth/Math.abs(xRange[0]-xRange[1]);
-        let yScale = canvas.clientHeight/Math.abs(yRange[0]-yRange[1]);
+        let xScale = canvas.width/Math.abs(xRange[0]-xRange[1]);
+        let yScale = canvas.height/Math.abs(yRange[0]-yRange[1]);
 
         let context = canvas.getContext('2d');
 
@@ -357,8 +357,8 @@ export let Graph = {
         let colors = [];
         if(typeof color=='string') for(let i=0;i<list.length;i++) colors.push(color); else colors = color;
         let ctx = canvas.getContext('2d');
-        let length = canvas.clientWidth/list.length;
-        let yScale = canvas.clientHeight/Math.abs(yRange[0]-yRange[1]);
+        let length = canvas.width/list.length;
+        let yScale = canvas.height/Math.abs(yRange[0]-yRange[1]);
         ctx.save();
         ctx.translate(0,Math.max(yRange[0],yRange[1])*yScale);
         ctx.scale(1,yScale);
