@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Sort algorithms: Visualization</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" media="screen" href="../stylesheets/style.css">
+    <script src="script.js" type="module" defer ></script>
+</head>
+<body>
+    <canvas id="myCanvas"></canvas>
+    <header>
+        <h1>Sort algorithms: Visualization</h1>
+    </header>
+
+    <section>
+        <input type="number" oninput="generateRandomList(this.value)" value=20>
+        <button onclick="sort('bubblesort')">Bubble sort</button>
+        <button onclick="sort('normalsort')">Sort</button>
+        <p>Status: <span id="state"></span></p>
+    </section>
+</body>
+</html>

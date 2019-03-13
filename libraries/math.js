@@ -1,4 +1,3 @@
-// Math functions
 export let Random = {
     generateInt: function(min,max,signed=false) {
         if(min==undefined) min = 1;
@@ -12,11 +11,17 @@ export let Random = {
             return -value;
         } else return value;
     },
-
-    generateColor: function() {
-        let colors = ['red', 'green', 'blue'];
+    generateColor: function(colors) {
+        if(colors==undefined) colors = ['red', 'green', 'blue'];
         return colors[Random.generateInt(0,colors.length-1)];
     },
+    normal: function(mean,sd) {
+        let u=Math.random();
+        let v=Math.random();
+        if(mean==undefined) mean=0;
+        if(sd==undefined) sd=1;
+        return Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*v)*sd+mean;
+    }
 };
 
 export class ComplexNumber {
@@ -176,11 +181,77 @@ export let Calculus = {
     }
 }
 
-/*export let Matrix = {
-    multiply = function(matrix1,matrix2) {
-         if(matrix1[0].length!=matrix2.length) throw 'Incompatible matrix dimensions';
+export let Matrix = {
+    multiply: function(matrix1,matrix2) {
+        if(matrix1[0].length!=matrix2.length) throw 'Incompatible matrix dimensions';
+        let result = [];
+        for(let i=0;i<matrix1.length;i++) {
+            result.push([]);
+            for(let k=0;k<matrix2[0].length;k++)  {
+                let sum = 0;
+                for(let j=0;j<matrix1[0].length;j++) sum += matrix1[i][j]*matrix2[j][k];
+                result[i][k] = sum;
+            }
+        }
+        return result;
     },
-}*/
+    add: function(matrix1,matrix2) {
+        if(matrix1.length!=matrix2.length) throw 'Incompatible matrix dimensions';
+        let result = [];
+        for(let i=0;i<matrix1.length;i++) {
+            result.push([]);
+            for(let j=0;j<matrix1[0].length;j++) result[i][j] = matrix1[i][j] + matrix2[i][j];
+        }
+        return result;
+    },
+    scale: function(matrix,scalar) {
+        let result = [];
+        for(let i=0;i<matrix.length;i++) {
+            result.push([]);
+            for(let j=0;j<matrix.length;j++) result[i][j] = matrix[i][j] * scalar;
+        }
+        return result;
+    },
+    small: function(matrix,x0,y0,x1,y1) {
+        if(x1<x0 || y1<y0) throw 'Wrong indices';
+        let result = [];
+        for(let i=x0;i<x1;i++) {
+            result.push([]);
+            for(let j=y0;j<y1;j++) result[i-x0][j-y0] = matrix[i][j];
+        }
+        return result;
+    }
+}
+
+export let Vector = {
+    dot: function(vec1,vec2) {
+        if(vec1.length!=vec2.length) throw 'Two vectors don\'t have the same length';
+        let sum=0;
+        for(let i=0;i<vec1.length;i++) sum += vec1[i]*vec2[i];
+        return sum;
+    },
+    cross: function(vec1,vec2) {
+        if(vec1.length!=vec2.length) throw 'Two vectors don\'t have the same length';
+        if(vec1.length!=3) throw 'Only support cross product for 3-dimension vector';
+        return [vec1[1]*vec2[2]-vec2[1]*vec1[2],vec1[2]*vec2[0]-vec2[2]*vec1[0],vec1[0]*vec2[1]-vec2[0]*vec1[1]];
+    },
+    magnitude: function(vec) {
+        let sum=0;
+        for(let i=0;i<vec.length;i++) sum += vec[i]*vec[i];
+        return Math.sqrt(sum);
+    },
+    add: function(vec1,vec2) {
+        if(vec1.length!=vec2.length) throw 'Two vectors don\'t have the same length';
+        let result=[];
+        for(let i=0;i<vec1.length;i++) result[i]=vec1[i]+vec2[i];
+        return result;
+    },
+    scale: function(vec,scalar) {
+        let result=[];
+        for(let i=0;i<vec.length;i++) result[i]=vec[i]*scalar;
+        return result;
+    }
+}
 
 export let Solver = {
     sim2: function(matrix) {  // simultaneous equation, 2 unknowns. size of matrix is 2x3
@@ -198,12 +269,8 @@ export let Solver = {
     },
 }
 
-export let Graph = (function() {
-    // a public object containing public methods
-    let pub = {};
-
-    // private methods
-    pub.drawAxis = function(xRange,yRange,canvas) {
+export let Graph = {
+    drawAxis: function(xRange,yRange,canvas) {
         let context = canvas.getContext('2d');
         let bigX = Math.max(xRange[0],xRange[1]);
         let smallX = Math.min(xRange[0],xRange[1]);
@@ -232,10 +299,8 @@ export let Graph = (function() {
         context.strokeStyle = 'black';
         context.stroke();
         context.restore();  // encapsulation
-    }
-
-    // public methods
-    pub.plotFn = function(Fn,xRange,yRange,step,canvas,color='blue'){
+    },
+    plotFn: function(Fn,xRange,yRange,step,canvas,color='blue'){
         if(typeof Fn != 'function') throw '' + Fn + ' is not a function';
         if(xRange.length != 2) throw 'Invalid xRange. xRange must contain only 2 numbers';
         if(yRange.length != 2) throw 'Invalid yRange. yRange must contain only 2 numbers';
@@ -253,9 +318,9 @@ export let Graph = (function() {
         }
         index = undefined;
 
-        pub.plot(xSeq,ySeq,xRange,yRange,canvas,color);
-    };
-    pub.plot = function(xSeq,ySeq,xRange,yRange,canvas,color='blue'){
+        Graph.plot(xSeq,ySeq,xRange,yRange,canvas,color);
+    },
+    plot: function(xSeq,ySeq,xRange,yRange,canvas,color='blue'){
         if(xSeq.length != ySeq.length) throw 'Invalid arguments. xSeq and ySeq do not have the same length';
         if(xRange.length != 2) throw 'Invalid xRange. xRange must contain only 2 numbers';
         if(yRange.length != 2) throw 'Invalid yRange. yRange must contain only 2 numbers';
@@ -282,10 +347,55 @@ export let Graph = (function() {
         context.strokeStyle = color;
         context.stroke();
         context.restore();
+    },
+    histogram: function(valueList,freqList,canvas) {
+        if(valueList.length!=freqList.length) throw 'Value list and frequency list must have the same length';
+         
+    },
+    bar: function(list,yRange,color,canvas) {
+        if(color==undefined) color='blue';
+        let colors = [];
+        if(typeof color=='string') for(let i=0;i<list.length;i++) colors.push(color); else colors = color;
+        let ctx = canvas.getContext('2d');
+        let length = canvas.clientWidth/list.length;
+        let yScale = canvas.clientHeight/Math.abs(yRange[0]-yRange[1]);
+        ctx.save();
+        ctx.translate(0,Math.max(yRange[0],yRange[1])*yScale);
+        ctx.scale(1,yScale);
+        for(let i=0;i<list.length;i++) {
+            ctx.beginPath();
+            ctx.rect(i*length,-list[i],length,list[i]);
+            ctx.fillStyle = colors[i];
+            ctx.fill();
+        }
+        ctx.restore();
     }
+};
 
-    return pub;
-}());
+export let Statistics = {
+    sum: function(list) {
+        let result = 0;
+        for(let i=0;i<list.length;i++) result+=list[i];
+        return result;
+    },
+    mean: function(list) {
+        return Statistics.sum(list)/list.length;
+    },
+    var: function(list) {
+        let sumSquared = 0,
+            sum = 0;
+        for(let i=0;i<list.length;i++) {
+            sumSquared += list[i]*list[i];
+            sum += list[i];
+        }
+        sumSquared /= list.length;
+        sum /= list.length;
+        return sumSquared - sum*sum;
+    },
+    sd: function(list) {
+        return Math.sqrt(Statistics.var(list));
+    }
+}
 
 export let Compute = {
     magnitude: function(x,y) {
