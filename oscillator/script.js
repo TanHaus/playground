@@ -2,8 +2,9 @@ import {Graph} from '../libraries/math.js';
 
 const canvas = document.querySelector('#myCanvas');
 const ctx = canvas.getContext('2d');
-let w = canvas.clientWidth,
-    h = canvas.clientHeight;
+const DPIscale = window.devicePixelRatio;
+let w = canvas.clientWidth*DPIscale,
+    h = canvas.clientHeight*DPIscale;
 const showomega0 = document.querySelector('#omega0'),
 showgamma = document.querySelector('#gamma'),
 showforce0 = document.querySelector('#force0'),
@@ -13,8 +14,8 @@ canvas.width = w;
 canvas.height = h;
 
 window.onresize = function() {
-  w = canvas.clientWidth;
-  h = canvas.clientHeight;
+  w = canvas.clientWidth*DPIscale;
+  h = canvas.clientHeight*DPIscale;
   canvas.width = w;
   canvas.height = h;
   ctx.clearRect(0,0,w,h);

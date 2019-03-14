@@ -2,13 +2,21 @@ import { Graph } from '../libraries/math.js';
 
 const canvas = document.querySelector('#myCanvas');
 const ctx = canvas.getContext('2d');
+const DPIscale = window.devicePixelRatio;
 
-let w = canvas.clientWidth,
-    h = canvas.clientHeight,
+let w = canvas.clientWidth*DPIscale,
+    h = canvas.clientHeight*DPIscale,
     xRange = [0,100],
     yRange = [-100,100];
 canvas.width = w;
 canvas.height = h;
+
+window.onresize = function() {
+    w = canvas.clientWidth*DPIscale;
+    h = canvas.clientHeight*DPIscale;
+    canvas.width = w;
+    canvas.height = h;
+}
 
 let wave = function(A,omega,phi,x) {
     return A*Math.cos(omega*x + phi);

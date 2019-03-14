@@ -1,13 +1,15 @@
 import { Signal, Graph, Polynomial } from '../libraries/math.js';
 
-window.canvas = document.querySelector('#myCanvas');
+const canvas = document.querySelector('#myCanvas');
 const ctx = canvas.getContext('2d');
-let w = canvas.clientWidth;
-let h = canvas.clientHeight;
+const DPIscale = window.devicePixelRatio;
+
+let w = canvas.clientWidth*DPIscale;
+let h = canvas.clientHeight*DPIscale;
 canvas.height = h; canvas.width = w;
 window.onresize = function() {
-    w = canvas.clientWidth;
-    h = canvas.clientHeight;
+    w = canvas.clientWidth*DPIscale;
+    h = canvas.clientHeight*DPIscale;
     canvas.height = h;
     canvas.width = w;
     draw();
@@ -42,7 +44,7 @@ window.update = function(type,value) {
                 showFn.innerText = '';
             } else {
                 error.innerHTML = '';
-                katex.render(poly.toString(),showFn);
+                katex.render(poly.toString2(),showFn);
             }
             break;
         case 'xMin':

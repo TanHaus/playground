@@ -32,6 +32,18 @@ All mathematical expressions are written in LaTeX and rendered with [KaTeX](http
 
 The inline math render script is located in `/libraries/inlineKatex.js`.
 
+# Main features
+
+## Implemented
+
+- Extensive use of HTML5 Canvas API
+- Correct scaling for canvas elements on high DPI displays (e.g. mobile phones)
+
+## Ideas
+
+- Use of REST API (e.g. maps)
+- OAuth2 token
+
 # math.js
 
 This is a math library I write for my own use. All of the math functions used in my web apps are written in this math.js library.

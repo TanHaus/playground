@@ -1,8 +1,9 @@
 const canvas = document.querySelector('#myCanvas');
 const ctx = canvas.getContext('2d');
+const DPIscale = window.devicePixelRatio;
 
-let w = canvas.clientWidth,
-    h = canvas.clientHeight,
+let w = canvas.clientWidth*DPIscale,
+    h = canvas.clientHeight*DPIscale,
     xOffset = w/2,
     yOffset = h/2,
     X0 = 300,
@@ -12,8 +13,8 @@ canvas.width = w;
 canvas.height = h;
 
 window.onresize = function() {
-  w = canvas.clientWidth;
-  h = canvas.clientHeight;
+  w = canvas.clientWidth*DPIscale;
+  h = canvas.clientHeight*DPIscale;
   xOffset = w/2;
   yOffset = h/2;
   canvas.width = w;

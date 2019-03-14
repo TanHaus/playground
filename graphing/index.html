@@ -4,7 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="description" content="Simple Graphing web app to draw Polynomial and Trigonemetry functions. Under development.">
     <title>Graphing</title>
+    <link rel="icon" type="image/png" href="../favicon.ico">
     <link rel="stylesheet" type="text/css" media="screen" href="../stylesheets/style.css" />
     <!-- Load KaTeX -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.10.1/dist/katex.min.css" integrity="sha384-dbVIfZGuN1Yq7/1Ocstc1lUEm+AT+/rCkibIcC/OmWo5f0EA48Vf8CytHzGrSwbQ" crossorigin="anonymous">
@@ -19,6 +21,9 @@
     <section id="mainControl">
         Choose the type of Function<select id="FnType" oninput="changeFn(this.value)">
                 <option value="poly">Polynomial</option>
+                <option value="rational">Rational</option>
+                <option value="exp">Exponential</option>
+                <option value="log">Logarithm</option>
                 <option value="sin">Sine</option>
                 <option value="cos">Cosine</option>
         </select><br>

@@ -78,14 +78,38 @@ export class Polynomial {
         }
     }
     toString() {
+        // for console.log()
         let result = '';
         for(let i=this.deg; i>1; i--) {
-            if(this.coefficient[i]!=1) result += this.coefficient[i];
-            result += 'x^' + i + ' + ';
+            if(this.coefficient[i]!=0) {
+                if(this.coefficient[i]!=1) result += this.coefficient[i];
+                result += 'x^' + i + ' + ';
+            }
         }
         if(this.coefficient[1]!=undefined) {
-            if(this.coefficient[1]!=1) result += this.coefficient[1];
-            result += 'x + ';
+            if(this.coefficient[i]!=0) {
+                if(this.coefficient[1]!=1) result += this.coefficient[1];
+                result += 'x + ';
+            }
+        }
+        result += this.coefficient[0];
+        return result;
+    }
+    toString2() {
+        // LaTeX format, for math render
+        let result = '';
+        for(let i=this.deg; i>1; i--) {
+            if(this.coefficient[i]!=0) {
+                if(this.coefficient[i]!=1) result += this.coefficient[i];
+                result += 'x^{' + i + '} + ';
+            }
+
+        }
+        if(this.coefficient[1]!=undefined) {
+            if(this.coefficient[1]!=0) {
+                if(this.coefficient[1]!=1) result += this.coefficient[1];
+                result += 'x + ';
+            }
         }
         result += this.coefficient[0];
         return result;

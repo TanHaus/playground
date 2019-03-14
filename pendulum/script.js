@@ -3,6 +3,7 @@ import { Draw } from '../libraries/misc.js';
 
 // Declare global variables
 const canvas = document.querySelector('#myCanvas');
+const DPIscale = window.devicePixelRatio;
 let w,h;
 let vOffset = 50, hOffset = 0.3;
 
@@ -171,8 +172,8 @@ window.update = function(value,type) {
 };
 
 function resizeCanvas() {
-    w = canvas.clientWidth;
-    h = canvas.clientHeight;
+    w = canvas.clientWidth*DPIscale;
+    h = canvas.clientHeight*DPIscale;
     canvas.width = w;
     canvas.height = h;
     hOffset = w/2;
@@ -180,7 +181,6 @@ function resizeCanvas() {
 }
 
 function show() {
-
     thetaShow.innerText = pendulum.theta.toExponential(2);
     omegaShow.innerText = pendulum.thetaSpeed.toExponential(2);
     alphaShow.innerText = pendulum.thetaAccel.toExponential(2);

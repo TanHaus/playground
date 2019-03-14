@@ -3,15 +3,16 @@ let iteration = 6;
 let scale = 1;
 const canvas = document.querySelector('#myCanvas');
 const ctx = canvas.getContext('2d');
-let w = canvas.clientWidth;
-let h = canvas.clientHeight;
+const DPIscale = window.devicePixelRatio;
+let w = canvas.clientWidth*DPIscale;
+let h = canvas.clientHeight*DPIscale;
 
 canvas.width = w;
 canvas.height = h;
 
 window.onresize = function() {
-    w = canvas.clientWidth;
-    h = canvas.clientHeight;
+    w = canvas.clientWidth*DPIscale;
+    h = canvas.clientHeight*DPIscale;
     canvas.width = w;
     canvas.height = h;
     ctx.clearRect(0,0,w,h);

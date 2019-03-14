@@ -15,10 +15,11 @@
 
 body { margin: 0; font-family: Calibri, Helvetica, Arial, sans-serif; background-color: var(--color-5); color: whitesmoke; }
 header, footer, section { padding: 0 var(--padding); }
+
 h1 { margin-left: 1.5vw; }
 p { color: whitesmoke; }
 ul { padding-left: 3vw; }
-li { list-style: none; }
+li { list-style: none; margin-bottom: 5px; }
 a { text-decoration: none; }
 a { color: var(--color-2); }
 a:hover { color: var(--color-3); }

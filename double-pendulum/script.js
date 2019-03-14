@@ -4,9 +4,10 @@ const GRAVITY = 9.81;
 const speed = 5;
 const canvas = document.querySelector('#myCanvas');
 const ctx = canvas.getContext('2d');
+const DPIscale = window.devicePixelRatio;
 let requestID = 0;
-let w = canvas.clientWidth,
-    h = canvas.clientHeight,
+let w = canvas.clientWidth*DPIscale,
+    h = canvas.clientHeight*DPIscale,
     offsetX = w/2,
     offsetY = h/3;
 
@@ -14,8 +15,8 @@ canvas.width = w;
 canvas.height = h;
 
 window.onresize = function() {
-    w = canvas.clientWidth;
-    h = canvas.clientHeight;
+    w = canvas.clientWidth*DPIscale;
+    h = canvas.clientHeight*DPIscale;
     canvas.width = w;
     canvas.height = h;
     offsetX = w/2;

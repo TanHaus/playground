@@ -3,16 +3,16 @@ import { Random, Graph } from '../libraries/math.js';
 const canvas = document.querySelector('#myCanvas');
 const ctx = canvas.getContext('2d');
 const state = document.querySelector('#state');
-const scaleRatio = window.devicePixelRatio;
+const DPIscale = window.devicePixelRatio;
 
-let h = canvas.clientHeight*scaleRatio,
-    w = canvas.clientWidth*scaleRatio;
+let h = canvas.clientHeight*DPIscale,
+    w = canvas.clientWidth*DPIscale;
 canvas.width = w;
 canvas.height = h;
 
 window.onresize = function() {
-    h = canvas.clientHeight*scaleRatio;
-    w = canvas.clientWidth*scaleRatio;
+    h = canvas.clientHeight*DPIscale;
+    w = canvas.clientWidth*DPIscale;
     canvas.height = h;
     canvas.width = w;
     Graph.bar(list,yRange,colors,canvas);

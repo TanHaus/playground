@@ -2,14 +2,23 @@ import { Graph,Polynomial,Calculus } from '../libraries/math.js';
 
 const canvas = document.querySelector('#myCanvas');
 const ctx = canvas.getContext('2d');
+const DPIscale = window.devicePixelRatio;
 
-let w = canvas.clientWidth,
-    h = canvas.clientHeight,
+let w = canvas.clientWidth*DPIscale,
+    h = canvas.clientHeight*DPIscale,
     xRange = [-6,6],
     yRange = [-2,2],
     taylor;
 canvas.width = w;
 canvas.height = h;
+
+window.onresize = function() {
+    w = canvas.clientWidth*DPIscale;
+    h = canvas.clientHeight*DPIscale;
+    canvas.width = w;
+    canvas.height = h;
+    draw();
+}
 
 let makeTaylor = function(Fn,x,n) {
     if(typeof Fn != 'function') throw ''+Fn+' is not a function';
