@@ -21,8 +21,8 @@ let xRange = [-5,5];
 let yRange = [-5,5];
 
 const polySection = document.querySelector('#poly');
-const sineSection = document.querySelector('#sine');
 const cosineSection = document.querySelector('#cosine');
+const genericSection = document.querySelector('#generic');
 const showError = document.querySelector('#error');
 
 window.currentFn = polySection;
@@ -30,13 +30,14 @@ let poly;
 
 Graph.drawAxis(xRange,yRange,canvas);
 
-window.update = function(type,value) {
+window.update = function(type) {
+    let temp;
     switch(type) {
         case 'poly':
-            let temp = value.split(',');
+            temp = document.querySelector('#polyCoeff').value.split(',');
             let coeff = [];
             for(let i=0; i<temp.length; i++) {
-                coeff[i] = parseFloat(temp[i]);
+                coeff[i] = parseFloat(temp[temp.length-i-1]);
             }
             poly = new Polynomial(coeff);
             if(isNaN(poly.eval(0))) {
@@ -47,20 +48,19 @@ window.update = function(type,value) {
                 katex.render(poly.toString2(),showFn);
             }
             break;
-        case 'xMin':
-            xRange[0] = parseFloat(value);
+        case 'xRange':
+            temp = document.querySelector('#xRange').value.split(',');
+            if(temp.length!=2) throw 'Range of x must contain only 2 numbers';
+            xRange[0] = parseFloat(temp[0]);
+            xRange[1] = parseFloat(temp[1]);
             break;
-        case 'xMax':
-            xRange[1] = parseFloat(value);
-            break;
-        case 'yMin':
-            yRange[0] = parseFloat(value);
-            break;
-        case 'yMax':
-            yRange[1] = parseFloat(value);
+        case 'yRange':
+            temp = document.querySelector('#yRange').value.split(',');
+            if(temp.length!=2) throw 'Range of x must contain only 2 numbers';
+            yRange[0] = parseFloat(temp[0]);
+            yRange[1] = parseFloat(temp[1]);
             break;
     }
-    draw();
 }
 
 window.changeFn = function(type) {
@@ -68,21 +68,27 @@ window.changeFn = function(type) {
     switch(type) {
         case 'poly':
             currentFn = polySection;
-            currentFn.classList.remove('hidden');
-            break;
-        case 'sine':
-            currentFn = sineSection;
-            currentFn.classList.remove('hidden');
             break;
         case 'cosine':
             currentFn = cosineSection;
-            currentFn.classList.remove('hidden');
             break;
+        case 'generic':
+            currentFn = genericSection;
     }
+    currentFn.classList.remove('hidden');
 }
 
-function draw() {
+window.draw = function(type) {
     ctx.clearRect(0,0,w,h);
+    update('xRange'); update('yRange');
     Graph.drawAxis(xRange,yRange,canvas);
-    poly.plot(canvas,xRange,yRange,'blue',0.01);
+    switch(type) {
+        case 'poly':
+            poly.plot(canvas,xRange,yRange,'blue',0.01);
+            break;
+        case 'generic':
+            Graph.plotFn(new Function('x', 'return '+document.querySelector('#genericExpression').value+';'),xRange,yRange,undefined,canvas);
+            break;
+    }
+
 }

@@ -4,18 +4,25 @@
   --color-3: #B05F20;
   --color-4: #594F4C;
   --color-5: #2F333B;
+  --radiance-1: rgb(52,102,255);
+  --radiance-2: rgb(255,0,102);
 }
 
 body { background-color: var(--color-2); font-family: Calibri, Helvetica, sans-serif; margin: 0; }
-section { padding: 10px 1vw; }
 canvas { padding: 0; border: solid 1px; }
+
+section { padding: 10px 1vw; }
 header { background-color: var(--color-5); color: whitesmoke; padding: 10px 1vw; }
+
 header > h1 { margin-top: 0; }
-a { text-decoration: none; }
-a { color: var(--color-2); }
+section > h2 { margin-top: 0; }
+a { text-decoration: none; color: var(--color-2); transition: 0.2s; }
 a:hover { color: var(--color-3); }
 ul, li { list-style: none; }
 .hidden { display: none; }
+button { background-color: var(--color-4); border: none; color: whitesmoke; min-width: 30px;
+  padding: 10px; margin: 5px 0px; transition: 0.2s; }
+button:hover { background-color: var(--color-3); }
 
 @media only screen and (min-width: 600px) {
   canvas { float: left; width: 70%; height: 95vh; }

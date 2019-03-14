@@ -21,26 +21,28 @@
     <section id="mainControl">
         Choose the type of Function<select id="FnType" oninput="changeFn(this.value)">
                 <option value="poly">Polynomial</option>
-                <option value="rational">Rational</option>
-                <option value="exp">Exponential</option>
-                <option value="log">Logarithm</option>
-                <option value="sin">Sine</option>
+                <option value="generic">Generic</option>
                 <option value="cos">Cosine</option>
         </select><br>
-        <span class="math">x_{min}</span><input type="number" step=0.01 value=-5 oninput="update('xMin',this.value)">
-        <span class="math">x_{max}</span><input type="number" step=0.01 value=5 oninput="update('xMax',this.value)"><br>
-        <span class="math">y_{min}</span><input type="number" step=0.01 value=-5 oninput="update('yMin',this.value)">
-        <span class="math">y_{max}</span><input type="number" step=0.01 value=5 oninput="update('yMax',this.value)"><br>
+        <p>For the inputs below, please key in the range of x and y to be viewed.</p>
+        Range of x <input id="xRange" type="text" value="-5,5"><br>
+        Range of y <input id="yRange" type="text" value="-5,5"><br>
         <p>The function: <span id="Fn"></span></p>
-        <span id="error"></span>
-    </section><br>
+        <p><span id="error"></span></p>
+    </section>
+
+    <section id="generic" class="hidden">
+        <input id="genericExpression" type="text">
+        <button onclick="draw('generic')">Graph</button>
+    </section>
 
     <section id="poly">
-        Key in the list of coefficients, separated by comma <input type="text" oninput="update('poly',this.value)">
+        Key in the list of coefficients, separated by comma <input id="polyCoeff" type="text" oninput="update('poly')">
+        <button onclick="draw('poly')">Graph</button>
     </section><br>
 
     <section id="cosine" class="hidden">
-        Key in the list of coefficients<input type="text" oninput="update('poly',this.value)"><br>
+        <input type="number" oninput="update('cosine')">
     </section>
 </body>
 </html>

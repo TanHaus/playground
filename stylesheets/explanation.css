@@ -17,7 +17,7 @@ body { margin: 0; font-family: Calibri, Helvetica, Arial, sans-serif; }
 header { background-color: var(--color-5); color: whitesmoke; }
 section { background-color: var(--color-2); color: black; }
 header, footer, section { padding: 10px var(--padding); }
-a { text-decoration: none; }
+a { text-decoration: none; transition: 0.2s; }
 header a { color: var(--color-2); }
 header a:hover { color: var(--color-3); }
 .math { padding: 0; }

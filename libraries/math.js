@@ -21,6 +21,25 @@ export let Random = {
         if(mean==undefined) mean=0;
         if(sd==undefined) sd=1;
         return Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*v)*sd+mean;
+    },
+    colorGradientArray(color1,color2,size) {
+        let result = [];
+        let R,G,B;
+        if(size==1) {
+            R = Math.round(Math.sqrt(color1.red*color1.red/2+color2.red*color2.red/2));
+            G = Math.round(Math.sqrt(color1.green*color1.green/2+color2.green*color2.green/2));
+            B = Math.round(Math.sqrt(color1.blue*color1.blue/2+color2.blue*color2.blue/2));
+            result.push('rgb('+R+','+G+','+B+')');
+        } else if(size>1) {
+            let length = size-1;
+            for(let i=0;i<=length;i++) {
+                R = Math.round(Math.sqrt(color1.red*color1.red*(1-i/length)+color2.red*color2.red*(i/length)));
+                G = Math.round(Math.sqrt(color1.green*color1.green*(1-i/length)+color2.green*color2.green*(i/length)));
+                B = Math.round(Math.sqrt(color1.blue*color1.blue*(1-i/length)+color2.blue*color2.blue*(i/length)));
+                result.push('rgb('+R+','+G+','+B+')');
+            }
+        }
+        return result;
     }
 };
 
@@ -191,6 +210,17 @@ export let Calculus = {
             return Calculus.diff(function(y) { return Calculus.diff(func,y,dx,n-6); },x,dx,6);
         }
     },
+    pdiff: function(func,numArgs,index,values) {
+        // Numerical calculation for Partial differentiation
+        // numArgs: number of arguments for the function
+        // index: index of the arguments with respect to which the function is differentiated
+        // values: numberical values of other arguments (excluding the ), contained in an array
+        // NOTE: the function func take arguments as an array
+        
+        let tempFn = function(x) {
+
+        }
+    },
     integrate: function(func,x1,x2,dx) {
         if(typeof func != 'function') throw '' + func + ' is not a function';
         if(dx==undefined) dx = (x2-x1)*1e-5;
@@ -203,6 +233,10 @@ export let Calculus = {
         result += func(index)*(x2-index);
         return result;
     }
+}
+
+export let Optimization = {
+
 }
 
 export let Matrix = {

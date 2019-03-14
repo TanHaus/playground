@@ -21,12 +21,41 @@
     <header>
         <h1>Double pendulum</h1>
         <p>You can check out the explanation <a href="explanation.html">here</a>.</p>
+        <p>When there is a major change in the window's size, please refresh the page.</p>
     </header>
     <section id="control">
-        <button onclick=>One pendulum</button>
-        <button onclick-></button>
-        <button onclick="showTop()">Show</button>
-        <button onclick="noShowTop()">Don't show</button>
+        Angle 1 <input id="theta1" type="number" value=150 oninput="update('theta1',this.value)">
+        Angle 2 <input id="theta2" type="number" value=310 oninput="update('theta2',this.value)">
+        <br>
+
+        <button onclick="generateStart(1)">One pendulum</button>
+        <button onclick="generateStart(20)">Chaotic</button>
+        <br>
+
+        <button onclick="showTop()">Show all</button>
+        <button onclick="noShowTop()">Show bottom mass only</button>
+        <button onclick="togglePath()">Toggle path</button>
+        <br>
+
+        <button onclick="speedUp(1)">Normal speed 1x</button>
+        <button onclick="speedUp(2)">Speed up 2x</button>
+        <button onclick="speedUp(4)">Speed up 4x</button>
+        <button onclick="speedUp(8)">Speed up 8x</button>
+    </section>
+    <section>
+        <h2>Instruction</h2>
+        <p>Click <b>'One pendulum'</b> to see the dynamics of a pendulum system. You can see the path traced out by the bottom mass.</p>
+        <p>Click <b>'Chaotic'</b> to see the chaotic nature of a pendulum system. This will create 20 double pendulum systems with slightly different initial positions. I recommend you click 'Show bottom mass only' for this.</p>
+        <p>Click <b>'Show top'</b> to see both masses, as well as the connecting rods.</p>
+        <p>Click <b>'Show bottom mass only'</b> to see only the bottom mass.</p>
+        <p>Click <b>'Toggle path'</b> to switch on/off the path traced out by the bottom mass.</p>
+    </section>
+    <section>
+        <h2>Description</h2>
+        <p>This double pendulum system is the solution to the following system of differential equations: (NOTE: masses of the two masses are the same, length of the two rods are the same)</p>
+        $$2\ddot{\theta}_1 + \cos(\theta_1-\theta_2) \ddot{\theta}_2 = - \dot{\theta}_2^2\sin(\theta_1-\theta_2) - 2\frac{g}{l}\sin\theta_1$$
+        $$\ddot{\theta}_2 + \cos(\theta_1-\theta_2) \ddot{\theta}_1  = \dot{\theta}_1^2\sin(\theta_1-\theta_2) - \frac{g}{l}\sin\theta_2$$
+        <p>Currently I use Euler method to solve for the numerical solution. I plan to implement the Runge–Kutta method in a future date.</p>
     </section>
 
 </body>

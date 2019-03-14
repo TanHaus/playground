@@ -39,6 +39,14 @@ The inline math render script is located in `/libraries/inlineKatex.js`.
 - Extensive use of HTML5 Canvas API
 - Correct scaling for canvas elements on high DPI displays (e.g. mobile phones)
 
+## Work to be done
+
+- Implement a differntial equation numerical solver (https://en.wikipedia.org/wiki/Numerical_methods_for_ordinary_differential_equations) for Physics simulation
+- Implement a finding minima algorithm, possibly with gradient descent
+- Implement a linear system of equations solver, by minimizing the error function
+- Implement a numerical differentiation with accuracy for degree > 6
+- Implement a numerical integrator
+
 ## Ideas
 
 - Use of REST API (e.g. maps)
