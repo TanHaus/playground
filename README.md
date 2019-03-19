@@ -42,6 +42,8 @@ These web-apps can be run directly on any modern browser by navigating to https:
 
 For offline uses and modifying the code, please click the green 'Clone and download' button, and 'Download as zip'. Otherwise, you can save the web page locally.
 
+![](download.gif)
+
 There is a special math library named `math.js` located in `\libraries\math.js`. This script contains all the math functions that I use in my code. Feel free to download this script for your own personal use. Documentation is available in the [Wiki](https://github.com/gau-nernst/web-apps/wiki/math.js) section (WIP).
 
 # Usage

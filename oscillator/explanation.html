@@ -8,7 +8,6 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="icon" type="image/png" href="../favicon.ico">
 	<link rel="stylesheet" type="text/css" media="screen" href="../stylesheets/explanation.css">
-	<link rel="stylesheet" type="text/css" media="print" href="../stylesheets/print.css">
 
     <!-- Load KaTeX -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.10.1/dist/katex.min.css" integrity="sha384-dbVIfZGuN1Yq7/1Ocstc1lUEm+AT+/rCkibIcC/OmWo5f0EA48Vf8CytHzGrSwbQ" crossorigin="anonymous">
@@ -27,80 +26,94 @@
 		</ul>
 		<p>To download this note, you can print this web page as PDF. Layout should work correctly.</p>
 	</header>
-	<section>
-		<h1>Simple Harmonic Motion (SHM)</h1>
-		<p>Simple Harmonic Motion is characterised by the following equation:</p>
-		$$\frac{d^2x}{dt^2} = - \omega ^2 x$$
-	
-		<p>There are some interesting properties of the above equation:</p>
+	<nav>
 		<ul>
-			<li><b>Second order ODE:</b> This implies that the full solution requires at least 2 adjustable constants (or parameters).</li>
-			<li><b>The equation is real:</b> <span class="math">x</span> is a real physical quantity (usually position), thus we should solve this equation in real domain <span class="math">\mathbb{R}</span></li>
-			<li><b>Linearity:</b> If <span class="math">x_1</span> and <span class="math">x_2</span> are two distinct solutions, <span class="math">ax_1 + bx_2</span> is also a solution. This is also known as <em>superposition</em>.</li>
+			<li><a href="#">Home</a></li>
+			<li><a href="#shm">Simple Harmonic Motion - Free oscillation</a></li>
+			<li><a href="#damped">Damped oscillation</a></li>
+			<li><a href="#driven">Driven oscillation</a></li>
 		</ul>
+	</nav>
+	<section id="shm">
+		<h1>1. Simple Harmonic Motion (SHM) - Free oscillation</h1>
+		<section>
+			<h2>1.1. Introduction</h2>
+			<p>Simple Harmonic Motion is characterised by the following equation:</p>
+			$$\frac{d^2x}{dt^2} = - \omega ^2 x$$
 		
-		<p>The full solution to this differential equation is: </p>
-			$$x(t) = A \cos(\omega t + \beta)$$
-			$$x(t) = A \cos \omega t + B \sin \omega t$$
+			<p>There are some interesting properties of the above equation:</p>
+			<ul>
+				<li><b>Second order ODE:</b> This implies that the full solution requires at least 2 adjustable constants (or parameters).</li>
+				<li><b>The equation is real:</b> $x$ is a real physical quantity (usually position), thus we should solve this equation in real domain $\mathbb{R}$.</li>
+				<li><b>Linearity:</b> If $x_1(t)$ and $x_2(t)$ are two distinct solutions, $A_1x_1(t) + A_2x_2(t)$ is also a solution. This is also known as <em>superposition</em>.</li>
+			</ul>
+			
+			<p>The full solution to this differential equation is: </p>
+				$$x(t) = A \cos(\omega t + \beta)$$
+				$$x(t) = A \cos \omega t + B \sin \omega t$$
+		
+			<p>where $A$, $B$ and $\beta$ are real constants.</p>
+		</section>
+		
+		<section>
+			<h2>1.2. Energy consideration</h2>
+			<p>Total energy of an oscillating system usually exists in two forms: potential energy, a function of position, and kinetic energy, a function of velocity. If we consider a mass-spring system, potential energy and kinetic energy can be expressed as the following:</p>
+			$$V(x) = \frac{1}{2}kx^2 = \frac{1}{2}k A^2 \cos^2 \omega t$$
+			$$T(v) = \frac{1}{2}mv^2 = \frac{1}{2}m \omega ^2 A^2 \sin^2 \omega t$$
 	
-		<p>where <span class="math">A</span>, <span class="math">B</span> and <span class="math">\beta</span> are real constants.</p>
+			<p>Total energy of the system: $E(x,v) = kA^2$. Energy is conserved, as expected. And this total energy is equal to maximum kinetic energy and maximum potential energy.</p>
+			<p><b>NOTE:</b> $m\omega^2 = k$</p>
+	
+			<p>The oscillating system can be viewed as exchanging potential and kinetic energy periodically, via a force derived from a conservative field. In the case of mass-spring system, kinetic energy is from the moving mass (spring is considered massless, so it doesn't have kineic energy), potential energy is stored in the spring (elastic potential energy) and the force is the spring force.</p>
+		</section>
+	
+		<section>
+			<h2>1.3. Why study SHM?</h2>
+			<p>Any system carrying out small oscillation around an equilibrium position is said to be in SHM. This can be shown by considering an arbitrary one dimensional potential, which is a function of position $V(x)$.</p>
+			<img src="./assets/potential.png" class="illustration">
+	
+			<p>Suppose the function is convex at a particular poitn $x=a$. By evaluating the Taylor series of $V(x)$ at $x=a$ we obtain:</p>
+			$$V(x) = V(a) + \frac{1}{1!} \frac{d}{dx} V(a) . (x-a) + \frac{1}{2!} \frac{d^2}{dx^2} V(a) . (x-a)^2 + ...$$
+	
+			<p>When the oscillation about $x=a$ is small, higher order of $(x-a)^n$ is negligible. Also note that because $\frac{d}{dx}V(a) = 0$, we will have:</p>
+			$$V(x) - V(a) = k(x-a)^2$$
+			$$F(x) = -\frac{dV}{dx} = -2k(x-a)$$
+			$$\frac{d^2x}{dt^2} = -\frac{2k}{m} (x-a)$$
+	
+			<p>If we choose $(a,0)$ as the new origin, $(x-a)$ will become $x$ while the second time derivative of $x$ stays the same.</p>
+			$$\frac{d^2x}{dt^2} = -\frac{2k}{m} x$$
+			<p>which is the equation of motion for SHM.</p>
+			<p>NOTE: see <a href="./taylor-series/explanation.html">Taylor series</a> for a more detailed explanation about the Taylor series.</p>
+		</section>
+	
+		<section>
+			<h2>1.4. Some typical oscillating systems</h2>
+			<h3>Mass-spring</h3>
+			<p>A mass $m$ is attached to a massless spring with a spring constant $k$. The spring obeys Hooke's Law in both extension and contraction.</p>
+			<img class="illustration" src="./assets/mass_spring.png">
+	
+			<h3>Pendulum</h3>
+			<p>To view a demonstration for a simple pendulum system, please visit <a href="../pendulum">here</a>.</p>
+			<p>A point mass $m$ is attached to one end of an massless, inelastic string (or a solid rod) of lenght $L$. The mass is displaced and released from rest from a certain height.</p>
+			<img class="illustration" src="./assets/pendulum.png">
+	
+			<h3>Floating object</h3>
+			<p>A cylinder of diamter $d$ floats with $l$ of its length submerged. The total height is $L$. The cylinder is pushed down by a distance of $A$ and released.</p>
+			<img class="illustration" src="./assets/floating_object.png">
+	
+			<h3>Spring of air</h3>
+			<p>A vertical tube with a cross-sectional area of $A$ is filled with air of density $\rho$, under adiabatic condition (no heat transfer), is closed at one end and fitted with a freely-moving piston of mass $m$. The piston is pushed down and released.</p>
+			<p>NOTE: under adiabatic condition, the first law of thermodynamics shows that:</p>
+			$$dU = -PdV$$
+			<img class="illustration" src="./assets/spring_of_air.png">
+	
+			<h3>LC circuit</h3>
+			<p>An LC circuit is composed of an ideal capacitor with capacitance $C$ and an ideal inductor with inductance $L$. The two components are connected to each other (shown below). The capacitor is initially charged to a voltage $V_0$. Find the current in the circuit as a function of time.</p>
+			<img class="illustration" src="./assets/LC_circuit2.png">
+		</section>
 	</section>
 	
-	<section>
-		<h1>Energy consideration</h1>
-		<p>Total energy of an oscillating system usually exists in two forms: potential energy, a function of position, and kinetic energy, a function of velocity. If we consider a mass-spring system, potential energy and kinetic energy can be expressed as the following:</p>
-		$$V(x) = \frac{1}{2}kx^2 = \frac{1}{2}k A^2 \cos^2 \omega t$$
-		$$T(v) = \frac{1}{2}mv^2 = \frac{1}{2}m \omega ^2 A^2 \sin^2 \omega t$$
 
-		<p>Total energy of the system: <span class="math">E(x,v) = kA^2</span>. Energy is conserved, as expected. And this total energy is equal to maximum kinetic energy and maximum potential energy.</p>
-		<p><b>NOTE:</b> <span class="math">m\omega^2 = k</span></p>
-
-		<p>The oscillating system can be viewed as exchanging potential and kinetic energy periodically, via a force derived from a conservative field. In the case of mass-spring system, kinetic energy is from the moving mass (spring is considered massless, so it doesn't have kineic energy), potential energy is stored in the spring (elastic potential energy) and the force is the spring force.</p>
-	</section>
-
-	<section>
-		<h1>Why study SHM?</h1>
-		<p>Any system carrying out small oscillation around an equilibrium position is said to be in SHM. This can be shown by considering an arbitrary one dimensional potential, which is a function of position <span class="math">V(x)</span>.</p>
-		<img src="./assets/potential.png" class="illustration">
-
-		<p>Suppose the function is convex at a particular poitn <span class="math">x=a</span>. By evaluating the Taylor series of <span class="math">V(x)</span> at <span class="math">x=a</span> we obtain:</p>
-		$$V(x) = V(a) + \frac{1}{1!} \frac{d}{dx} V(a) . (x-a) + \frac{1}{2!} \frac{d^2}{dx^2} V(a) . (x-a)^2 + ...$$
-
-		<p>When the oscillation about <span class="math">x=a</span> is small, higher order of <span class="math">(x-a)^n</span> is negligible. Also note that because <span class="math">\frac{d}{dx}V(a) = 0</span>, we will have:</p>
-		$$V(x) - V(a) = k(x-a)^2$$
-		$$F(x) = -\frac{dV}{dx} = -2k(x-a)$$
-		$$\frac{d^2x}{dt^2} = -\frac{2k}{m} (x-a)$$
-
-		<p>If we choose <span class="math">(a,0)</span> as the new origin, <span class="math">(x-a)</span> will become <span class="math">x</span> while the second time derivative of <span class="math">x</span> stays the same.</p>
-		$$\frac{d^2x}{dt^2} = -\frac{2k}{m} x$$
-		<p>which is the equation of motion for SHM.</p>
-	</section>
-
-	<section>
-		<h1>Some typical oscillating systems</h1>
-		<h2>Mass-spring</h2>
-		<p>A mass <span class="math">m</span> is attached to a massless spring with a spring constant <span class="math">k</span>. The spring obeys Hooke's Law in both extension and contraction.</p>
-		<img class="illustration" src="./assets/mass_spring.png">
-
-		<h2>Pendulum</h2>
-		<p>To view a demonstration for a simple pendulum system, please visit <a href="../pendulum">here</a>.</p>
-		<p>A point mass <span class="math">m</span> is attached to one end of an massless, inelastic string (or a solid rod) of lenght <span class="math">L</span>. The mass is displaced and released from rest from a certain height.</p>
-		<img class="illustration" src="./assets/pendulum.png">
-
-		<h2>Floating object</h2>
-		<p>A cylinder of diamter <span class="math">d</span> floats with <span class="math">l</span> of its length submerged. The total height is <span class="math">L</span>. The cylinder is pushed down by a distance of <span class="math">A</span> and released.</p>
-		<img class="illustration" src="./assets/floating_object.png">
-
-		<h2>Spring of air</h2>
-		<p>A vertical tube with a cross-sectional area of <span class="math">A</span> is filled with air of density <span class="math">\rho</span>, under adiabatic condition (no heat transfer), is closed at one end and fitted with a freely-moving piston of mass <span class="math">m</span>. The piston is pushed down and released.</p>
-		<p>NOTE: under adiabatic condition, the first law of thermodynamics shows that:</p>
-		$$dU = -PdV$$
-		<img class="illustration" src="./assets/spring_of_air.png">
-
-		<h2>LC circuit</h2>
-		<p>An LC circuit is composed of an ideal capacitor with capacitance <span class="math">C</span> and an ideal inductor with inductance <span class="math">L</span>. The two components are connected to each other (shown below). The capacitor is initially charged to a voltage <span class="math">V_0</span>. Find the current in the circuit as a function of time.</p>
-		<img class="illustration" src="./assets/LC_circuit2.png">
-	</section>
 <!--
 \section{Problems}
 
@@ -236,113 +249,210 @@
 Content from A.P. French Waves and Oscillations. Problems from A.P French and Physics Olympiad past year papers.
 -->
 
-\section{Damped oscillation}
+	<section id="damped">
+		<h1>2. Damped oscillation</h1>
+		<section>
+			<h2>2.1. Introduction</h2>
+			<p>Real oscillating systems must dissipate energy and come to a stop. In many situations, the resistive force is proportional to the velocity of the oscillator. We will include a resistive term $F = -\gamma \frac{dx}{dt}$ in the equation of motion.</p>
+			$$\frac{d^2x}{dt^2} = -\omega_0^2x - \gamma\frac{dx}{dt}$$
+			<p>where $\gamma$ is a positive, real constant. It determines the strength the resistive force. $\omega_0$ is the natural frequency, the angular frequency of free oscillation.</p>
+	
+			<p>Let's again consider some of important features of this ODE:</p>
+			<ul>
+				<li><b>This is a second-order ODE</b> with a first order term $\frac{dx}{dt}$.</li>
+				<li><b>The equation is real</b> $x(t) \in \mathbb{R}$.</li>
+				<li><b>Linearity</b>: If we have two distinct solutions $x_1(t)$ and $x_2(t)$, we can construct the full solution $A_1x_1(t)+A_2x_2(t)$.</li>
+			</ul>
+		</section>
+		
+		<section>
+			<h2>2.2. Solving the ODE</h2>
+			<p>Although the equation is in real domain ($x(t) \in \mathbb{R}$), it turns out that it's much easier to solve the ODE if we do it in complex domain $\mathbb{C}$.</p>
+			<p>This particular trick works because a complex function is a <em>linear combination</em> of a real part and an imaginary part. Since time is in the real domain ($t \in \mathbb{R}$), time derivative of a complex function will have a separate real and imaginary parts. To understand this idea, we can write a complex function of time as $z(t)=a(t)+b(t)i$. If we plug this into the above ODE:</p>
+			$$\frac{d^2z}{dt^2} = -\omega_0^2z-\gamma\frac{dz}{dt}$$
+			$$\frac{d^2a}{dt^2} + \frac{d^2b}{dt^2}i = -\omega_0^2a -\omega_0^2bi - \gamma\frac{da}{dt} -\gamma\frac{db}{dt}i$$
+	
+			<p>The above equation requires that the real parts equal to the real parts, and the imaginary parts equal to the imaginary parts. Note that the first and second time derivatives of $a(t)$ and $b(t)$ are real functions.</p>
+			$$\frac{d^2a}{dt^2} = -\omega_0^2a-\gamma\frac{da}{dt}$$
+			$$\frac{d^2b}{dt^2} = -\omega_0^2b-\gamma\frac{db}{dt}$$
+	
+			<p>This means that both $a(t)$ and $b(t)$ are <b>real</b> solutions to the original ODE i.e. $a(t)$ and $b(t)$ are what we obtain if we solve the ODE in the real domain. Thus, what we can do is that we can solve the damped oscillation ODE in the complex domain, and then obtain the real part of that complex solution to get our real solution.</p>
+	
+			<p>There are many tricks to solve this ODE, especially in the complex domain. We can try using an exponential function because its derivative has a similar form to itself. So I will let $x(t) = Ae^{Bt}$, where $A$ and $B$ are complex constants. Its first and second time derivatives will be:</p>
+			$$\frac{dx}{dt} = BAe^{Bt}$$
+			$$\frac{d^2x}{dt^2} = B^2Ae^{Bt}$$
+	
+			<p>Let's substitute these back into our original ODE and rearrang it:</p>
+			$$B^2Ae^{Bt} = -\omega_0^2Ae^{Bt} - \gamma \frac{dx}{dt} = BAe^{Bt}$$
+			$$B^2 = -\omega_0^2 - \gamma B$$
+			$$B^2 + \gamma B + \omega_0^2 = 0$$
+	
+			<p>This is our familiar <b>quadratic equation</b>. Because $B$ is a complex number, we can always find the value of B from the above equation. Surprisingly, it also means that the value of $B$ depends entirely on <b>characteristic</b> of our damped oscillation system ($\omega_0$ and $\gamma$). Let's consider our discriminant $\Delta = \gamma^2 - 4\omega_0^2$</p>
+	
+			<h3><b>Case 1</b>: $\Delta=0$ (or $\frac{\gamma}{2} = \omega_0$) - <em>Critical damping</em></h3>
+			$$B = -\gamma/2 = -\omega_0$$
+	
+			<p>Our $B$ value is a real number! Our $A$ value will be one adjustable constant for our general solution.</p>
+			$$x(t) = Ae^{-\frac{\gamma}{2}t}$$
+	
+			<p>This is great! As $A$ is our adjustable constant, we can get a real solution by choosing a real value for $A$.</p>
+			<p>You might note that we still need one more adjustable constant to obtain the general solution. Thus, we need another solution to the ODE. This solution is not intuitive to guess, but it is $x(t) = Ate^{Bt}$. Its first and second time derivatives will be:</p>
+			$$\frac{dx}{dt} = Ae^{Bt} + BAte^{Bt} = (1+Bt)Ae^{Bt}$$
+			$$\frac{d^2x}{dt^2} = BAe^{Bt} + (1+Bt)BAe^{Bt} = (2+Bt)BAe^{Bt}$$
+	
+			<p>Substituting these back into our ODE:</p>
+			$$(2+Bt)BAe^{Bt} = -\omega_0^2 Ate^{Bt} - \gamma (1+Bt)Ae^{Bt}$$
+			$$(2+Bt)B = -\omega_0^2 t - \gamma (1+Bt)$$
+			$$2B+B^2t = -\omega_0^2 t - \gamma - \gamma B t$$
+			$$(B^2 + \gamma B + \omega_0^2)t + (2B + \gamma) = 0$$
+	
+			<p>This looks interesting! There is a small observation we can make about this. The left-hand side of the above equation can be thought as a function of time. This function is always equal to zero, which means that all of its coefficients are zero.</p>
+			$$B^2 + \gamma B + \omega_0^2 = 0$$
+			$$2B + \gamma = 0$$
+	
+			<p>What a coincidence! This will give us the exact value of $B$ as the above case: $B = -\gamma/2$. Thus our second solution will $x(t) = Ate^{-\frac{\gamma}{2}t}$.</p>
+			
+			<p>The general solution will be the linear combination of two solutions above:</p>
+			$$x(t) = (A_1+A_2t)e^{-\frac{\gamma}{2}t}$$
+	
+			<p>This situation is also known as <b>Critical damping</b>. The system decays exponentially without oscillation. The amount of damping is just right to stop oscillation.</p>
 
-\subsection{Introduction}
+			<h3><b>Case 2</b>: $\Delta>0$ (or $\frac{\gamma}{2} > \omega_0$) - <em>Overdamping</em></h3>
+			$$B = -\frac{-\gamma \pm \sqrt{\Delta}}{2} = -\frac{\gamma}{2} \pm \sqrt{\frac{\gamma^2}{4}-\omega_0^2}$$
 
-Real oscillating systems must dissipate energy and come to a stop. In many situations, the resistive force is proportional to the velocity of the oscillator. We will include a resistive term $F = -\gamma \frac{dx}{dt}$ in the equation of motion.
-$$\frac{d^2x}{dt^2}=-\omega_0^2x-\gamma\frac{dx}{dt}$$
+			<p>Great! We have two values of $B$, which correspond to two solutions:</p>
+			$$x(t) = Ae^{(-\gamma/2 + \sqrt{\gamma^2/4-\omega_0^2})t}$$
+			$$x(t) = Ae^{(-\gamma/2 - \sqrt{\gamma^2/4-\omega_0^2})t}$$
 
-where $\gamma$ is a positive, real constant. It determines the strength the resistive force. $\omega_0$ is the angular frequency when there is no damping.
-\\
+			<p>The general solution will be the linear combination of the above two solutions:</p>
+			$$x(t) = e^{-\frac{\gamma}{2} t} \bigg(A_1e^{\sqrt{\gamma^2/4-\omega_0^2}t}+A_2e^{-\sqrt{\gamma^2/4-\omega_0^2}t}\bigg)$$
 
-Let's again consider some of important features of this ODE:
+			<p>Again, we can choose the values of $A_1$ and $A_2$ to be real to obtain the real solution.</p>
+			
+			<p>This situation is known as <b>overdamping</b>. The system decays slowlier than exponentially. The amount of damping is so great that it takes longer for the system to return to the equilibrium position.</p>
 
-\begin{enumerate}
-	\item \textbf{This is a second order ODE} with first order term ($\frac{dx}{dt}$).
-	\item \textbf{The equation is real}.
-	\item \textbf{Linearity}: If we have two distinct solutions $x_1$ and $x_2$, the full solution is $ax_1+bx_2$.
-\end{enumerate}
+			<h3><b>Case 3</b>: $\Delta < 0$ (or $\frac{\gamma}{2} < \omega_0$) - <em>Underdamping</em></h3>
+			$$B = -\frac{-\gamma \pm i\sqrt{-\Delta}}{2} = -\frac{\gamma}{2} \pm i\sqrt{\omega_0^2-\frac{\gamma^2}{4}}$$
 
-\subsection{Solving the ODE}
+			<p>Again, each value of $B$ corresponds to one solution:</p>
+			$$x(t) = Ae^{(-\gamma/2 + i\sqrt{\omega_0^2-\gamma^2/4})t}$$
+			$$x(t) = Ae^{(-\gamma/2 - i\sqrt{\omega_0^2-\gamma^2/4})t}$$
 
-Although the equation is in real domain, it turns out that it's much easier to solve the ODE if we do it in complex domain $\mathbb{C}$. Thus we now assume $x$ and its derivatives are complex functions of time (note: time is still in real domain). The physical quantity that corresponds to them is simply their real part.
-\\
+			<p>However, it must be noted that our values of $B$ are complex numbers, and unfortunately, we cannot ignore this fact. We have to take the real part of the above solutions. Luckily, the <a href="http://mathworld.wolfram.com/EulerFormula.html">Euler identity</a> allows us to write the above solutions in a clearer form, to see the real and imaginary parts.</p>
+			$$x(t) = Ae^{-\frac{\gamma}{2} t} \Bigg[\cos\bigg(\sqrt{\omega_0^2-\frac{\gamma^2}{4}}t\bigg) + i\sin\bigg(\sqrt{\omega_0^2-\frac{\gamma^2}{4}}t\bigg)\Bigg]$$
+			$$x(t) = Ae^{-\frac{\gamma}{2} t} \Bigg[\cos\bigg(\sqrt{\omega_0^2-\frac{\gamma^2}{4}}t\bigg) - i\sin\bigg(\sqrt{\omega_0^2-\frac{\gamma^2}{4}}t\bigg)\Bigg]$$
 
-One function that appears similar to its derivatives is the exponential function. Let's try $x=Ae^{pt}$, where $A,p \in \mathbb{C}$. Note that $\frac{dx}{dt} = px$ and $\frac{d^2x}{dt^2} = p^2 x$.
+			<p>The real part of the solution above will give us a real solution. Howver, both above solutions have the same real part, thus we will not get two distinct solutions by taking the real part of the two solutions. This is indeed very unfortunate. But interestingly, the imaginary part of the <em>complex</em> solution is also a <em>real</em> solution.</p>
 
-$$p^2x=-\omega_0^2x-\gamma px$$
-$$p^2+\gamma p+\omega_0^2=0$$
+			<p>Taking the imaginary part alone (without the imaginary unit $i$) will give us another real solution. Therefore, our two real distinct solutions are:</p>
+			$$x(t) = Ae^{-\frac{\gamma}{2} t} \cos\bigg(\sqrt{\omega_0^2-\frac{\gamma^2}{4}}t\bigg)$$
+			$$x(t) = Ae^{-\frac{\gamma}{2} t} \sin\bigg(\sqrt{\omega_0^2-\frac{\gamma^2}{4}}t\bigg)$$
 
-This is a quadratic equation of $p$. Consider its discriminant: $\Delta = \gamma^2-4\omega_0^2$
-\\
+			<p>The general solution will be a linear combination of the above solutions:</p>
+			$$x(t) = e^{-\frac{\gamma}{2} t} \Bigg[A_1 \cos\bigg(\sqrt{\omega_0^2-\frac{\gamma^2}{4}}t\bigg) + A_2 \sin\bigg(\sqrt{\omega_0^2-\frac{\gamma^2}{4}}t\bigg)\Bigg]$$
 
-\textbf{Case 1:} $\Delta=0$
-$$p=-\gamma/2$$
-$$x=Ae^{-\tfrac{\gamma}{2}t}$$
+			<p>The general solution shows that this is an oscillating system from the term $\cos$ and $\sin$. Thus, the quantity $\sqrt{\omega_0^2-\frac{\gamma^2}{4}}$ is the <b>angular frequency</b> of oscillation. With this information, we can then set $\omega = \sqrt{\omega_0^2-\frac{\gamma^2}{4}}$ and simplify our general solution:</p>
+			$$x(t) = e^{-\frac{\gamma}{2} t} \bigg(A_1 \cos \omega t + A_2 \sin \omega t \bigg)$$
 
-$p$ is real (it has no imanginary part). Although we say $A$ is complex, we can choose $A$ to be real, since we can just take the real part of $A$. Thus this is both a real and complex solution. However, we only have one adjustable constant $A$. The other solution turns out to be $te^{-\frac{\gamma}{2}t}$. The full complex and real solution is:
-$$x=(A+Bt)e^{-\frac{\gamma}{2}t}$$
+			<p>We can make an interesting observation here. Using the <a href="http://mathworld.wolfram.com/SchwarzsInequality.html">Cauchy–Schwarz inequality</a>, we get this:</p>
+			$$A_1 \cos \omega t + A_2 \sin \omega t \leq \sqrt{A_1^2+A_2^2} \sqrt{\cos^2 \omega t + \sin^2 \omega t} = \sqrt{A_1^2+A_2^2}$$
+			<p>Note that $\cos^2{\theta} + \sin^2{\theta} = 1$ for any real values of $\theta$. Thus:</p>
+			$$x(t) \leq \sqrt{A_1^2+A_2^2} e^{-\frac{\gamma}{2}}$$
 
-This situation is called \textit{critical damping}. There is no oscillation, as the system decays exponentially. Damping is just right for the system not oscillates.
-\\
+			<p>The above inequality means that our general solution is always smaller than an exponential function. This exponential function $\sqrt{A_1^2+A_2^2} e^{-\frac{\gamma}{2}}$ is known as the <b>envelope</b> of our solution: the system will oscillate within this exponential decay envelope.</p>
+			
+			<p>This is the most interesting situation, also known as <b>underdamping</b>. The <b>amplitude</b> of oscillation decays exponentially with time until there is no more oscillation. The system oscillates at an angular frequency slightly below its <b>natural frequency</b>. The amount of damping is small, dissipating the energy of oscillation.</p>
 
-\textbf{Case 2:} $\Delta>0$
-$$p=-\gamma/2 \pm \sqrt{\gamma^2/4-\omega_0^2}$$
-$$x=\big(Ae^{\omega t}+Be^{-\omega t}\big)e^{-\tfrac{\gamma}{2}t}$$
+			<p>Note that our general solution can be written in a more compact form:</p>
+			$$x(t) = Ae^{-\frac{\gamma}{2} t}\cos (\omega t+\phi)$$
 
-where $\omega = \sqrt{\gamma^2/4-\omega_0^2}$. Again, $p$ here is real. We have two values of $p$, thus the full solution is their linear combination. $A$ and $B$ can be chosen to be real, as already discussed above, so this is the real and complex solution.
-\\
+			<p>At this point, it's best to visit the <a href="./" target="__blank">Harmonic Oscillator solution graph</a> to understand the behavior of the system when the value of $\gamma$ changes. Keep in mind that you should set the value of $F_0$ to zero.</p>
+		</section>
+	</section>
 
-This situation is called \textit{over-damping}. There is also no oscillation, but the system decays slowlier than exponential decay. Damping is too great that even the system returns to the equilibrium position slowly.
-\\
+	<section id="driven">
+		<h1>3. Driven oscillation without damping</h1>
+		<section>
+			<h2>3.1. Introduction</h2>
+			<p>All of the situations above do not involve an external driving force. Suppose we want to use a force to drive the oscillator. There are many forms that our driving force can take, but for simplicity, we will take the driving force to be of the form $F(t)=F_0 \cos \omega_d t$, where $\omega_d$ is the angular frequency of the driving force. This force is an oscillating force, a worthy assumption for our oscillating system. The ODE then becomes:</p>
+			$$\frac{d^2x}{dt^2}=-\omega_0^2x+\frac{F_0}{m}\cos \omega_d t$$
 
-\textbf{Case 3:} $\Delta<0$
-$$p=-\gamma/2\pm i\sqrt{\omega_0^2-\gamma^2/4}$$
-$$x=\big(Ae^{i\omega t}+Be^{-i\omega t}\big)e^{-\tfrac{\gamma}{2}t}$$
+			<p>Let's make some observations about this ODE:</p>
+			<ul>
+				<li>This is a <b>non-linear</b> ODE: a linear combination of two distinct solutions does not give us another solution.</li>
+			</ul>
 
-where $\omega = \sqrt{\omega_0^2-\gamma^2/4}$. This is the full complex solution. (Note that $A$ and $B$ are complex)
-\\
+			<p>This fact will be an obstacle for us, but there is a little trick to circumvent this. I will discuss it later.</p>
+		</section>
 
-We know that $e^{i \theta}$ is a complex number from Euler's identity $e^{i\theta} = \cos \theta + i \sin \theta$, and $A,B$ can be written as $a+bi$, where $a,b \in \mathbb{R}$. Taking the real part of the complex solution, we obtain the full real solution:
+		<section>
+			<h2>3.2. Solving the ODE</h2>
+			<h3>3.2.1. Steady-state solution</h3>
+			<p>Although this ODE is in the real domain, again, it's much easier to analyse and solve it in the complex domain. Remember, our real solution is the real part of our complex solution. Thus, instead of considering our driving force as $F(t) = F_0 \cos \omega_d t$, we will consider our driving force as a complex exponential function of time $F(t) = F_0 e^{i\omega_d t}$. We can do this thanks to the <a href="http://mathworld.wolfram.com/EulerFormula.html">Euler identity</a>. Our ODE in the complex domain will be:</p>
+			$$\frac{d^2x}{dt^2}=-\omega_0^2x+\frac{F_0}{m}e^{i\omega_d t}$$
 
-$$x = (A \cos \omega t + B \sin \omega t)e^{-\tfrac{\gamma}{2}t}$$
+			<p>We will guess our solution to be an exponential function again. However, as you might have observed, we have the driving force term, which has its own exponential term. Thus, we can try an exponential function with the same power as the driving force term as our solution. In the Physics sense, we can understand that our oscillating system follows the angular frequency of the driving force.</p>
+			$$x=Ae^{i \omega_d t}$$
+			$$\frac{dx}{dt}=i\omega_dAe^{i \omega_d t}$$
+			$$\frac{d^2x}{dt^2}=-\omega_d^2Ae^{i \omega_d t}$$
 
-This is the only situation where there is oscillation, called \textit{under-damping}. There is a exponential decay envelope $e^{-\tfrac{\gamma}{2}t}$ over the oscillation. The system losses its energy until it returns to rest at equilibrium position.
-\\
+			<p>Substituting these into our ODE:</p>
+			$$-\omega_d^2Ae^{i \omega_d t}=-\omega_0^2Ae^{i \omega_d t}+\frac{F_0}{m}e^{i\omega_d t}$$
+			$$-\omega_d^2A=-\omega_0^2A+\frac{F_0}{m}$$
+			$$(\omega_0^2-\omega_d^2)A=\frac{F_0}{m}$$
+			$$A = \frac{F_0/m}{\omega_0^2-\omega_d^2}$$
 
-Let's plot the three cases for comparisons. For all cases, the system is solved for $x(0)=1$ and $\frac{d}{dt}x(0)=0$. Free oscillation without damping $\gamma=0$ is also plotted.
+			<p>This is indeed very strange! Remember from the above situations, the $A$ value will be one of our adjustable constants. But in this case, we get an <em>exact</em> and <em>real</em> value of $A$! Although we are happy that the complex solution $x(t)=Ae^{i\omega_d t}$ works, this is a <b>fixed</b> solution: we cannot modify this solution to fit to our initial conditions.</p>
+			<p>At least we know that the corresponding real solution will simply be:</p>
+			$$x(t) = A\cos \omega_d t$$
+			<p>where $A = \frac{F_0/m}{\omega_0^2-\omega_d^2}$.</p>
 
-\begin{figure}[!hbt]
-	\centering
-	\includegraphics[width=0.5\textheight]{Damping.png}
-	\caption{\label{fig:decay}Oscillations with different values of $\gamma$ ($\omega_0=3$).}
-\end{figure}
+			<p>This particular solution has a special name: the <b>steady-state solution</b>. This solution is the dominant behavior of the oscillating system after a long period time, when the initial conditions no longer matter much. To fully understand this concept, please continue reading.</p>
 
-\begin{figure}[!hbt]
-	\centering
-	\includegraphics[width=0.5\textheight]{damping_tgt.png}
-	\caption{\label{fig:decay}Oscillations with different values of $\gamma$ ($\omega_0=3$).}
-\end{figure}
+			<h3>3.2.2. Transient solution</h3>
+			<p>We will use a clever trick here. Note that our ODE has an extra driving force term. This term prevents us from adding two solutions together to obtain another solution. However, if we add a solution of <b>free oscillation</b> ODE to a solution of driven oscillation ODE, the newly obtained solution will not affect the driving force term. To see this more clearly, consider $x_1(t)$ as a solution to free oscillation ODE and $x_2(t)$ as a solution to driven oscillation ODE:</p>
+			$$\frac{d^2x_1}{dt^2} = -\omega_0^2 x_1$$
+			$$\frac{d^2x_2}{dt^2} = -\omega_0^2 x_2 + \frac{F_0}{m}\cos \omega_d t$$
+			$$\frac{d^2(x_1+x_2)}{dt^2} = -\omega_0^2 (x_1+x_2) + \frac{F_0}{m}\cos \omega_d t$$
 
-\subsection{Energy consideration}
+			<p>Wow! $x_1(t)+x_2(t)$ is a solution to the driven oscillation ODE! Recall the solution to the free oscillation ODE is $x_1(t)=A\cos(\omega t+\phi)$, our general solution to the driven oscillation ODE is:</p>
+			$$x(t) = A\cos(\omega t+\phi) + \frac{F_0/m}{\omega_0^2-\omega_d^2}\cos \omega_d t$$
+			<p>where $A$ and $\phi$ are our two adjustable constants.</p>
 
-The general solution of damped oscillation has the form $x=x_1 e^{-\frac{\gamma}{2}t}$ where $x_1$ is some function of time. Generally the total energy of the system decays exponentially with time. You can confirm this by yourself.
+			<p>However there is a problem to this solution. This is a sum of two cosine terms with different angular frequencies, which will produce a <b>beat</b> pattern. Visit <a href="./" target="__blank">Harmonic Oscillator solution graph</a> and set $\gamma$ to zero to observe this phenomenon.</p>
+		</section>
 
-\section{Driven oscillation without damping}
+		<section>
+			<h2>3.3. Resonance</h2>
+			<p>Taking a closer look at our steady state solution:</p>
+			$$x(t) = \frac{F_0/m}{\omega_0^2-\omega_d^2}\cos \omega_d t$$
 
-\subsection{Introduction}
+			<p>The amplitude of this oscillation depends on the magnitude of the driving force $F_0$, the angular frequency of the driving force $\omega_d$ and the natural frequency of the oscillating system $\omega_0$.</p>
+		</section>
+	</section>
 
-All the cases we have considered so far do not involve an external driving force. Suppose we want to use a force to drive the oscillator. This force will be of the form $F=F_0 \cos \omega t$, where $\omega$ is the angular frequency of the driving force.
+	<section>
+		<h1>4. Driven oscillation with damping</h1>
+		<section>
+			<h2>4.1. Introduction</h2>
+		</section>
 
-$$\frac{d^2x}{dt^2}=-\omega_0^2x+\frac{F_0}{m}\cos \omega t$$
+		<section>
+			<h2>4.2. Solving the ODE</h2>
+		</section>
 
-This ODE does not have linearity property because of the external force term. In mathematics, it's called non-linear ODE. Even if we find two distinct solutions of the equation, we still cannot obtain the full solution. 
-\\
+		<section>
+			<h2>4.3. The transient and steady-state solutions</h2>
+		</section>
 
-However, we notice that if $x_0$ is a solution to the free oscillation equation, and $x_1$ is a solution to the driven oscillation equation, $x_1 + x_0$ is also a solution of the driven oscillation equation. This can be shown as following:
+		<section>
+			<h2>4.4. The frequency response graph and Resonance</h2>
+		</section>
+	</section>
 
-$$\frac{d^2x_1}{dt^2}=-\omega_0^2x_1+\frac{F_0}{m}\cos\omega t$$
-$$\frac{d^2x_0}{dt^2}=-\omega_0^2x_0$$
-$$\frac{d^2}{dt^2}(x_1+x_0)=-\omega_0^2(x_1+x_0)+F_0\cos\omega t$$
-
-If we substitute $x_0$ with the full solution of free oscillation equation, we get the full solution of the driven oscillation equation $x = x_1 + A\cos \omega_0t + B\sin \omega_0t$. The remaining work is to find $x_1$.
-
-\subsection{Solving the ODE}
-
-Although this equation is in real domain, again, it's much easier to analyse and solve it in complex domain. Instead of expressing the driving force as a cosine term, we will use Euler's identity to express it as an exponential.
-
-$$\frac{d^2x}{dt^2}=-\omega_0^2x+\frac{F_0}{m}e^{i\omega t}$$
+	<section>
+		<h1>5. Interesting examples of harmonic oscillators</h1>
+	</section>
 
 We guess a solution to be an exponential of $i\omega t$ in the form $x=Ae^{i \omega t}$. The rationale behind this is that we can cancel out the term $e^{i \omega t}$ in the equation. (Note that $A$ is a complex number)
 
@@ -409,7 +519,7 @@ The full complex solution to driven oscillation with damping:
 
 $$x = \frac{F_0/m}{\omega_0^2-\omega^2+\gamma \omega i} e^{i\omega t} + x_0$$
 
-$x_0$ will take the form of underdamped, critically damped or overdamped oscillation depending on damping coefficient $\gamma$. The two adjustable constants thus come from $x_0$. If we convert the solution to real domain:
+ $x_0$ will take the form of underdamped, critically damped or overdamped oscillation depending on damping coefficient $\gamma$. The two adjustable constants thus come from $x_0$. If we convert the solution to real domain:
 
 $$x = C\cos(\omega t - \delta) + x_0$$
 
@@ -462,12 +572,6 @@ The real part $R$ is called resistance, while the imaginary part $X$ is called r
 
 \end{enumerate}
 
-\vspace{1.4cm}
-
-If interested, you can try Vietnam APhO 2018 Theory question 1 about \textit{Optical trap of neutral atoms}. http://apho2018.vn/theory-q1-n90.html
-
-\vspace{3cm}
-
 \textbf{Fun Facts} Consider an arbitrary, real and periodic signal $S(t)$ of period $P$. By Fourier's theorem, we can decompose the signal into linear combination of sinusoids.
 
 $$S(t) = a_0 + a_1 \cos \omega_1 t + a_2 \cos \omega_2 t + \dots + b_1 \sin \omega_1 t + b_2 \sin \omega_2 t + \dots$$
@@ -489,10 +593,6 @@ $$x = x_{a_0} + x_{a_1} + x_{a_2} + \dots + x_{b_1} + x_{b_2} + \dots = x_{a_0} 
 
 where $x_{a_0}$ is the solution to the equation with bias term, $x_{a_i}$ and $x_{b_i}$ is the solution to the equation with cosine and sine term respectively. Thus, by understanding how the oscillator behaves in response to a sinusoidal driver, we can extend the theory to an arbitrary periodic driver. Note that it is possible to extend the analysis to non-periodic signal.
 \\
-
-\vspace{3cm}
-
-Content from A.P. French Waves and Oscillations.
 
 	<footer>
 		Reference: A.P. French Waves and Oscillations

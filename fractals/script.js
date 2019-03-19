@@ -10,7 +10,7 @@ let h = canvas.clientHeight*DPIscale;
 canvas.width = w;
 canvas.height = h;
 
-window.onresize = function() {
+window.resize = function() {
     w = canvas.clientWidth*DPIscale;
     h = canvas.clientHeight*DPIscale;
     canvas.width = w;
@@ -19,7 +19,9 @@ window.onresize = function() {
     drawKoch();
 }
 
-drawKoch();
+window.onresize = resize
+
+resize();
 
 function KochFull(x,y,angle,distance,iteration,scale) {
     distance *= scale;
@@ -50,6 +52,7 @@ function Koch(x,y,angle,distance,iteration,scale) {
 
         ctx.restore();
         ctx.strokeStyle = 'black';
+        ctx.lineWidth = Math.min(w,h)/400;
         ctx.stroke();
         ctx.restore();
 

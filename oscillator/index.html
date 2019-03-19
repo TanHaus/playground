@@ -23,6 +23,7 @@
         <p>To view explanation, please click <a href="explanation.html">here</a>.</p>
     </header>
     <section id="control">
+        <h2>Control</h2>
         Show exact solution<input type="checkbox" oninput="updateValue(this.checked,'exactSol')" checked=true><br>
         Show estimated solution<input type="checkbox" oninput="updateValue(this.checked,'estimatedSol')" checked=true><br>
         <span class="math">\omega_0</span><input type="range" oninput="updateValue(this.value,'omega0')" min=0 max=15 step=0.01><span id="omega0"></span><br>
@@ -31,11 +32,14 @@
         <span class="math">F_0</span><input type="range" oninput="updateValue(this.value,'force0')" min=0 max=20 step=0.01><span id="force0"></span><br>
     </section>
     <section>
+        <h2>Description</h2>
         <p>The graph aboves shows the solution <span class="math">x(t)</span> to the following second-order differential equation:</p>
         <p>$$\frac{d^2x}{dt^2} = -\omega_0 x - \gamma \frac{dx}{dt} + F_0 \cos(\omega t)$$</p>
     
         <p>You can adjust the parameters with the sliders above to observe the behavior of the solution when the parameters are changed. Initial conditions are</p>
         <p>$$x(0) = 0; \frac{dx}{dt}(0) = 0$$</p>
+
+        <p>The estimated numerical solution is obtained using Euler method.</p>
     </section>
     <footer>
         <p>Note: checkbox does not work with Edge</p>

@@ -6,17 +6,24 @@
     --color-5: #2F333B;
 }
 
+html { scroll-behavior: smooth; }
+
 @media only screen and (min-width: 600px) {
     :root { --padding: 30vw; }
+    nav { position: fixed; left: 0;}
 }
 @media only screen and (max-width: 600px) {
     :root { --padding: 15vw; }
+}
+@media only print {
+    body { font-family: 'Times New Roman', Times, serif; }
+    .illustration { max-width: 200px; font-size: 10; }
 }
 
 body { margin: 0; font-family: Calibri, Helvetica, Arial, sans-serif; }
 header { background-color: var(--color-5); color: whitesmoke; }
 section { background-color: var(--color-2); color: black; }
-header, footer, section { padding: 10px var(--padding); }
+header, footer, body>section { padding: 10px var(--padding); }
 a { text-decoration: none; transition: 0.2s; }
 header a { color: var(--color-2); }
 header a:hover { color: var(--color-3); }

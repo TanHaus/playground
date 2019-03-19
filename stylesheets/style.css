@@ -9,9 +9,9 @@
 }
 
 body { background-color: var(--color-2); font-family: Calibri, Helvetica, sans-serif; margin: 0; }
-canvas { padding: 0; border: solid 1px; }
+canvas { padding: 0; }
 
-section { padding: 10px 1vw; }
+body>section { padding: 10px 1vw; }
 header { background-color: var(--color-5); color: whitesmoke; padding: 10px 1vw; }
 
 header > h1 { margin-top: 0; }
