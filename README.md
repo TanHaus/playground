@@ -1,10 +1,10 @@
-Web apps (https://gau-nernst.github.io/Web-apps/)
+Web apps (https://gau-nernst.github.io/web-apps/)
 ==================
 
 <div>
-    <img src="https://img.shields.io/github/repo-size/gau-nernst/Web-apps.svg">
-    <img src="https://img.shields.io/github/languages/top/gau-nernst/Web-apps.svg">
-    <img src="https://img.shields.io/github/license/gau-nernst/Web-apps.svg">
+    <img src="https://img.shields.io/github/repo-size/gau-nernst/web-apps.svg">
+    <img src="https://img.shields.io/github/languages/top/gau-nernst/web-apps.svg">
+    <img src="https://img.shields.io/github/license/gau-nernst/web-apps.svg">
 </div>
 
 # Description
@@ -38,7 +38,7 @@ The inline math render script is located in `/libraries/inlineKatex.js`.
 
 # Installation
 
-These web-apps can be run directly on any modern browser by navigating to https://gau-nernst.github.io/Web-apps/.
+These web-apps can be run directly on any modern browser by navigating to https://gau-nernst.github.io/web-apps/.
 
 For offline uses and modifying the code, please click the green 'Clone and download' button, and 'Download as zip'. Otherwise, you can save the web page locally.
 
