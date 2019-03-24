@@ -1,55 +1,13 @@
-export let Random = {
-    generateInt: function(min,max,signed=false) {
-        if(min==undefined) min = 1;
-        if(max==undefined) max = 100;
-        if(min>max) throw 'Invalid parameters. Min is larger than max';
-
-        let value = min+Math.round(Math.random()*(max-min));
-        if(min>0) {
-            if(signed==false) return value;
-            if(Math.random()>0.5) return value;
-            return -value;
-        } else return value;
-    },
-    generateColor: function(colors) {
-        if(colors==undefined) colors = ['red', 'green', 'blue'];
-        return colors[Random.generateInt(0,colors.length-1)];
-    },
-    normal: function(mean,sd) {
-        let u=Math.random();
-        let v=Math.random();
-        if(mean==undefined) mean=0;
-        if(sd==undefined) sd=1;
-        return Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*v)*sd+mean;
-    },
-    colorGradientArray(color1,color2,size) {
-        let result = [];
-        let R,G,B;
-        if(size==1) {
-            R = Math.round(Math.sqrt(color1.red*color1.red/2+color2.red*color2.red/2));
-            G = Math.round(Math.sqrt(color1.green*color1.green/2+color2.green*color2.green/2));
-            B = Math.round(Math.sqrt(color1.blue*color1.blue/2+color2.blue*color2.blue/2));
-            result.push('rgb('+R+','+G+','+B+')');
-        } else if(size>1) {
-            let length = size-1;
-            for(let i=0;i<=length;i++) {
-                R = Math.round(Math.sqrt(color1.red*color1.red*(1-i/length)+color2.red*color2.red*(i/length)));
-                G = Math.round(Math.sqrt(color1.green*color1.green*(1-i/length)+color2.green*color2.green*(i/length)));
-                B = Math.round(Math.sqrt(color1.blue*color1.blue*(1-i/length)+color2.blue*color2.blue*(i/length)));
-                result.push('rgb('+R+','+G+','+B+')');
-            }
-        }
-        return result;
-    }
-};
-
+// Begin of classes
 export class ComplexNumber {
     constructor(re,im) {
         this.re = re;
         this.im = im;
     }
     toString() {
-        return '' + this.re + ' + ' + this.im + 'i';
+        if(arguments=='polar') return ''+this.magnitude()+'e^i'+this.arg().toPrecision(6);
+        if(arguments=='polorLatex') return ''+this.magnitude()+'e^{i'+this.arg().toPrecision(6)+'}';
+        return ''+this.re+' + '+this.im+'i';
     }
     clone(other) {
         this.re = other.re;
@@ -68,6 +26,19 @@ export class ComplexNumber {
     }
     scale(scalar) {
         return new ComplexNumber(this.re*scalar,this.im*scalar);
+    }
+    conjugate() {
+        return new ComplexNumber(this.re,-this.im);
+    }
+    inverse() {
+        let mag = this.magnitude();
+        return new ComplexNumber(this.re/mag,-this.im/mag);
+    }
+    magnitude() {
+        return Math.sqrt(this.re*this.re+this.im*this.im);
+    }
+    arg() {
+        return Math.atan2(this.im,this.re);
     }
     static CLONE(no) {
         return new ComplexNumber(no.re,no.im);
@@ -96,33 +67,22 @@ export class Polynomial {
             this.coefficient[i] = temp[i];
         }
     }
-    toString() {
-        // for console.log()
+    toString() { // for console.log()
         let result = '';
-        for(let i=this.deg; i>1; i--) {
-            if(this.coefficient[i]!=0) {
-                if(this.coefficient[i]!=1) result += this.coefficient[i];
-                result += 'x^' + i + ' + ';
+        if(arguments=='latex') {
+            for(let i=this.deg; i>1; i--) {
+                if(this.coefficient[i]!=0) {
+                    if(this.coefficient[i]!=1) result += this.coefficient[i];
+                    result += 'x^{' + i + '} + ';
+                }
             }
-        }
-        if(this.coefficient[1]!=undefined) {
-            if(this.coefficient[i]!=0) {
-                if(this.coefficient[1]!=1) result += this.coefficient[1];
-                result += 'x + ';
+        } else {
+            for(let i=this.deg; i>1; i--) {
+                if(this.coefficient[i]!=0) {
+                    if(this.coefficient[i]!=1) result += this.coefficient[i];
+                    result += 'x^' + i + ' + ';
+                }
             }
-        }
-        result += this.coefficient[0];
-        return result;
-    }
-    toString2() {
-        // LaTeX format, for math render
-        let result = '';
-        for(let i=this.deg; i>1; i--) {
-            if(this.coefficient[i]!=0) {
-                if(this.coefficient[i]!=1) result += this.coefficient[i];
-                result += 'x^{' + i + '} + ';
-            }
-
         }
         if(this.coefficient[1]!=undefined) {
             if(this.coefficient[1]!=0) {
@@ -153,8 +113,8 @@ export class Polynomial {
         return new Polynomial(coefficient);
     }
     multiply(other) {
-        let coefficient = [];
-        let deg = this.deg + other.deg;
+        let coefficient = [],
+            deg = this.deg + other.deg;
         for(let i = this.deg; i>=0; i--) {
             for(let j = other.deg; j>=0; j--) {
                 let index = deg-(i+j);
@@ -187,6 +147,52 @@ export class Rational {
     }
 }
 
+// Begin of modules
+export let Random = {
+    generateInt: function(min,max,signed=false) {
+        if(min==undefined) min = 1;
+        if(max==undefined) max = 100;
+        if(min>max) throw 'Invalid parameters. Min is larger than max';
+
+        let value = min+Math.round(Math.random()*(max-min));
+        if(min>0) {
+            if(signed==false) return value;
+            if(Math.random()>0.5) return value;
+            return -value;
+        } else return value;
+    },
+    generateColor: function(colors) {
+        if(colors==undefined) colors = ['red', 'green', 'blue'];
+        return colors[Random.generateInt(0,colors.length-1)];
+    },
+    normal: function(mean,sd) {
+        let u=Math.random(),
+            v=Math.random();
+        if(mean==undefined) mean=0;
+        if(sd==undefined) sd=1;
+        return Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*v)*sd+mean;
+    },
+    colorGradientArray(color1,color2,size) {
+        let result = [],
+            R,G,B;
+        if(size==1) {
+            R = Math.round(Math.sqrt(color1.red*color1.red/2+color2.red*color2.red/2));
+            G = Math.round(Math.sqrt(color1.green*color1.green/2+color2.green*color2.green/2));
+            B = Math.round(Math.sqrt(color1.blue*color1.blue/2+color2.blue*color2.blue/2));
+            result.push('rgb('+R+','+G+','+B+')');
+        } else if(size>1) {
+            let length = size-1;
+            for(let i=0;i<=length;i++) {
+                R = Math.round(Math.sqrt(color1.red*color1.red*(1-i/length)+color2.red*color2.red*(i/length)));
+                G = Math.round(Math.sqrt(color1.green*color1.green*(1-i/length)+color2.green*color2.green*(i/length)));
+                B = Math.round(Math.sqrt(color1.blue*color1.blue*(1-i/length)+color2.blue*color2.blue*(i/length)));
+                result.push('rgb('+R+','+G+','+B+')');
+            }
+        }
+        return result;
+    }
+};
+
 export let Calculus = {
     diff: function(func,x,dx,n) {
         if(typeof func != 'function') throw '' + func + ' is not a function';
@@ -218,19 +224,20 @@ export let Calculus = {
         // NOTE: the function func take arguments as an array
         
         let tempFn = function(x) {
-
+            return func();
         }
     },
-    integrate: function(func,x1,x2,dx) {
+    integrate: function(func,x1,x2,dx) { // Integrate using Simpson's 1/3 rule
         if(typeof func != 'function') throw '' + func + ' is not a function';
-        if(dx==undefined) dx = (x2-x1)*1e-5;
+        if(dx==undefined) dx = (x2-x1)*1e-4;
         let result = 0;
         let index = x1;
         while(index + dx < x2) {
-            result += func(index)*dx;
+            result += dx/6*(func(index)+4*func(index+dx/2)+func(index+dx));
             index += dx;
         }
-        result += func(index)*(x2-index);
+        dx = x2-index;
+        result += dx/6*(func(index)+4*func(index+dx/2)+func(index+dx));
         return result;
     }
 }
@@ -270,13 +277,65 @@ export let Matrix = {
         }
         return result;
     },
-    small: function(matrix,x0,y0,x1,y1) {
+    extract: function(matrix,x0,y0,x1,y1) {
         if(x1<x0 || y1<y0) throw 'Wrong indices';
         let result = [];
         for(let i=x0;i<x1;i++) {
             result.push([]);
             for(let j=y0;j<y1;j++) result[i-x0][j-y0] = matrix[i][j];
         }
+        return result;
+    },
+    clone: function(source) {
+        let destination = [];
+        for(let i=0;i<source.length;i++) {
+            destination.push([]);
+            for(let j=0;j<source[i].length;j++) {
+                destination[i].push(source[i][j]);
+            }
+        }
+        return destination;
+    },
+    rowOperations: {
+        swap: function(matrix,num1,num2) {
+            if(Math.max(num1,num2)>matrix.length) throw 'Row index is outside the matrix dimension';
+            let result = Matrix.clone(matrix);
+            for(let i=0;i<result[num1].length;i++) {
+                result[num1][i] = matrix[num2][i];
+                result[num2][i] = matrix[num1][i];
+            }
+            return result;
+        },
+        scale: function(matrix,num,scalar) {
+            if(num>matrix.length) throw 'Row index is outside the matrix dimension';
+            let result = Matrix.clone(matrix);
+            for(let i=0;i<result[num].length;i++) {
+                result[num][i] *= scalar;
+            }
+            return result;
+        },
+        addRow: function(matrix,source,operand,scalar=1) {
+            if(Math.max(source,operand)>matrix.length) throw 'Row index is outside the matrix dimension';
+            let result = Matrix.clone(matrix);
+            for(let i=0;i<result[source].length;i++) {
+                result[source][i] += result[operand][i]*scalar;
+            }
+            return result;
+        }
+    },
+    echelonForm: function(matrix) {
+        let result = Matrix.clone(matrix);
+        for(let i=0;i<matrix.length-1;i++) {
+            for(let j=i+1;j<matrix.length;j++) result = Matrix.rowOperations.addRow(result,j,i,-result[j][i]/result[i][i]);
+        }
+        return result;
+    },
+    reducedEchelonForm: function(matrix) {
+        let result = Matrix.echelonForm(matrix);
+        for(let i=result.length-1;i>0;i--) {
+            for(let j=i-1;j>-1;j--) result = Matrix.rowOperations.addRow(result,j,i,-result[j][i]/result[i][i]);
+        }
+        for(let i=0;i<result.length;i++) result = Matrix.rowOperations.scale(result,i,1/result[i][i]);
         return result;
     }
 }
@@ -325,23 +384,28 @@ export let Solver = {
             y: (m*c-n*a)/(b*c-a*d),
         }
     },
+    simultaneousEqn: function(matrix) {
+        if(matrix[0].length!=matrix.length+1) throw 'Augmented matrix has wrong dimension. It must be in n x (n+1)';
+        let temp = Matrix.reducedEchelonForm(matrix);
+        let result = [];
+        for(let i=0;i<temp.length;i++) result.push(temp[i][temp[i].length-1]);
+        return result;
+    }
 }
 
 export let Graph = {
     drawAxis: function(xRange,yRange,canvas) {
-        let context = canvas.getContext('2d');
-        let bigX = Math.max(xRange[0],xRange[1]);
-        let smallX = Math.min(xRange[0],xRange[1]);
-        let bigY = Math.max(yRange[0],yRange[1]);
-        let smallY = Math.min(yRange[0],yRange[1]);
-
-        let xScale = canvas.width/(bigX-smallX);
-        let yScale = canvas.height/(bigY-smallY);
+        let context = canvas.getContext('2d'),
+            bigX = Math.max(xRange[0],xRange[1]),
+            smallX = Math.min(xRange[0],xRange[1]),
+            bigY = Math.max(yRange[0],yRange[1]),
+            smallY = Math.min(yRange[0],yRange[1]),
+            xScale = canvas.width/(bigX-smallX),
+            yScale = canvas.height/(bigY-smallY);
 
         context.save();  // this is for normal encapsulation
         context.save();  // this is for stroke
         context.translate(-smallX*xScale,bigY*yScale);
-        
         context.scale(xScale,yScale)
 
         context.beginPath();
@@ -363,12 +427,12 @@ export let Graph = {
         if(xRange.length != 2) throw 'Invalid xRange. xRange must contain only 2 numbers';
         if(yRange.length != 2) throw 'Invalid yRange. yRange must contain only 2 numbers';
 
-        let bigX = Math.max(xRange[0],xRange[1]);
-        let smallX = Math.min(xRange[0],xRange[1]);
+        let bigX = Math.max(xRange[0],xRange[1]),
+            smallX = Math.min(xRange[0],xRange[1]);
         if(step==undefined) step = (bigX-smallX)/canvas.width;
-        let xSeq = []
-        let ySeq = [];
-        let index = 0;
+        let xSeq = [],
+            ySeq = [],
+            index = 0;
         for(let i=smallX; i<bigX; i+=step) {
             xSeq[index] = i;
             ySeq[index] = Fn(i);
@@ -383,15 +447,13 @@ export let Graph = {
         if(xRange.length != 2) throw 'Invalid xRange. xRange must contain only 2 numbers';
         if(yRange.length != 2) throw 'Invalid yRange. yRange must contain only 2 numbers';
         
-        let xScale = canvas.width/Math.abs(xRange[0]-xRange[1]);
-        let yScale = canvas.height/Math.abs(yRange[0]-yRange[1]);
-
-        let context = canvas.getContext('2d');
+        let xScale = canvas.width/Math.abs(xRange[0]-xRange[1]),
+            yScale = canvas.height/Math.abs(yRange[0]-yRange[1]),
+            context = canvas.getContext('2d');
 
         context.save();  // this is for normal encapsulation
         context.save();  // this is for stroke
         context.translate(-Math.min(xRange[0],xRange[1])*xScale,Math.max(yRange[0],yRange[1])*yScale);
-
         context.scale(xScale,yScale)
 
         context.beginPath();
@@ -406,6 +468,24 @@ export let Graph = {
         context.stroke();
         context.restore();
     },
+    point: function(x,y,radius,xRange,yRange,canvas,color='blue') {
+        if(xRange.length != 2) throw 'Invalid xRange. xRange must contain only 2 numbers';
+        if(yRange.length != 2) throw 'Invalid yRange. yRange must contain only 2 numbers';
+        
+        let xScale = canvas.width/Math.abs(xRange[0]-xRange[1]),
+            yScale = canvas.height/Math.abs(yRange[0]-yRange[1]),
+            context = canvas.getContext('2d');
+        if(radius==undefined) radius = 5;
+
+        context.save();
+        context.translate(-Math.min(xRange[0],xRange[1])*xScale,Math.max(yRange[0],yRange[1])*yScale);
+
+        context.beginPath();
+        context.arc(x*xScale,-y*yScale,radius,0,Math.PI*2);
+        context.fillStyle = color;
+        context.fill();
+        context.restore();
+    },
     histogram: function(valueList,freqList,canvas) {
         if(valueList.length!=freqList.length) throw 'Value list and frequency list must have the same length';
          
@@ -414,9 +494,9 @@ export let Graph = {
         if(color==undefined) color='blue';
         let colors = [];
         if(typeof color=='string') for(let i=0;i<list.length;i++) colors.push(color); else colors = color;
-        let ctx = canvas.getContext('2d');
-        let length = canvas.width/list.length;
-        let yScale = canvas.height/Math.abs(yRange[0]-yRange[1]);
+        let ctx = canvas.getContext('2d'),
+            length = canvas.width/list.length,
+            yScale = canvas.height/Math.abs(yRange[0]-yRange[1]);
         ctx.save();
         ctx.translate(0,Math.max(yRange[0],yRange[1])*yScale);
         ctx.scale(1,yScale);
@@ -432,26 +512,57 @@ export let Graph = {
 
 export let Statistics = {
     sum: function(list) {
-        let result = 0;
-        for(let i=0;i<list.length;i++) result+=list[i];
+        let result = 0,
+            length = list.length;
+        for(let i=0;i<length;i++) result+=list[i];
         return result;
     },
     mean: function(list) {
-        return Statistics.sum(list)/list.length;
+        let result = 0,
+            length = list.length;
+        for(let i=0;i<length;i++) result+=list[i];
+        return result/length;
     },
     var: function(list) {
         let sumSquared = 0,
-            sum = 0;
-        for(let i=0;i<list.length;i++) {
+            sum = 0,
+            length = list.length;
+        for(let i=0;i<length;i++) {
             sumSquared += list[i]*list[i];
             sum += list[i];
         }
-        sumSquared /= list.length;
-        sum /= list.length;
-        return sumSquared - sum*sum;
+        sum /= length;
+        return sumSquared/length - sum*sum;
     },
     sd: function(list) {
         return Math.sqrt(Statistics.var(list));
+    },
+    sampleVar: function(list) {  // unbiased estimate of population variance from a sample
+        let sumSquared = 0,
+            sum = 0,
+            length = list.length;
+        for(let i=0;i<length;i++) {
+            sumSquared += list[i]*list[i];
+            sum += list[i];
+        }
+        let temp = length-1;
+        return sumSquared/temp - sum*sum/length/temp;
+    },
+    sampleSd: function(list) {
+        return Math.sqrt(Statistics.sampleVar(list));
+    },
+    cov: function(list1,list2) {
+        if(list1.length!=list2.length) throw 'Two lists don\'t have the same length';
+        let xySum = 0,
+            xSum = 0,
+            ySum = 0,
+            length = list1.length;
+        for(let i=0;i<length;i++) {
+            xySum += list1[i]*list2[i];
+            xSum += list1[i];
+            ySum += list2[i];
+        }
+        return (xySum-xSum*ySum/length)/length;
     }
 }
 
@@ -469,8 +580,8 @@ export let Compute = {
         return Compute.magnitude(point1.x-point2.x,point1.y-point2.y);
     },
     rotateVector: function(vector,angle) {
-        let magnitude = Compute.magnitude(vector.x,vector.y);
-        let theta0 = Math.atan2(vector.x, vector.y);
+        let magnitude = Compute.magnitude(vector.x,vector.y),
+            theta0 = Math.atan2(vector.x, vector.y);
         return {
             x: magnitude*Math.cos(theta0-angle),
             y: magnitude*Math.sin(theta0-angle),
@@ -478,55 +589,27 @@ export let Compute = {
     },
 }
 
-/* Set up nth Root of Unity for use with FFT algorithm
- * Not efficient, but constant time
- * Give exact values for some cases. Else use formula to generate
- * nRootUnity[x][y] is the first xth root of unity power to y
- * NOTE: there will be holes in the array nRootUnity
- *
- */
-
-let nRootUnity = [];
-let base = 1;
-for(let i=1;i<13;i++) {  // 2 → 4096
-    base *= 2;
-    nRootUnity[base] = [];
-    nRootUnity[base][0] = new ComplexNumber(1,0);
-    for(let j=1;j<base;j++) {
-        switch(j) {
-            case base/2:
-                nRootUnity[base][j] = new ComplexNumber(-1,0);
-                break;
-            case base/4:
-                nRootUnity[base][j] = new ComplexNumber(0,-1);
-                break;
-            case base*3/4:
-                nRootUnity[base][j] = new ComplexNumber(0,1);
-                break;
-            case base/8:
-                nRootUnity[base][j] = new ComplexNumber(Math.SQRT1_2,-Math.SQRT1_2);
-                break;
-            case base*3/8:
-                nRootUnity[base][j] = new ComplexNumber(-Math.SQRT1_2,-Math.SQRT1_2);
-                break;
-            case base*5/8:
-                nRootUnity[base][j] = new ComplexNumber(-Math.SQRT1_2,Math.SQRT1_2);
-                break;
-            case base*7/8:
-                nRootUnity[base][j] = new ComplexNumber(Math.SQRT1_2,Math.SQRT1_2);
-                break;
-            default:
-                nRootUnity[base][j] = new ComplexNumber(Math.cos(2*Math.PI*j/base),Math.sin(-2*Math.PI*j/base));
-        }
-    }
-}
-base = undefined;  // remove value of base in case of conflict
-
 export let Signal = (function() {
     // this implementation is designed to work for real signal only, size = power of 2
     
     // a public object to store public methods. this anonymous function will return this public object
     // only fft(), ifft() and get() are exposed to public
+    /* Set up nth Root of Unity for use with FFT algorithm
+    * Not efficient, but constant time
+    * Give exact values for some cases. Else use formula to generate
+    * nRootUnity[x][y] is the first xth root of unity power to y
+    * NOTE: there will be holes in the array nRootUnity
+    *
+    */
+    let nRootUnity = [],
+        base = 1;
+    for(let i=1;i<13;i++) {  // 2 → 4096
+        base *= 2;
+        nRootUnity[base] = [];
+        nRootUnity[base][0] = new ComplexNumber(1,0);
+        for(let j=1;j<base;j++) nRootUnity[base][j] = new ComplexNumber(Math.cos(2*Math.PI*j/base),Math.sin(-2*Math.PI*j/base));
+    }
+    base = undefined;  // remove value of base in case of conflict
 
     let pub = {};
     
@@ -540,19 +623,18 @@ export let Signal = (function() {
          * RETURN: an array of ComplexNumber objects
          */
         if(timeSignal.length==4) return FFT4(timeSignal);
-        let size = timeSignal.length;
-        let signalEven = [];
-        let signalOdd = [];
+        let size = timeSignal.length,
+            signalEven = [],
+            signalOdd = [];
         for(let i=0;i<size;i+=2) {
             signalEven.push(timeSignal[i]);
         }
         for(let i=1;i<size;i+=2) {
             signalOdd.push(timeSignal[i]);
         }
-        let freqEven = FFT(signalEven);
-        let freqOdd = FFT(signalOdd);
-
-        let freqSignal = [];
+        let freqEven = FFT(signalEven),
+            freqOdd = FFT(signalOdd),
+            freqSignal = [];
         
         for(let i=0;i<size/2;i++) {
             freqSignal.push(freqEven[i].add(freqOdd[i].multiply(nRootUnity[size][i])));
@@ -717,3 +799,43 @@ export let Signal = (function() {
     // return the public object
     return pub;
 }());
+
+export let Parser = {
+    toPostfix: function(string) {
+        let output = [],
+            stack = [],
+            numbers = ['0','1','2','3','4','5','6','7','8','9'],
+            operators = ['+','-','*','/','^'];
+        let compareOperator = function(op1,op2) {
+            let order = [['+','-'],
+                         ['*','/'],
+                         ['^']];
+            let rank1,rank2;
+            for(let i=0;i<order.length;i++) {
+                if(rank1==undefined&&order[i].includes(op1)) rank1 = i;
+                if(rank2==undefined&&order[i].includes(op2)) rank2 = i;
+                if(rank1!=undefined&&rank2!=undefined) break;
+            }
+            if(rank1!=rank2) return rank1>rank2;     // rank according to operator precedence
+            if(rank1!=2) return true; return false;  // when the precedences are equal, return true iff op1 is left-associative
+        }
+        for(let i=0;i<string.length;i++) {
+            if(numbers.includes(string[i])) output.push(string[i]);
+            else if(operators.includes(string[i])) {
+                while(stack.length!=0&&compareOperator(stack[stack.length-1],string[i])&&stack[stack.length-1]!='(') output.push(stack.pop());
+                stack.push(string[i]);
+            }
+            else if(string[i]=='(') stack.push(string[i]);
+            else if(string[i]==')') {
+                while(stack[stack.length-1]!='(') output.push(stack.pop());
+                stack.pop();
+            }
+            //console.log(output);
+            //console.log(stack);
+        }
+        while(stack.length>0) {
+            output.push(stack.pop());
+        }
+        return output
+    }
+}

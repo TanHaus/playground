@@ -22,4 +22,3 @@ ul { padding-left: 3vw; }
 li { list-style: none; margin-bottom: 5px; }
 a { text-decoration: none; color: var(--color-2); transition: 0.2s; }
 a:hover { color: var(--color-3); }
-canvas { border: 1px solid whitesmoke; }

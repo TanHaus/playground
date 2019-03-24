@@ -45,7 +45,7 @@ window.update = function(type) {
                 showFn.innerText = '';
             } else {
                 error.innerHTML = '';
-                katex.render(poly.toString2(),showFn);
+                katex.render(poly.toString('latex'),showFn);
             }
             break;
         case 'xRange':

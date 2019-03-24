@@ -15,19 +15,25 @@ This site is written in HTML, CSS and JavaScript.
 
 ## List of apps
 
+<h2>Featured</h2>
 <ul>
-    <li>Simple balls (Not working)</li>
-    <li>Planets (Not working)</li>
-    <li><a href="https://gau-nernst.github.io/web-apps/pendulum/">Pendulum</a></li>
     <li><a href="https://gau-nernst.github.io/web-apps/double-pendulum/">Double pendulum</a></li>
-    <li><a href="https://gau-nernst.github.io/web-apps/graphing/">Graphing</a></li>
+    <li><a href="https://gau-nernst.github.io/web-apps/oscillator/">Harmonic oscillator</a></li>
+</ul>
+<h2>Others</h2>
+<ul>
     <li><a href="https://gau-nernst.github.io/web-apps/fractals/">Fractals</a></li>
     <li><a href="https://gau-nernst.github.io/web-apps/lissajous/">Lissajous curves</a></li>
-    <li><a href="https://gau-nernst.github.io/web-apps/oscillator/">Harmonic oscillator</a></li>
-    <li><a href="https://gau-nernst.github.io/web-apps/wave/">Wave (under development)</a></li>
-    <li><a href="https://gau-nernst.github.io/web-apps/taylor-series/">Taylor series (under development)</a></li>
-    <li><a href="https://gau-nernst.github.io/web-apps/fourier-series/">Fourier series (under development)</a></li>
-    <li><a href="https://gau-nernst.github.io/web-apps/sort/">Sort algorithm visualization (under development)</a></li>
+    <li><a href="https://gau-nernst.github.io/web-apps/pendulum/">Pendulum</a></li>
+    <li><a href="https://gau-nernst.github.io/web-apps/simple-balls/">Simple balls</a> (Not working as intended)</li>
+</ul>
+<h2>Under development</h2>
+<ul>
+    <li><a href="https://gau-nernst.github.io/web-apps/graphing/">Graphing</a></li>                
+    <li><a href="https://gau-nernst.github.io/web-apps/wave/">Wave</a></li>
+    <li><a href="https://gau-nernst.github.io/web-apps/taylor-series/">Taylor series</a></li>
+    <li><a href="https://gau-nernst.github.io/web-apps/fourier-series/">Fourier series</a></li>
+    <li><a href="https://gau-nernst.github.io/web-apps/sort/">Sort algorithm visualization</a></li>
 </ul>
 
 ## Mathematical expressions

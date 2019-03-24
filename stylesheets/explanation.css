@@ -10,10 +10,11 @@ html { scroll-behavior: smooth; }
 
 @media only screen and (min-width: 600px) {
     :root { --padding: 30vw; }
-    nav { position: fixed; left: 0;}
+    .illustration { max-width: 400px; }
 }
 @media only screen and (max-width: 600px) {
-    :root { --padding: 15vw; }
+    :root { --padding: 13vw; }
+    .illustration { max-width: 90%; }
 }
 @media only print {
     body { font-family: 'Times New Roman', Times, serif; }
@@ -24,9 +25,8 @@ body { margin: 0; font-family: Calibri, Helvetica, Arial, sans-serif; }
 header { background-color: var(--color-5); color: whitesmoke; }
 section { background-color: var(--color-2); color: black; }
 header, footer, body>section { padding: 10px var(--padding); }
+
 a { text-decoration: none; transition: 0.2s; }
 header a { color: var(--color-2); }
 header a:hover { color: var(--color-3); }
-.math { padding: 0; }
-div.math { overflow-y: auto; margin-left: -10vw; margin-right: -10vw; }
-.illustration { max-width: 400px; }
+.katex { overflow-x: auto; overflow-y: hidden; }
