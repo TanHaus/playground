@@ -10,50 +10,85 @@ export class ComplexNumber {
         return ''+this.re+' + '+this.im+'i';
     }
     clone(other) {
-        this.re = other.re;
-        this.im = other.im;
+        if(typeof other=='number') { this.re = other; this.im = 0; }
+        else { this.re = other.re; this.im = other.im; }
         return this;
     }
-    isEqual(other) {
-        if(this.re==other.re && this.im==other.im) return true;
-        return false;
-    }
-    add(other) {
-        return ComplexNumber.ADD(this,other);
-    }
-    multiply(other) {
-        return ComplexNumber.MULTIPLY(this,other);
-    }
-    scale(scalar) {
-        return new ComplexNumber(this.re*scalar,this.im*scalar);
-    }
-    conjugate() {
-        return new ComplexNumber(this.re,-this.im);
-    }
-    inverse() {
-        let mag = this.magnitude();
-        return new ComplexNumber(this.re/mag,-this.im/mag);
-    }
-    magnitude() {
-        return Math.sqrt(this.re*this.re+this.im*this.im);
-    }
-    arg() {
-        return Math.atan2(this.im,this.re);
-    }
+    isEqual(other)  { return ComplexNumber.EQUAL(this,other);    }
+    add(other)      { return ComplexNumber.ADD(this,other);      }
+    multiply(other) { return ComplexNumber.MULTIPLY(this,other); }
+    conjugate()     { return ComplexNumber.CONJUGATE(this);      }
+    inverse()       { return ComplexNumber.INVERSE(this);        }
+    magnitude()     { return ComplexNumber.MAGNITUDE(this);      }
+    arg()           { return ComplexNumber.ARG(this);            }
+    sqrt()          { return ComplexNumber.SQRT(this);           }
+    cbrt()          { return ComplexNumber.CBRT(this);           }
     static CLONE(no) {
+        if(typeof no=='number') return new ComplexNumber(no,0);
         return new ComplexNumber(no.re,no.im);
     }
     static EQUAL(no1,no2) {
-        if(no1.re==no2.re && no1.im==no2.im) return true;
+        if(typeof no1=='number') no1 = {'re':no1,'im':0};
+        if(typeof no2=='number') no2 = {'re':no2,'im':0};
+        if(no1.re==no2.re&&no1.im==no2.im) return true;
         return false
     }
     static ADD(no1,no2) {
-        return new ComplexNumber(no1.re+no2.re,
-                                 no1.im+no2.im);
+        if(typeof no1=='number') no1 = {'re':no1,'im':0};
+        if(typeof no2=='number') no2 = {'re':no2,'im':0};
+        return new ComplexNumber(no1.re+no2.re,no1.im+no2.im);
     }
     static MULTIPLY(no1,no2) {
+        if(typeof no1=='number') no1 = {'re':no1,'im':0};
+        if(typeof no2=='number') no2 = {'re':no2,'im':0};
         return new ComplexNumber(no1.re*no2.re - no1.im*no2.im,
                                  no1.re*no2.im + no1.im*no2.re);
+    }
+    static CONJUGATE(number) {
+        if(typeof number=='number') return new ComplexNumber(number,0);
+        return new ComplexNumber(number.re,-number.im);
+    }
+    static INVERSE(number) {
+        if(typeof number=='number') return new ComplexNumber(1/number,0);
+        let mag = number.magnitude();
+        return new ComplexNumber(number.re/mag,-number.im/mag);
+    }
+    static MAGNITUDE(number) {
+        if(typeof number=='number') return number;
+        return Math.sqrt(number.re*number.re+number.im*number.im);
+    }
+    static ARG(number) {
+        if(typeof number=='number') return Math.atan2(0,number);
+        return Math.atan2(number.im,number.re);
+    }
+    static SQRT(number) {
+        if(typeof number=='number') number = new ComplexNumber(number,0);
+        let mag = Math.sqrt(number.magnitude()),
+            arg = number.arg()/2,
+            num1 = mag*Math.cos(arg),
+            num2 = mag*Math.sin(arg);
+        return [new ComplexNumber(num1,num2), new ComplexNumber(-num1,-num2)];
+    }
+    static CBRT(number) {
+        if(typeof number=='number') number = new ComplexNumber(number,0);
+        let mag = Math.cbrt(number.magnitude()),
+            arg = number.arg()/3;
+        return [new ComplexNumber(mag*Math.cos(arg),mag*Math.sin(arg)),
+                new ComplexNumber(mag*Math.cos(arg+2*Math.PI/3),mag*Math.sin(arg+2*Math.PI/3)),
+                new ComplexNumber(mag*Math.cos(arg-2*Math.PI/3),mag*Math.sin(arg-2*Math.PI/3))];
+    }
+    static EXP(number) {
+        if(typeof number=='number') number = new ComplexNumber(number,0);
+        let mag = Math.exp(number.re),
+            arg = number.im;
+        return new ComplexNumber(mag*Math.cos(arg),mag*Math.sin(arg));
+    }
+    static POW(no1,no2) {
+        if(typeof no1=='number') no1 = new ComplexNumber(no1,0);
+        if(typeof no2=='number') no2 = new ComplexNumber(no2,0);
+        let mag = Math.pow(no1.magnitude(),no2.re)*Math.exp(-no1.arg()*no2.im),
+            arg = no1.arg()*no2.re+Math.log(no1.magnitude())*no2.im;
+        return new ComplexNumber(mag*Math.cos(arg),mag*Math.sin(arg));
     }
 }
 
@@ -67,7 +102,7 @@ export class Polynomial {
             this.coefficient[i] = temp[i];
         }
     }
-    toString() { // for console.log()
+    toString() {
         let result = '';
         if(arguments=='latex') {
             for(let i=this.deg; i>1; i--) {
@@ -138,6 +173,24 @@ export class Polynomial {
         if(n==0) return new Polynomial(coefficient);
         return new Polynomial(coefficient).diff(n);
     }
+    findRoot(x0) {
+        let coeff = this.coefficient;
+        switch(this.deg) {
+        case 0:
+            if(coeff[0]==0) console.warn('Infinite number of roots');
+            else console.warn('No roots');
+            return undefined;
+        case 1:
+            return -coeff[0]/coeff[1];
+        case 2:
+            return Solver.quadraticEqn(coeff[2],coeff[1],coeff[0]);
+        case 3:
+            
+        default:
+            console.warn('Degree is 4 and beyond. Only one root will be returned');
+            return Solver.findRootEqn(function(x) { return this.eval(x); },0,function(x) { return this.diff(1).eval(x); });
+        }
+    }
 }
 
 export class Rational {
@@ -152,8 +205,10 @@ export let Random = {
     generateInt: function(min,max,signed=false) {
         if(min==undefined) min = 1;
         if(max==undefined) max = 100;
-        if(min>max) throw 'Invalid parameters. Min is larger than max';
-
+        if(min>max) {
+            console.warn('Min is larger than max. Their values will be swapped');
+            let temp = min; min = max; max = temp;
+        }
         let value = min+Math.round(Math.random()*(max-min));
         if(min>0) {
             if(signed==false) return value;
@@ -227,7 +282,7 @@ export let Calculus = {
             return func();
         }
     },
-    integrate: function(func,x1,x2,dx) { // Integrate using Simpson's 1/3 rule
+    integrate: function(func,x1,x2,dx) { // method used: Simpson's 1/3 rule
         if(typeof func != 'function') throw '' + func + ' is not a function';
         if(dx==undefined) dx = (x2-x1)*1e-4;
         let result = 0;
@@ -243,7 +298,30 @@ export let Calculus = {
 }
 
 export let Optimization = {
-
+    minima: function(func,x0=0,dfunc,accuracy=1e-15,step=100) {  // method used: linear regression
+        if(dfunc==undefined) dfunc = function(x) { return Calculus.diff(func,x,undefined,1); }
+        let count = 0,
+            previous = x0+1;
+        while(Math.abs(x0-previous)>accuracy&&count<1e4) {
+            previous = x0;
+            x0 -= dfunc(x0)/step;
+            count++;
+        }
+        if(count==1e4-1) console.warn('Iteration limit is reached. Minima may not be ideal');
+        return x0;
+    },
+    maxima: function(func,x0=0,dfunc,accuracy=1e-15,step=100) {  // method used: linear regression
+        if(dfunc==undefined) dfunc = function(x) { return Calculus.diff(func,x,undefined,1); }
+        let count = 0,
+            previous = x0+1;
+        while(Math.abs(x0-previous)>accuracy&&count<1e4) {
+            previous = x0;
+            x0 += dfunc(x0)/step;
+            count++;
+        }
+        if(count==1e4-1) console.warn('Iteration limit is reached. Maxima may not be ideal');
+        return x0;
+    }
 }
 
 export let Matrix = {
@@ -377,19 +455,42 @@ export let Solver = {
         let c = matrix[1][0]; let d = matrix[1][1]; let n = matrix[1][2];
 
         if(a*d==b*c) {
-            if(a*n==c*m) throw 'Infinite number of solutions';
-            else throw 'No solution found';
+            if(a*n==c*m) console.warn('Infinite number of solutions');
+            else console.warn('No solution found');
+            return undefined;
         } else return {
             x: (m*d-n*b)/(a*d-b*c),
             y: (m*c-n*a)/(b*c-a*d),
         }
     },
-    simultaneousEqn: function(matrix) {
+    simultaneousEqn: function(matrix) {  // method used: Gaussian elimination
         if(matrix[0].length!=matrix.length+1) throw 'Augmented matrix has wrong dimension. It must be in n x (n+1)';
         let temp = Matrix.reducedEchelonForm(matrix);
         let result = [];
         for(let i=0;i<temp.length;i++) result.push(temp[i][temp[i].length-1]);
         return result;
+    },
+    findRootEqn: function(func,x0=0,dfunc,accuracy=1e-15) {  // method used: Newton's method
+        if(dfunc==undefined) dfunc = function(x) { return Calculus.diff(func,x,undefined,1); };
+        let count = 0;
+        while(Math.abs(func(x0))>accuracy&&count<1e4) {
+            x0 -= func(x0)/dfunc(x0);
+            count++;
+        }
+        if(Math.abs(func(x0)>1)) {
+            console.warn('No solution found');
+            return undefined;
+        }
+        return x0;
+    },
+    quadraticEqn: function(a,b,c) {
+        let determinant = b*b-4*a*c;
+        if(determinant<0) { console.warn('No real roots'); return undefined; }
+        else if(determinant==0) { return [(-b/2/coeff[2])]; }
+        else return [-b+Math.sqrt(determinant)/2/a,-b-Math.sqrt(determinant)/2/a];
+    },
+    cubicEqn: function(a,b,c,d) {
+
     }
 }
 
@@ -563,6 +664,41 @@ export let Statistics = {
             ySum += list2[i];
         }
         return (xySum-xSum*ySum/length)/length;
+    },
+    regression: {
+        linear: function(listX,listY) {
+            if(listX.length!=listY.length) throw 'Two data sets must have the same length';
+            let sumX = 0,
+                sumY = 0,
+                sumX2 = 0,
+                sumY2 = 0,
+                sumXY = 0;
+            for(let i=0;i<listX.length;i++) {
+                sumX += listX[i];
+                sumY += listY[i];
+                sumX2 += listX[i]*listX[i];
+                sumY2 += listY[i]*listY[i];
+                sumXY += listX[i]*listY[i];
+            }
+            let denominator = sumX*sumX - listX.length*sumX2,
+                numerator = sumX*sumY-sumXY*listX.length,
+                A = (sumX*sumY-sumXY*listX.length)/denominator,
+                B = (sumXY*sumX-sumX2*sumY)/denominator,
+                R = -numerator/Math.sqrt(listX.length*sumX2-sumX*sumX)/Math.sqrt(listX.length*sumY2-sumY*sumY),
+                R2 = R*R;
+            return {'a': A, 'b': B, 'r2': R2, 'r': R};
+        },
+        exponential: function(listX,listY) {
+            if(listX.length!=listY.length) throw 'Two data sets must have the same length';
+            let listYnew = [];
+            for(let i=0;i<listY.length;i++) {
+                listYnew.push(Math.log(listY[i]));
+            }
+            let raw = Statistics.regression.linear(listX,listYnew),
+                A = Math.exp(raw.b),
+                B = Math.exp(raw.a);
+            return {'a': A, 'b': B, 'r2': raw.r2, 'r': raw.r};
+        }
     }
 }
 
@@ -599,17 +735,17 @@ export let Signal = (function() {
     * Give exact values for some cases. Else use formula to generate
     * nRootUnity[x][y] is the first xth root of unity power to y
     * NOTE: there will be holes in the array nRootUnity
-    *
     */
-    let nRootUnity = [],
-        base = 1;
-    for(let i=1;i<13;i++) {  // 2 → 4096
-        base *= 2;
-        nRootUnity[base] = [];
-        nRootUnity[base][0] = new ComplexNumber(1,0);
-        for(let j=1;j<base;j++) nRootUnity[base][j] = new ComplexNumber(Math.cos(2*Math.PI*j/base),Math.sin(-2*Math.PI*j/base));
+    let nRootUnity = [];
+    {
+        let base = 1;
+        for(let i=1;i<13;i++) {  // 2 → 4096
+            base *= 2;
+            nRootUnity[base] = [];
+            nRootUnity[base][0] = new ComplexNumber(1,0);
+            for(let j=1;j<base;j++) nRootUnity[base][j] = new ComplexNumber(Math.cos(2*Math.PI*j/base),Math.sin(-2*Math.PI*j/base));
+        }
     }
-    base = undefined;  // remove value of base in case of conflict
 
     let pub = {};
     
