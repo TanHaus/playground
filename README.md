@@ -58,7 +58,7 @@ Instructions on how to use the web-apps are available on the web interface.
 
 To learn about my `math.js`, please go to the [Wiki](https://github.com/gau-nernst/web-apps/wiki/math.js) section (WIP).
 
-You can try out `math.js` in this hidden Test page [here](https://gau-nernst.github.io/web-apps/test/). The whole module is imported as a namespace, and then linked as a property named `math` of the `window` object. To use it, simply open the Console in your browser of choice and call the `math` object.
+You can try out `math.js` in the hidden Test page [here](https://gau-nernst.github.io/web-apps/test/) (https://gau-nernst.github.io/web-apps/test/). The whole module is imported as a namespace, and then linked as a property named `math` of the `window` object. To use it, simply open the Console in your browser of choice and call the `math` object.
 
 ```javascript
 math.Solver.cubicEqn(1,5,4,3);
