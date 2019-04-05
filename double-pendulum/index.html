@@ -37,10 +37,18 @@
         <button onclick="togglePath()">Toggle path</button>
         <br>
 
-        <button onclick="speedUp(1)">Normal speed 1x</button>
-        <button onclick="speedUp(2)">Speed up 2x</button>
-        <button onclick="speedUp(4)">Speed up 4x</button>
-        <button onclick="speedUp(8)">Speed up 8x</button>
+        Speed: <select oninput="update('speed',this.value)">
+        <option value=1>1x</option>
+        <option value=2>2x</option>
+        <option value=4>4x</option>
+        <option value=8>8x</option>
+        </select>
+        <br>
+
+        Select ODE solver: <select oninput="update('mode',this.value)">
+        <option value='Euler'>Euler</option>
+        <option value='RK4'>RK4</option>
+        </select>
     </section>
     <section>
         <h2>Instruction</h2>
@@ -55,7 +63,7 @@
         <p>This double pendulum system is the solution to the following system of differential equations: (NOTE: masses of the two masses are the same, length of the two rods are the same)</p>
         $$2\ddot{\theta}_1 + \cos(\theta_1-\theta_2) \ddot{\theta}_2 = - \dot{\theta}_2^2\sin(\theta_1-\theta_2) - 2\frac{g}{l}\sin\theta_1$$
         $$\ddot{\theta}_2 + \cos(\theta_1-\theta_2) \ddot{\theta}_1  = \dot{\theta}_1^2\sin(\theta_1-\theta_2) - \frac{g}{l}\sin\theta_2$$
-        <p>Currently I use Euler method to solve for the numerical solution. I plan to implement the Runge–Kutta method in a future date.</p>
+        <p>Currently I have implemented both the Euler method and RK4 method to solve for the numerical solution to this differential equation.</p>
     </section>
 
 </body>

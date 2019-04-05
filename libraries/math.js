@@ -30,7 +30,7 @@ export class ComplexNumber {
     static EQUAL(no1,no2) {
         if(typeof no1=='number') no1 = {'re':no1,'im':0};
         if(typeof no2=='number') no2 = {'re':no2,'im':0};
-        if(no1.re==no2.re&&no1.im==no2.im) return true;
+        if(Math.abs(no1.re-no2.re)<no1.re*1e-12&&Math.abs(no1.im-no2.im)<no1.im*1e-12) return true;
         return false
     }
     static ADD(no1,no2) {
@@ -200,31 +200,26 @@ export class Rational {
     }
 }
 
-// Begin of modules
+// Begin of functions
 export let Random = {
-    generateInt: function(min,max,signed=false) {
-        if(min==undefined) min = 1;
-        if(max==undefined) max = 100;
+    integer: function(min=1,max=100,signed=false) {
         if(min>max) {
             console.warn('Min is larger than max. Their values will be swapped');
             let temp = min; min = max; max = temp;
         }
-        let value = min+Math.round(Math.random()*(max-min));
+        let value = min+Math.floor(Math.random()*(max-min+1));
         if(min>0) {
             if(signed==false) return value;
-            if(Math.random()>0.5) return value;
+            if(Math.random()>=0.5) return value;
             return -value;
         } else return value;
     },
-    generateColor: function(colors) {
-        if(colors==undefined) colors = ['red', 'green', 'blue'];
-        return colors[Random.generateInt(0,colors.length-1)];
+    pickFromArray: function(members) {
+        return members[Random.integer(0,members.length-1)];
     },
-    normal: function(mean,sd) {
+    normal: function(mean=0,sd=1) {  // Box-Muller transform
         let u=Math.random(),
             v=Math.random();
-        if(mean==undefined) mean=0;
-        if(sd==undefined) sd=1;
         return Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*v)*sd+mean;
     },
     colorGradientArray(color1,color2,size) {
@@ -298,25 +293,25 @@ export let Calculus = {
 }
 
 export let Optimization = {
-    minima: function(func,x0=0,dfunc,accuracy=1e-15,step=100) {  // method used: linear regression
+    minima: function(func,x0=0,dfunc,accuracy=1e-15,step=0.01) {  // method used: linear regression
         if(dfunc==undefined) dfunc = function(x) { return Calculus.diff(func,x,undefined,1); }
         let count = 0,
             previous = x0+1;
         while(Math.abs(x0-previous)>accuracy&&count<1e4) {
             previous = x0;
-            x0 -= dfunc(x0)/step;
+            x0 -= dfunc(x0)*0.01;
             count++;
         }
         if(count==1e4-1) console.warn('Iteration limit is reached. Minima may not be ideal');
         return x0;
     },
-    maxima: function(func,x0=0,dfunc,accuracy=1e-15,step=100) {  // method used: linear regression
+    maxima: function(func,x0=0,dfunc,accuracy=1e-15,step=0.01) {  // method used: linear regression
         if(dfunc==undefined) dfunc = function(x) { return Calculus.diff(func,x,undefined,1); }
         let count = 0,
             previous = x0+1;
         while(Math.abs(x0-previous)>accuracy&&count<1e4) {
             previous = x0;
-            x0 += dfunc(x0)/step;
+            x0 += dfunc(x0)*step;
             count++;
         }
         if(count==1e4-1) console.warn('Iteration limit is reached. Maxima may not be ideal');
@@ -483,14 +478,29 @@ export let Solver = {
         }
         return x0;
     },
-    quadraticEqn: function(a,b,c) {
+    quadraticEqn: function(a,b,c,complex=false) {
+        if(complex==true) {
+            let sqrtD = ComplexNumber.SQRT(b*b-4*a*c);
+            return [sqrtD[0].add(-b).multiply(1/2/a),sqrtD[1].add(-b).multiply(1/2/a)];
+        }
         let determinant = b*b-4*a*c;
         if(determinant<0) { console.warn('No real roots'); return undefined; }
         else if(determinant==0) { return [(-b/2/coeff[2])]; }
         else return [-b+Math.sqrt(determinant)/2/a,-b-Math.sqrt(determinant)/2/a];
     },
-    cubicEqn: function(a,b,c,d) {
-
+    cubicEqn: function(a,b,c,d,complex=false) {
+        let p = c/a-b*b/3/a/a,
+            q = d/a+2/27*b*b*b/a/a/a-b*c/3/a,
+            sqrtD = ComplexNumber.SQRT(q*q+4*p*p*p/27),
+            u1 = ComplexNumber.CBRT(sqrtD[0].add(-q).multiply(0.5)),
+            u2 = ComplexNumber.CBRT(sqrtD[1].add(-q).multiply(0.5)),
+            result = [];
+        if(complex==true) for(let i=0;i<3;i++) result.push(u1[i].add(u2[i]).add(-b/3/a));
+        else for(let i=0;i<3;i++) {
+            let number = u1[i].add(u2[i]).add(-b/3/a);
+            if(Math.abs(number.im)<a*1e-12) result.push(number.re); 
+        }
+        return result;
     }
 }
 

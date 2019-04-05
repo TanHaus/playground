@@ -227,14 +227,14 @@ class Game {
         let density = 1;
     
         for (let i = 0; i < nb; i++) {
-            let preRadius = Random.generateInt(minRadius,maxRadius);
+            let preRadius = Random.integer(minRadius,maxRadius);
             
-            ballResult.push(new Ball(Random.generateInt(preRadius,w-preRadius),
-                                     Random.generateInt(preRadius,h-preRadius),
+            ballResult.push(new Ball(Random.integer(preRadius,w-preRadius),
+                                     Random.integer(preRadius,h-preRadius),
                                      preRadius,
-                                     Random.generateColor(),
-                                     Random.generateInt(minSpeedMagnitude, maxSpeedMagnitude, true),
-                                     Random.generateInt(minSpeedMagnitude, maxSpeedMagnitude, true),
+                                     Random.pickFromArray(['red','green','blue']),
+                                     Random.integer(minSpeedMagnitude, maxSpeedMagnitude, true),
+                                     Random.integer(minSpeedMagnitude, maxSpeedMagnitude, true),
                                      density*preRadius*preRadius));
             
             // check if the new ball overlapse any other balls

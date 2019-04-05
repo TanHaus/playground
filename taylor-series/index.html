@@ -11,5 +11,14 @@
 </head>
 <body>
     <canvas id="myCanvas"></canvas>
+    <header>
+        <h1>Taylor series</h1>
+    </header>
+    <section>
+        <h2>Control</h2>
+        Degree: <input type="number" min=0 max=6 step=1 value=6 oninput="update('degree',this.value)"><br>
+        Evaluate at: <input type="range" min=-6 max=6 step=0.01 value=0 oninput="update('x0',this.value)"><br>
+        Function: <input type="text" oninput="update('func',this.value)"><br>
+    </section>
 </body>
 </html>

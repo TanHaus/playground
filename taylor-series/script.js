@@ -6,9 +6,10 @@ const DPIscale = window.devicePixelRatio;
 
 let w = canvas.clientWidth*DPIscale,
     h = canvas.clientHeight*DPIscale,
-    xRange = [-6,6],
-    yRange = [-2,2],
-    taylor;
+    xRange = [-6,6], yRange = [-2,2],
+    taylor, degree = 2,
+    x0 = 0, func = Math.exp;
+
 canvas.width = w;
 canvas.height = h;
 
@@ -31,20 +32,31 @@ let makeTaylor = function(Fn,x,n) {
     }
     taylor = new Polynomial(coefficient);
 }
-let x0 = 1;
-let func = Math.sqrt;
-makeTaylor(func,x0,7);
 
 let draw = function() {
     ctx.clearRect(0,0,w,h);
+    makeTaylor(func,x0,degree);
     Graph.drawAxis(xRange,yRange,canvas);
     Graph.plotFn(function(x) { return taylor.eval(x-x0); },xRange,yRange,undefined,canvas,'blue');
     Graph.plotFn(func,xRange,yRange,undefined,canvas,'green');
 }
-draw();
 
 window.update = function(type,value) {
     switch(type) {
-        case 1:
+        case 'degree':
+        if(parseInt(value)>6) value='6';
+        else if(parseInt(value)<0) value='0';
+        degree = parseInt(value);
+        break;
+        case 'x0':
+        x0 = parseFloat(value);
+        break;
+        case 'func':
+        func = new Function('x','return '+value+';');
+        break;
     }
+    draw();
 }
+// Main program
+draw();
+

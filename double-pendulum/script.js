@@ -1,11 +1,13 @@
-import { Compute,Random } from '../libraries/math.js';
+import { Compute,Random,Vector } from '../libraries/math.js';
 
-const GRAVITY = 9.81;
-const speed = 5;
-const canvas = document.querySelector('#myCanvas');
-const ctx = canvas.getContext('2d');
-const DPIscale = window.devicePixelRatio;
-let requestID = 0;
+const GRAVITY = 9.81,
+      canvas = document.querySelector('#myCanvas'),
+      ctx = canvas.getContext('2d'),
+      DPIscale = window.devicePixelRatio,
+      step = 1/60; // 60fps
+
+let requestID = 0,
+    mode = 'Euler';
 let w = canvas.clientWidth*DPIscale,
     h = canvas.clientHeight*DPIscale,
     offsetX = w/2,
@@ -36,21 +38,58 @@ let colors,
 
 class DoublePendulum {
     constructor(theta1,theta2,length,radius,color='black') {
-        this.theta1 = theta1; this.omega1 = 0; this.alpha1 = 0;
-        this.theta2 = theta2; this.omega2 = 0; this.alpha2 = 0;
+        this.theta1 = theta1; this.omega1 = 0;
+        this.theta2 = theta2; this.omega2 = 0;
         this.length = length; this.radius = radius; this.color = color;
     }
-    update() {
-        let sin1 = Math.sin(this.theta1), sin2 = Math.sin(this.theta2),
-            cos1 = Math.cos(this.theta1), cos2 = Math.cos(this.theta2),
-            A = Math.cos(this.theta1-this.theta2),
-            B = Math.sin(this.theta1-this.theta2),
-            angular = -GRAVITY/this.length, divide = 2-A*A;
-        
-        this.alpha1 = (angular*(2*sin1-A*sin2)-B*(this.omega2*this.omega2+A*this.omega1*this.omega1))/divide;
-        this.alpha2 = (angular*2*(A*sin1-sin2)-B*(A*this.omega2*this.omega2+2*this.omega1*this.omega1))/-divide;
-        this.omega1 += this.alpha1/60*speed; this.theta1 += this.omega1/60*speed;
-        this.omega2 += this.alpha2/60*speed; this.theta2 += this.omega2/60*speed;
+    update(type) {
+        let L = this.length;
+        let alpha = function(omega,theta) {
+            let omega1 = omega[0], omega2 = omega[1],
+                theta1 = theta[0], theta2 = theta[1];
+            let sin1 = Math.sin(theta1), sin2 = Math.sin(theta2),
+                sin12 = Math.sin(theta1-theta2), cos12 = Math.cos(theta1-theta2),
+                gl = GRAVITY/L, denominator = 2-sin12*sin12;
+            let alpha1 = (gl*(cos12*sin2-2*sin1)-sin12*(omega2*omega2+cos12*omega1*omega1))/denominator,
+                alpha2 = (-2*gl*(sin2-sin1)+sin12*(2*omega1*omega1+cos12*omega2*omega2))/denominator;
+            return [alpha1,alpha2];
+        }
+        if(type=='RK4') {
+        // RK4
+        let v0 = [this.omega1,this.omega2],
+            x0 = [this.theta1,this.theta2],
+            
+            dvh1 = Vector.scale(alpha(v0,x0),step),
+            dxh1 = Vector.scale(v0,step),
+            vh1 = Vector.add(v0,Vector.scale(dvh1,0.5)),
+            xh1 = Vector.add(x0,Vector.scale(dxh1,0.5)),
+
+            dvh2 = Vector.scale(alpha(vh1,xh1),step),
+            dxh2 = Vector.scale(vh1,step),
+            vh2 = Vector.add(v0,Vector.scale(dvh2,0.5)),
+            xh2 = Vector.add(x0,Vector.scale(dxh2,0.5)),
+            
+            dvh3 = Vector.scale(alpha(vh2,xh2),step),
+            dxh3 = Vector.scale(vh2,step),
+            vh3 = Vector.add(v0,Vector.scale(dxh3,0.5)),
+            xh3 = Vector.add(x0,Vector.scale(dxh2,0.5)),
+
+            dvh4 = Vector.scale(alpha(vh3,xh3),step),
+            dxh4 = Vector.scale(vh3,step);
+
+        this.omega1 += (dvh1[0]+2*dvh2[0]+2*dvh3[0]+dvh4[0])/6;
+        this.omega2 += (dvh1[1]+2*dvh2[1]+2*dvh3[1]+dvh4[1])/6;
+        this.theta1 += (dxh1[0]+2*dxh2[0]+2*dxh3[0]+dxh4[0])/6;
+        this.theta2 += (dxh1[1]+2*dxh2[1]+2*dxh3[1]+dxh4[1])/6;
+        } else if(type=='Euler') {
+        // Euler
+        let v0 = [this.omega1,this.omega2],
+            x0 = [this.theta1,this.theta2],
+            a = alpha(v0,x0);
+        this.omega1 += a[0]*step; this.theta1 += this.omega1*step;
+        this.omega2 += a[1]*step; this.theta2 += this.omega2*step;
+        }
+
     }
     draw() {
         let position = toPosition(this);
@@ -117,7 +156,7 @@ function drawSnaps(snaps) {
 function mainLoop() {
     ctx.clearRect(0,0,w,h);
     for(let i=0;i<pens.length;i++) {
-        for(let j=0;j<runSpeed;j++) pens[i].update();
+        for(let j=0;j<runSpeed;j++) pens[i].update(mode);
         pens[i].draw();
     }
     pens[0].takeSnap();
@@ -128,7 +167,7 @@ function mainLoop() {
 function mainLoop2() {
     ctx.clearRect(0,0,w,h);
     for(let i=0;i<pens.length;i++) {
-        for(let j=0;j<runSpeed;j++) pens[i].update();
+        for(let j=0;j<runSpeed;j++) pens[i].update(mode);
         pens[i].draw2();
     }
     pens[0].takeSnap();
@@ -149,13 +188,8 @@ window.generateStart = function(n) {
     cancelAnimationFrame(requestID);
     snaps = []; pens = [];
     colors = Random.colorGradientArray(color1,color2,n);
-    //for(let i=0;i<n;i++) pens.push(new DoublePendulum(Compute.degToRad(80+i),Compute.degToRad(310+i),length,radius,colors[i]));
     for(let i=0;i<n;i++) pens.push(new DoublePendulum(Compute.degToRad(initTheta1+i),Compute.degToRad(initTheta2+i),length,radius,colors[i]));
     mainLoop();
-}
-
-window.speedUp = function(value) {
-    runSpeed = value;
 }
 
 window.update = function(type,value) {
@@ -165,6 +199,12 @@ window.update = function(type,value) {
             break;
         case "theta2":
             initTheta2 = parseFloat(value);
+            break;
+        case "mode":
+            mode = value;
+            break;
+        case "speed":
+            runSpeed = parseInt(value);
             break;
     }
 }
