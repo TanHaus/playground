@@ -1,11 +1,11 @@
 import { Signal, Graph, Polynomial } from '../libraries/math.js';
 
-const canvas = document.querySelector('#myCanvas');
-const ctx = canvas.getContext('2d');
-const DPIscale = window.devicePixelRatio;
+const canvas = document.querySelector('#myCanvas'),
+      ctx = canvas.getContext('2d'),
+      DPIscale = window.devicePixelRatio;
 
-let w = canvas.clientWidth*DPIscale;
-let h = canvas.clientHeight*DPIscale;
+let w = canvas.clientWidth*DPIscale,
+    h = canvas.clientHeight*DPIscale;
 canvas.height = h; canvas.width = w;
 window.onresize = function() {
     w = canvas.clientWidth*DPIscale;

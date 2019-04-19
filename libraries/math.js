@@ -198,6 +198,14 @@ export class Rational {
         this.num = new Polynomial(numerator);
         this.den = new Polynomial(denominator);
     }
+    eval(x) {
+        let den = this.den.eval(x);
+        if(Math.abs(den)>1e-30) return this.num.eval(x)/den;
+        return undefined;
+    }
+    toString() {
+        return '('+this.num.toString()+')/('+this.den.toString()+')';
+    }
 }
 
 // Begin of functions
@@ -251,19 +259,17 @@ export let Calculus = {
             else dx=1e-2;
         }
         if(n==undefined) n=1;
-        if(n==0) return func(x);
-        if(n==1) return (-func(x+2*dx)+8*func(x+dx)-8*func(x-dx)+func(x-2*dx))/(12*dx);
-        if(n==2) return (-func(x+2*dx)+16*func(x+dx)-30*func(x)+16*func(x-dx)-func(x-2*dx))/(12*Math.pow(dx,2));
-
-        if(n==3) return (-func(x+3*dx)+8*func(x+2*dx)-13*func(x+dx)+13*func(x-dx)-8*func(x-2*dx)+func(x-3*dx))/(8*Math.pow(dx,3));
-        if(n==4) return (-func(x+3*dx)+12*func(x+2*dx)-39*func(x+dx)+ 56*func(x)-39*func(x-dx)+12*func(x-2*dx)-func(x-3*dx))/(6*Math.pow(dx,4));
-
-        if(n==5) return (-func(x+4*dx)+9*func(x+3*dx)-26*func(x+2*dx)+29*func(x+dx)-29*func(x-dx)+26*func(x-2*dx)-9*func(x-3*dx)+func(x-4*dx))/(6*Math.pow(dx,5));
-        if(n==6) return (-func(x+4*dx)+12*func(x+3*dx)-52*func(x+2*dx)+116*func(x+dx)-150*func(x)+116*func(x-dx)-52*func(x-2*dx)+12*func(x-3*dx)-func(x-4*dx))/(4*Math.pow(dx,6));
-
-        while(n>6) {
-            console.warn('Numerical differentiation of order higher than 6 is not accurate');
-            return Calculus.diff(function(y) { return Calculus.diff(func,y,dx,n-6); },x,dx,6);
+        switch(n) {
+            case 0: return func(x);
+            case 1: return (-func(x+2*dx)+8*func(x+dx)-8*func(x-dx)+func(x-2*dx))/(12*dx);
+            case 2: return (-func(x+2*dx)+16*func(x+dx)-30*func(x)+16*func(x-dx)-func(x-2*dx))/(12*Math.pow(dx,2));
+            case 3: return (-func(x+3*dx)+8*func(x+2*dx)-13*func(x+dx)+13*func(x-dx)-8*func(x-2*dx)+func(x-3*dx))/(8*Math.pow(dx,3));
+            case 4: return (-func(x+3*dx)+12*func(x+2*dx)-39*func(x+dx)+ 56*func(x)-39*func(x-dx)+12*func(x-2*dx)-func(x-3*dx))/(6*Math.pow(dx,4));
+            case 5: return (-func(x+4*dx)+9*func(x+3*dx)-26*func(x+2*dx)+29*func(x+dx)-29*func(x-dx)+26*func(x-2*dx)-9*func(x-3*dx)+func(x-4*dx))/(6*Math.pow(dx,5));
+            case 6: return (-func(x+4*dx)+12*func(x+3*dx)-52*func(x+2*dx)+116*func(x+dx)-150*func(x)+116*func(x-dx)-52*func(x-2*dx)+12*func(x-3*dx)-func(x-4*dx))/(4*Math.pow(dx,6));
+            default:
+              console.warn('Numerical differentiation of order higher than 6 is not accurate');
+              return Calculus.diff(function(y) { return Calculus.diff(func,y,dx,n-6); },x,dx,6);
         }
     },
     pdiff: function(func,numArgs,index,values) {
@@ -501,6 +507,19 @@ export let Solver = {
             if(Math.abs(number.im)<a*1e-12) result.push(number.re); 
         }
         return result;
+    },
+    ODE: function(mode='Euler',func,x0,step=1/60) {
+        if(mode='Euler') {
+            return x0+h*func(x0);
+        }
+        if(mode='RK4') {
+            let k1 = h*func(x0),
+                k2 = h*func(x0+k1/2),
+                k3 = h*func(x0+k2/2),
+                k4 = h*func(x0+k3);
+            return x0+(k1+k2*2+k3*2+k4)/6;
+        }
+        return undefined;
     }
 }
 
@@ -863,13 +882,14 @@ export let Signal = (function() {
         }
         
         if(realSignal.length==2 && fftSize==2) return FFT2(parseReal(realSignal));
-        
         if(realSignal.length==fftSize) return FFT(parseReal(realSignal));
-        
         return FFT(parseReal(zeroPadding(realSignal,fftSize)));
     };
     
-    pub.ifft = function(freqSignal) {
+    pub.ifft = function(freqSignal,fftSize) {
+        let result = pub.fft(freqSignal,fftSize);
+        for(let i=0;i<freqSignal.length;i++) result[i] = result[i].multiply(1/fftSize);
+        return result;
     };
     
     pub.get = {
@@ -879,9 +899,7 @@ export let Signal = (function() {
              * RETURN: a number array of real components
              */
             let result = [];
-            for(let i=0;i<signal.length;i++) {
-                result[i] = signal[i].re;
-            }
+            for(let i=0;i<signal.length;i++) result[i] = signal[i].re;
             return result;
         },
         ImArray: function(signal) {
@@ -890,9 +908,7 @@ export let Signal = (function() {
              * RETURN: a number array of imaginary components
              */
             let result = [];
-            for(let i=0;i<signal.length;i++) {
-                result[i] = signal[i].im;
-            }
+            for(let i=0;i<signal.length;i++) result[i] = signal[i].im;
             return result;
         },
         MagnitudeArray: function(signal) {
@@ -901,9 +917,7 @@ export let Signal = (function() {
              * RETURN: a number array of magnitudes
              */
             let result = [];
-            for(let i=0;i<signal.length;i++) {
-                result[i] = Math.sqrt(signal[i].re*signal[i].re + signal[i].im*signal[i].im);
-            }
+            for(let i=0;i<signal.length;i++) result[i] = Math.sqrt(signal[i].re*signal[i].re + signal[i].im*signal[i].im);
             return result;
         },
         getPhaseArray: function(signal) {
@@ -912,9 +926,7 @@ export let Signal = (function() {
              * RETURN: a number array of phases in radian
              */
             let result = [];
-            for(let i=0;i<signal.length;i++) {
-                result[i] = Math.atan2(signal[i].im,signal[i].re);
-            }
+            for(let i=0;i<signal.length;i++) result[i] = Math.atan2(signal[i].im,signal[i].re);
             return result;
        },  
     };
@@ -922,9 +934,7 @@ export let Signal = (function() {
         if(typeof Fn != 'function') throw '' + Fn + ' is not a function';
 
         let result = [];
-        for(let i=0;i<xSeq.length;i++) {
-            result[i] = Fn(xSeq[i]);
-        }
+        for(let i=0;i<xSeq.length;i++) result[i] = Fn(xSeq[i]);
         return result;
     };
     pub.generatexSeq = function(xRange,step) {

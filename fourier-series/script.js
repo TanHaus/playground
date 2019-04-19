@@ -1,13 +1,14 @@
-import { Graph } from '../libraries/math.js';
+import { Graph, Signal } from '../libraries/math.js';
 
-const canvas = document.querySelector('#myCanvas');
-const ctx = canvas.getContext('2d');
-const DPIscale = window.devicePixelRatio;
+const canvas = document.querySelector('#myCanvas'),
+      ctx = canvas.getContext('2d'),
+      DPIscale = window.devicePixelRatio;
 
 let w = canvas.clientWidth*DPIscale,
     h = canvas.clientHeight*DPIscale,
     xRange = [0,100],
-    yRange = [-100,100];
+    yRange = [-50,50],
+    period = 2*Math.PI;
 canvas.width = w;
 canvas.height = h;
 
@@ -21,11 +22,19 @@ window.onresize = function() {
 let wave = function(A,omega,phi,x) {
     return A*Math.cos(omega*x + phi);
 }
+let fftSize = 256;
+let xSignal = Signal.generatexSeq(xRange,100/fftSize),
+    ySignal = Signal.generateFn(Math.sin,xSignal),
+    fSignal = Signal.get.MagnitudeArray(Signal.fft(ySignal,fftSize)),
+    f2Signal = Signal.get.MagnitudeArray(Signal.ifft(fSignal,fftSize));
 
+console.log(xSignal,ySignal,fSignal,f2Signal);
 let draw = function() {
     ctx.clearRect(0,0,w,h);
     Graph.drawAxis(xRange,yRange,canvas);
-    Graph.plotFn(function(x) { return wave(50,2,0,x)+wave(20,1.4,0,x); },xRange,yRange,undefined,canvas,'blue');
+    Graph.plot(xSignal,ySignal,xRange,yRange,canvas,'red');
+    Graph.plot(xSignal,fSignal,xRange,yRange,canvas,'green');
+    Graph.plot(xSignal,f2Signal,xRange,yRange,canvas,'blue');
 }
 draw();
 
