@@ -14,16 +14,14 @@ const showomega0 = document.querySelector('#omega0'),
       showDelta = document.querySelector('#delta');
 
 canvasPen.style = 'position: absolute; left: 0; top:0; z-index: 0;';
-canvas.width = w;
-canvas.height = h;
-canvasPen.width = w;
-canvasPen.height = h;
 
 window.onresize = function() {
   w = canvas.clientWidth*DPIscale;
   h = canvas.clientHeight*DPIscale;
   canvas.width = w;
   canvas.height = h;
+  canvasPen.style.width = canvas.clientWidth;
+  canvasPen.style.height = canvas.clientHeight;
   canvasPen.width = w;
   canvasPen.height = h;
   pendulum.resize();
@@ -57,7 +55,6 @@ function draw() {
         transX0 = C*Math.cos(phase),
         transY0 = -omega*C*Math.sin(phase);
 
-    console.log('C = ' + C);
     if(delta==0) {
         let A = x0-transX0,
             B = v0+gamma/2*x0-transY0;
@@ -66,7 +63,6 @@ function draw() {
                    (A+B*t)*Math.exp(-gamma*t/2);
         });
         envelope = Object.assign(function(t) { return undefined; });
-        console.log('delta = 0');
     } else if(delta>0) {
         let f = Math.sqrt(delta)/2,
             A = ((x0-transX0)*(f+gamma/2)+v0-transY0)/(2*f),
@@ -76,7 +72,6 @@ function draw() {
                    (A*Math.exp(f*t)+B*Math.exp(-f*t))*Math.exp(-gamma*t/2);
         });
         envelope = Object.assign(function(t) { return undefined; });
-        console.log('delta > 0');
     } else if(delta<0) {
         let f = Math.sqrt(-delta)/2,
             A = x0-transX0,
@@ -86,11 +81,26 @@ function draw() {
                    (A*Math.cos(f*t)-B*Math.sin(f*t))*Math.exp(-gamma*t/2);
         });
         envelope = Object.assign(function(t) { return Math.sqrt(A*A+B*B)*Math.exp(-gamma*t/2); });
-        console.log('delta < 0');
     }
     
     Graph.plotFn(solution,xRange,yRange,0.01,canvas); 
     Graph.plotFn(envelope,xRange,yRange,0.01,canvas,'red');
+}
+function draw2() {
+    let x = [x0,],
+        v = [v0,],
+        time = [0,];
+    let index = 0,
+        t = 0;
+    while(t<xRange[1]) {
+        let a = -omega0*omega0*x[index]-gamma*v[index]+force0*Math.cos(omega*time[index]);
+        v.push(v[index]+a*0.01);
+        x.push(x[index]+v[index+1]*0.01);
+        time.push(time[index]+0.01);
+        index++;
+        t+=0.01;
+    }
+    Graph.plot(time,x,xRange,yRange,canvas,'green');
 }
 
 window.updateValue = function(value,what) {
@@ -109,7 +119,6 @@ window.updateValue = function(value,what) {
           break;
         case 'exactSol':
           exactSol=value;
-          console.log(value);
           break;
         case 'estimatedSol':
           estimatedSol=value;
@@ -117,27 +126,10 @@ window.updateValue = function(value,what) {
     }
     pendulum.reset();
     show();
-    console.log(exactSol);
     ctx.clearRect(0,0,w,h);
     Graph.drawAxis(xRange,yRange,canvas);
     if(exactSol) draw();
     if(estimatedSol) draw2();
-}
-function draw2() {
-    let x = [x0,],
-        v = [v0,],
-        time = [0,];
-    let index = 0,
-        t = 0;
-    while(t<xRange[1]) {
-        let a = -omega0*omega0*x[index]-gamma*v[index]+force0*Math.cos(omega*time[index]);
-        v.push(v[index]+a*0.01);
-        x.push(x[index]+v[index+1]*0.01);
-        time.push(time[index]+0.01);
-        index++;
-        t+=0.01;
-    }
-    Graph.plot(time,x,xRange,yRange,canvas,'green');
 }
 function show() {
     showomega0.textContent = omega0;
@@ -194,6 +186,7 @@ function mainloop() {
 }
 
 // main program
+window.onresize();
 show();
 ctx.clearRect(0,0,w,h);
 Graph.drawAxis(xRange,yRange,canvas);
@@ -201,3 +194,5 @@ draw();
 draw2();
 
 mainloop();
+
+window.pendulum = pendulum;

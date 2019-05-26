@@ -17,7 +17,12 @@
     <script type="module" src="script.js" defer></script>
 </head>
 <body>
-    <canvas id="myCanvas"></canvas>
+    <div id="flex-container">
+    <canvas id="myCanvas" class="flex"></canvas>
+    <div class="flex">
+    <header>
+        <h1>Graphing</h1>
+    </header>
     <section id="mainControl">
         Choose the type of Function<select id="FnType" oninput="changeFn(this.value)">
                 <option value="poly">Polynomial</option>
@@ -44,5 +49,7 @@
     <section id="cosine" class="hidden">
         <input type="number" oninput="update('cosine')">
     </section>
+    </div>
+    </div>
 </body>
 </html>

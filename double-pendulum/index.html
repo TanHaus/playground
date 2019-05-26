@@ -12,59 +12,62 @@
     <!-- Load KaTeX -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.10.1/dist/katex.min.css" integrity="sha384-dbVIfZGuN1Yq7/1Ocstc1lUEm+AT+/rCkibIcC/OmWo5f0EA48Vf8CytHzGrSwbQ" crossorigin="anonymous">
     <script defer src="https://cdn.jsdelivr.net/npm/katex@0.10.1/dist/katex.min.js" integrity="sha384-2BKqo+exmr9su6dir+qCw08N2ZKRucY4PrGQPPWU1A7FtlCGjmEGFqXCv5nyM5Ij" crossorigin="anonymous"></script>
-    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.10.1/dist/contrib/auto-render.min.js" integrity="sha384-kWPLUVMOks5AQFrykwIup5lo0m3iMkkHrD0uJ4H5cjeGihAutqP0yW0J6dpFiVkI" crossorigin="anonymous" onload="renderMathInElement(document.body)"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.10.1/dist/contrib/auto-render.min.js" integrity="sha384-kWPLUVMOks5AQFrykwIup5lo0m3iMkkHrD0uJ4H5cjeGihAutqP0yW0J6dpFiVkI" crossorigin="anonymous"></script>
+    <script defer src="../libraries/inlineKatex.js"></script>
 
     <script type="module" src="script.js" defer></script>
 </head>
 <body>
-    <canvas id="myCanvas"></canvas>
-    <header>
-        <h1>Double pendulum</h1>
-        <p>You can check out the explanation <a href="explanation.html">here</a>.</p>
-        <p>When there is a major change in the window's size, please refresh the page.</p>
-    </header>
-    <section id="control">
-        Angle 1 <input id="theta1" type="number" value=150 oninput="update('theta1',this.value)">
-        Angle 2 <input id="theta2" type="number" value=310 oninput="update('theta2',this.value)">
-        <br>
+    <div id="flex-container">
+        <canvas id="myCanvas" class="flex"></canvas>
+        <div class="flex">
+            <header>
+                    <h1>Double pendulum</h1>
+                    <p>You can check out the explanation <a href="explanation.html">here</a></p>
+                </header>
+                <section id="control">
+                    <div>Angle 1 <input id="theta1" type="number" value=150 oninput="update('theta1',this.value)"></div>
+                    <div>Angle 2 <input id="theta2" type="number" value=310 oninput="update('theta2',this.value)"></div>
+                    <br>
 
-        <button onclick="generateStart(1)">One pendulum</button>
-        <button onclick="generateStart(20)">Chaotic</button>
-        <br>
-
-        <button onclick="showTop()">Show all</button>
-        <button onclick="noShowTop()">Show bottom mass only</button>
-        <button onclick="togglePath()">Toggle path</button>
-        <br>
-
-        Speed: <select oninput="update('speed',this.value)">
-        <option value=1>1x</option>
-        <option value=2>2x</option>
-        <option value=4>4x</option>
-        <option value=8>8x</option>
-        </select>
-        <br>
-
-        Select ODE solver: <select oninput="update('mode',this.value)">
-        <option value='Euler'>Euler</option>
-        <option value='RK4'>RK4</option>
-        </select>
-    </section>
-    <section>
-        <h2>Instruction</h2>
-        <p>Click <b>'One pendulum'</b> to see the dynamics of a pendulum system. You can see the path traced out by the bottom mass.</p>
-        <p>Click <b>'Chaotic'</b> to see the chaotic nature of a pendulum system. This will create 20 double pendulum systems with slightly different initial positions. I recommend you click 'Show bottom mass only' for this.</p>
-        <p>Click <b>'Show top'</b> to see both masses, as well as the connecting rods.</p>
-        <p>Click <b>'Show bottom mass only'</b> to see only the bottom mass.</p>
-        <p>Click <b>'Toggle path'</b> to switch on/off the path traced out by the bottom mass.</p>
-    </section>
-    <section>
-        <h2>Description</h2>
-        <p>This double pendulum system is the solution to the following system of differential equations: (NOTE: masses of the two masses are the same, length of the two rods are the same)</p>
-        $$2\ddot{\theta}_1 + \cos(\theta_1-\theta_2) \ddot{\theta}_2 = - \dot{\theta}_2^2\sin(\theta_1-\theta_2) - 2\frac{g}{l}\sin\theta_1$$
-        $$\ddot{\theta}_2 + \cos(\theta_1-\theta_2) \ddot{\theta}_1  = \dot{\theta}_1^2\sin(\theta_1-\theta_2) - \frac{g}{l}\sin\theta_2$$
-        <p>Currently I have implemented both the Euler method and RK4 method to solve for the numerical solution to this differential equation.</p>
-    </section>
-
+                    <div>
+                    <button onclick="generateStart(1)">Start</button>
+                    <button onclick="generateStart(20)">Chaotic</button>
+                    </div>
+            
+                    <div>
+                    <button onclick="showTop()">Show all</button>
+                    <button onclick="noShowTop()">Bottom mass(es) only</button>
+                    <button onclick="togglePath()">Toggle path</button>
+                    </div>
+                    <br>
+            
+                    <div>Speed: <select oninput="update('speed',this.value)">
+                    <option value=1>1x</option>
+                    <option value=2>2x</option>
+                    <option value=4>4x</option>
+                    <option value=8>8x</option>
+                    </select></div>
+            
+                    <div>Select ODE solver: <select oninput="update('mode',this.value)">
+                    <option value='Euler'>Euler</option>
+                    <option value='RK4'>RK4</option>
+                    </select></div>
+                </section>
+                <section>
+                    <h2>Instruction</h2>
+                    <p>Click <b>Start</b> to see the dynamics of a pendulum system. To spice things up, click <b>Chaotic</b> to generate 20 pendulum systems.</p>
+                    <p>In <b>Chaotic</b> mode, it is recommended to use <b>Bottom mass(es) only</b> and toggle path <b>off</b> for aesthetic purpose.</p>
+                    <p>The default Ordinary Differential Equation (ODE) solver is <b>Euler's method</b>. To get a more accurate solution, please use the <b>RK4 method</b> instead.</p>
+                </section>
+                <section>
+                    <h2>Description</h2>
+                    <p>This double pendulum system is the solution to the following system of differential equations: (NOTE: masses of the two masses are the same, length of the two rods are the same)</p>
+                    <p> $ 2\ddot{\theta}_1 + \cos(\theta_1-\theta_2) \ddot{\theta}_2 = - \dot{\theta}_2^2\sin(\theta_1-\theta_2) - 2\frac{g}{l}\sin\theta_1 $ </p>
+                    <p> $ \ddot{\theta}_2 + \cos(\theta_1-\theta_2) \ddot{\theta}_1  = \dot{\theta}_1^2\sin(\theta_1-\theta_2) - \frac{g}{l}\sin\theta_2 $ </p>
+                    <p>Currently I have implemented both the Euler method and RK4 method to solve for the numerical solution to this differential equation.</p>
+                </section>
+        </div>
+    </div>
 </body>
 </html>

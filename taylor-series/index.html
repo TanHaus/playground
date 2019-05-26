@@ -7,15 +7,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="icon" type="image/png" href="../favicon.ico">
     <link rel="stylesheet" type="text/css" media="screen" href="../stylesheets/style.css">
-    <script src="script.js" defer type="module"></script>
     <!-- Load KaTeX -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.10.1/dist/katex.min.css" integrity="sha384-dbVIfZGuN1Yq7/1Ocstc1lUEm+AT+/rCkibIcC/OmWo5f0EA48Vf8CytHzGrSwbQ" crossorigin="anonymous">
     <script defer src="https://cdn.jsdelivr.net/npm/katex@0.10.1/dist/katex.min.js" integrity="sha384-2BKqo+exmr9su6dir+qCw08N2ZKRucY4PrGQPPWU1A7FtlCGjmEGFqXCv5nyM5Ij" crossorigin="anonymous"></script>
-    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.10.1/dist/contrib/auto-render.min.js" integrity="sha384-kWPLUVMOks5AQFrykwIup5lo0m3iMkkHrD0uJ4H5cjeGihAutqP0yW0J6dpFiVkI" crossorigin="anonymous" onload="renderMathInElement(document.body)"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.10.1/dist/contrib/auto-render.min.js" integrity="sha384-kWPLUVMOks5AQFrykwIup5lo0m3iMkkHrD0uJ4H5cjeGihAutqP0yW0J6dpFiVkI" crossorigin="anonymous"></script>
+    <script defer src="../libraries/inlineKatex.js"></script>
+
+    <script src="script.js" defer type="module"></script>
 </head>
 <body>
-    <canvas id="myCanvas"></canvas>
-    <header>
+    <div id="flex-container">
+    <canvas id="myCanvas" class="flex"></canvas>
+    <div class="class"><header>
         <h1>Taylor series</h1>
         <p>To find out more behind the mathematics of Taylor series, please visit <a href="./explanation.html">Taylor series: Explanation</a>.</p>
     </header>
@@ -30,5 +33,7 @@
         $$p(x) = f(x_0) + \frac{f'(x_0)}{n!}(x-x_0) + \frac{f''(x_0)}{n!}(x-x_0)^2 + \dots$$
         <p>In this web app, the derivative values are calculated using numerical methods.</p>
     </section>
+    </div>
+    </div>
 </body>
 </html>

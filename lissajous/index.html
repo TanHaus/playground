@@ -17,8 +17,12 @@
     <script src="script.js" defer></script>
 </head>
 <body>
-    <canvas id="myCanvas"></canvas>
-
+    <div id="flex-container">
+    <canvas id="myCanvas" class="flex"></canvas>
+    <div class="flex">
+    <header>
+        <h1>Lissajous curves</h1>
+    </header>
     <section id="control">
         <span class="math">\omega_x</span><input type="range" oninput="updateVal(this.value,'oX')" min=0.01 max=10 step=0.01><br>
         <span class="math">\omega_y</span><input type="range" oninput="updateVal(this.value,'oY')" min=0.01 max=10 step=0.01><br>
@@ -32,5 +36,7 @@
         $$x = \cos(\omega_x t + \phi_x)$$
         $$y = \cos(\omega_y t + \phi_y)$$
     </section>
+    </div>
+    </div>
 </body>
 </html>

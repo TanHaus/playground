@@ -10,19 +10,6 @@ let h = canvas.clientHeight*DPIscale;
 canvas.width = w;
 canvas.height = h;
 
-window.resize = function() {
-    w = canvas.clientWidth*DPIscale;
-    h = canvas.clientHeight*DPIscale;
-    canvas.width = w;
-    canvas.height = h;
-    ctx.clearRect(0,0,w,h);
-    drawKoch();
-}
-
-window.onresize = resize
-
-resize();
-
 function KochFull(x,y,angle,distance,iteration,scale) {
     distance *= scale;
     Koch(x,y,angle,distance,iteration,scale);
@@ -33,7 +20,6 @@ function KochFull(x,y,angle,distance,iteration,scale) {
     y += distance*Math.sin(ANGLE60*2-angle);
     Koch(x,y,angle+ANGLE60*2,distance,iteration,scale);
 }
-
 function Koch(x,y,angle,distance,iteration,scale) {
     if(iteration==1) {
         if(x>w || y<0) return undefined;
@@ -78,7 +64,6 @@ function Koch(x,y,angle,distance,iteration,scale) {
         return undefined;
     }
 }
-
 function drawKoch(i,s) {
     ctx.clearRect(0,0,w,h);
     let x = 150;
@@ -92,3 +77,15 @@ function drawKoch(i,s) {
     ctx.fillText('Scale: '+scale.toFixed(0),10,h-10)
     KochFull(x,y,ANGLE60,distance,iteration,scale);
 }
+
+window.resize = function() {
+    w = canvas.clientWidth*DPIscale;
+    h = canvas.clientHeight*DPIscale;
+    canvas.width = w;
+    canvas.height = h;
+    ctx.clearRect(0,0,w,h);
+    drawKoch();
+}
+window.onresize = resize
+
+resize();

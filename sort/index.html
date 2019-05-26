@@ -11,16 +11,19 @@
     <script src="script.js" type="module" defer ></script>
 </head>
 <body>
-    <canvas id="myCanvas"></canvas>
+    <div id="flex-container">
+    <canvas id="myCanvas" class="flex"></canvas>
+    <div class="flex">
     <header>
         <h1>Sorting algorithms: Visualization</h1>
     </header>
-
     <section>
         <input type="number" oninput="generateRandomList(this.value)" value=20>
         <button onclick="sort('bubblesort')">Bubble sort</button>
         <button onclick="sort('normalsort')">Sort</button>
         <p>Status: <span id="state"></span></p>
     </section>
+    </div>
+    </div>
 </body>
 </html>

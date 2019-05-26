@@ -208,6 +208,67 @@ export class Rational {
     }
 }
 
+export class Set {
+    constructor() {
+        let temp = [], args, count = 0;
+        if(arguments.length==1 && typeof arguments[0]=='object') args=arguments[0];
+        else args = arguments;
+        for(let i=0;i<args.length;i++) {
+            if(temp.includes(args[i])==false) {
+                temp.push(args[i]);
+                count++;
+            }
+        }
+        this.data = temp;
+        this.length = count;
+        return this;
+    }
+    add(element) {
+        if(this.data.includes(element)==false) {
+            this.data.push(element);
+            this.length++;
+            return element;
+        }
+        return undefined;
+    }
+    remove(element) {
+        let index = this.data.indexOf(element);
+        if(index==-1) return undefined;
+        this.data.splice(index,1);
+        this.length--;
+        return element;
+    }
+    has(element) { return this.data.includes(element); }
+    union(anotherSet) { return Set.UNION(this,anotherSet); }
+    intersection(anotherSet) { return Set.INTERSECTION(this,anotherSet); }
+    subset(anotherSet) { return Set.SUBSET(this,anotherSet); }
+    static UNION(set1,set2) {
+        let result = new Set();
+        for(let i=0;i<set1.length;i++) result.add(set1.data[i]);
+        for(let i=0;i<set2.length;i++) result.add(set2.data[i]);
+        return result;
+    }
+    static INTERSECTION(set1,set2) {
+        let long,short,result = new Set();
+        if(set1.length>set2.length) { long=set1; short=set2; }
+        else { long=set2; short=set1; }
+        for(let i=0;i<short.length;i++) if(long.has(short.data[i])) result.add(short.data[i]);
+        return result;
+    }
+    static SUBSET(set1,set2) {
+        for(let i=0;i<set1.length;i++) {
+            if(set2.has(set1.data[i])==false) return false;
+        }
+        return true;
+    }
+}
+
+export class Queue {
+    constructor() {
+        
+    }
+}
+
 // Begin of functions
 export let Random = {
     integer: function(min=1,max=100,signed=false) {
