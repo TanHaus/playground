@@ -9,9 +9,11 @@ Web apps (https://gau-nernst.github.io/web-apps/)
 
 # Description
 
-I write small applications that run directly in web browsers. Most of them are simple physics simulations and topics that I am intersted in.
+I write small applications that run directly in web browsers. Most of them are simple physics simulations and topics that I am intersted in. This site is written in HTML, CSS and JavaScript.
 
-This site is written in HTML, CSS and JavaScript.
+Most of the apps are very basic. The more polished ones are in the __Featured__ list.
+
+To view what I have planned for this project, please navigate to the __Project__ tab above (or you can click [here](https://github.com/gau-nernst/web-apps/projects/1)).
 
 ## List of apps
 
@@ -40,7 +42,15 @@ This site is written in HTML, CSS and JavaScript.
 
 All mathematical expressions are written in LaTeX and rendered with [KaTeX](https://github.com/KaTeX/KaTeX). A small script is written to render inline mathematical expressions, which are encapsulated by a single dollar sign symbol `$`.
 
+To accomodate the responsive design, I only uses inline LaTeX. This is a problem with KaTeX, where block math expressions will not wrap properly.
+
 The inline math render script is located in `/libraries/inlineKatex.js`.
+
+## Structure
+
+Each web app should have one explanation page accompanied it. Currently, only the featured ones have explanation pages.
+
+Both the app page and the explanation page have responsive design. Meaning, they should be displayed well on both mobile and desktop devices.
 
 # Installation
 
