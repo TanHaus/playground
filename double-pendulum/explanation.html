@@ -12,7 +12,7 @@
     <!-- Load KaTeX -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.10.1/dist/katex.min.css" integrity="sha384-dbVIfZGuN1Yq7/1Ocstc1lUEm+AT+/rCkibIcC/OmWo5f0EA48Vf8CytHzGrSwbQ" crossorigin="anonymous">
     <script defer src="https://cdn.jsdelivr.net/npm/katex@0.10.1/dist/katex.min.js" integrity="sha384-2BKqo+exmr9su6dir+qCw08N2ZKRucY4PrGQPPWU1A7FtlCGjmEGFqXCv5nyM5Ij" crossorigin="anonymous"></script>
-    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.10.1/dist/contrib/auto-render.min.js" integrity="sha384-kWPLUVMOks5AQFrykwIup5lo0m3iMkkHrD0uJ4H5cjeGihAutqP0yW0J6dpFiVkI" crossorigin="anonymous" onload="renderMathInElement(document.body)"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.10.1/dist/contrib/auto-render.min.js" integrity="sha384-kWPLUVMOks5AQFrykwIup5lo0m3iMkkHrD0uJ4H5cjeGihAutqP0yW0J6dpFiVkI" crossorigin="anonymous"></script>
 
     <script defer src="../libraries/inlineKatex.js" type="module"></script> <!-- load inline math --> 
 </head>
@@ -21,83 +21,125 @@
         <h1>Double pendulum: Explanation</h1>
         <p>To check out Double pendulum demonstration, please visit <a href="./">this link</a>.</p>
     </header>
-    <section>
-        <p>A double pendulum system is considered a very chaotic dynamic system. It is sensitive to initial conditions (i.e. initial position and velocity) where only a small difference in initial conditions will result in a drastically divergent pattern.</p>
-
-        <p>A simple pendulum system is just a point mass attached to a fixed point via a massless string (or a solid massless rod). Similarly, a double pendulum system consists two point masses:</p>
+    <div id="flex-layout">
+    <nav class="flex">
+        <label for="nav-toggle">Navigation</label>
+        <input type="checkbox" id="nav-toggle">
+        <ul id="flex-container">
+            <a href="#"><li class="flex">Home</li></a>
+            <a href="#intro"><li class="flex">Intro</li></a>
+            <a href="#eqn"><li class="flex">Equation of motion</li></a>
+        </ul>
+    </nav>
+    <section class="flex">
+        <h2 id="intro">1. Introduction</h2>
+        <p>A <b>double pendulum system</b> is considered a <b>chaotic</b> dynamic system. It is very <em>sensitive</em> to initial conditions. Slightly different initial position and velocity result in a drastically divergent pattern.</p>
+        <p>A double pendulum system consists two point masses:</p>
         <ul>
             <li><b>First point mass $m_1$</b>: attached to a fixed point via a solid massless rod.</li>
             <li><b>Second point mass $m_2$</b>: attached to the first point mass $m_1$ via another solid massless rod.</li>
         </ul>
-        
-        <p>To find the equation of motion for this system, we will use Lagrangian mechanics.</p>
-        $$L = T_{total} - V_{total}$$
+        <hr>
+        <h2 id="eqn">2. The equation of motion</h2>
+        <p>To find the equation of motion for this system, we will use <a href="https://en.wikipedia.org/wiki/Lagrangian_mechanics">Lagrangian mechanics</a>.</p>
+        <p> $L = T_{total} - V_{total}$ </p>
         
         <p>where $T_{total}$ is the total <b>kinetic energy</b> of the system, and $V_{total}$ is the total <b>potential energy</b> of the system.</p>
         
-        <p>Total kinetic energy is simply equal to:</p>
-        $$T_{total} = T_1 + T_2$$
-        $$T_{total} = \frac{1}{2}m_1v_1^2 + \frac{1}{2}m_2v_2^2$$
-        $$T_{total} = \frac{1}{2}m_1(\dot{x}_1^2+\dot{y}_1^2) + \frac{1}{2}m_2(\dot{x}_2^2+\dot{y}_2^2)$$
+        <h3>2.1. Energy terms</h3>
+        <p><b>Total kinetic energy</b> is simply equal to:</p>
+        <p> $T_{total} = T_1 + T_2$ </p>
+        <p> $T_{total} = \frac{1}{2}m_1v_1^2 + \frac{1}{2}m_2v_2^2$ </p>
+        <p> $T_{total} = \frac{1}{2}m_1(\dot{x}_1^2+\dot{y}_1^2) + \frac{1}{2}m_2(\dot{x}_2^2+\dot{y}_2^2)$ </p>
 
-        <p>And total potential energy (gravitational potential energy) is:</p>
-        $$V_{total} = V_1 + V_2$$
-        $$V_{total} = m_1gy_1 + m_2gy_2$$
+        <p>And <b>total potential energy</b> (gravitational potential energy) is:</p>
+        <p> $V_{total} = V_1 + V_2$ </p>
+        <p> $V_{total} = m_1gy_1 + m_2gy_2$ </p>
         
         <p><b>NOTE:</b> I take upwards as the positive y-direction. My y-coordinates will be negative as the origin is at the fixed point.</p>
         
-        <p>Now I will convert the total kinetic energy and total potential energy to the generalized coordinates. Since there are 4 degrees of freedom (x and y for each masses) and 2 constraints (set by the two solid massless rods), our generalized coordinates will have only 4-2=2 coordinates.</p>
+        <h3>2.2. Generalized coordinates</h3>
+        <p>Now I have to rewrite those energy terms in terms of <a href="https://en.wikipedia.org/wiki/Generalized_coordinates">generalized coordinates</a>. In total, there are:
+        <ul>
+            <li>4 <b>degrees of freedom</b>, 2 for each each masses, and</li>
+            <li>2 <b>constraints</b>, set out by the two solid massless rods.<</li>
+        </ul>our generalized coordinates will have $4-2=2$ coordinates.</p>
         
-        <p>We will choose $\theta_1$ and $\theta_2$ (as shown in the diagram) as our generalized coordinates. The equation to convert our Cartesian coordinates to the generalized coordinates are:</p>
-        $$x_1 = l_1 \sin\theta_1$$
-        $$y_1 = -l_1 \cos\theta_1$$
-        $$x_2 = l_1 \sin\theta_1 + l_2 \sin\theta_2$$
-        $$y_2 = -l_1 \cos\theta_1 - l_2 \cos\theta_2$$
+        <svg viewBox="30 0 200 80">
+            <line x1="100" y1="5" x2="140" y2="35" stroke="black" stroke-width="1"/>
+            <line x1="140" y1="35" x2="170" y2="75" stroke="black" stroke-width="1"/>
+            <!--path for the two rods-->
+            <path d="M 100 20
+                     a 15 15 0 0 0 12 -6"
+                     stroke="black" stroke-width="1" fill="none"/>
+            <path d="M 140 50
+                     a 15 15 0 0 0 9 -3"
+                     stroke="black" stroke-width="1" fill="none"/>
+            <line x1="100" y1="5" x2="100" y2="55" stroke="black" stroke-width="1" stroke-dasharray="5,5"/>
+            <line x1="140" y1="35" x2="140" y2="85" stroke="black" stroke-width="1" stroke-dasharray="5,5"/>
+            <text x="105" y="27" fill="black" font-size="0.5rem">&theta;1</text>
+            <text x="143" y="60" fill="black" font-size="0.5rem">&theta;2</text>
+            <!--path for the two angles-->
+            <circle cx="100" cy="5" r="2" fill="black"/>
+            <circle cx="140" cy="35" r="5" fill="#594F4C"/>
+            <circle cx="170" cy="75" r="5" fill="#594F4C"/>
+            <!--for the two masses-->
+        </svg>
         
-        <p><b>NOTE:</b> We have a minus sign for y-coordinates because our y-coordinates have negative values.</p>
+        <p>We will choose $\theta_1$ and $\theta_2$ (as shown in the diagram) as our generalized coordinates. The next step will be to convert the Cartesian coordinates to the genearlized coordinates.</p>
         
-        <p>Now we only need to differentiate the above 4 expressions with respect to time to obtain the transformation for velocities:</p>
-        $$\dot{x}_1 = l_1 \dot{\theta_1} \cos\theta_1$$
-        $$\dot{y_1} = l_1 \dot{\theta_1} \sin\theta_1$$
-        $$\dot{x_2} = l_1 \dot{\theta_1} \cos\theta_1 + l_2 \dot{\theta_2} \cos\theta_2$$
-        $$\dot{y_1} = l_1 \dot{\theta_1} \sin\theta_1 + l_2 \dot{\theta_2} \sin\theta_2$$
+        <h3>2.3. Coordinates conversion</h3>
+        <p>The equation to convert our Cartesian coordinates to the generalized coordinates are:</p>
+        <p class="math-box"> $x_1 = l_1 \sin\theta_1$ </p>
+        <p class="math-box"> $y_1 = -l_1 \cos\theta_1$ </p>
+        <p class="math-box"> $x_2 = l_1 \sin\theta_1 + l_2 \sin\theta_2$ </p>
+        <p class="math-box"> $y_2 = -l_1 \cos\theta_1 - l_2 \cos\theta_2$ </p>
+        
+        <p><b>NOTE:</b> We have a minus sign for the y-coordinates because our y-coordinates have negative values.</p>
+        
+        <p>Now we need to differentiate with respect to time the above expressions to obtain the generalized velocities:</p>
+        <p class="math-box"> $\dot{x}_1 = l_1 \dot{\theta_1} \cos\theta_1$ </p>
+        <p class="math-box"> $\dot{y_1} = l_1 \dot{\theta_1} \sin\theta_1$ </p>
+        <p class="math-box"> $\dot{x_2} = l_1 \dot{\theta_1} \cos\theta_1 + l_2 \dot{\theta_2} \cos\theta_2$ </p>
+        <p class="math-box"> $\dot{y_1} = l_1 \dot{\theta_1} \sin\theta_1 + l_2 \dot{\theta_2} \sin\theta_2$ </p>
         
         <p>We now substitute these back into our expressions for total kinetic energy and total potential energy:</p>
-        $$T_{total} = \bigg( \frac{1}{2}m_1l_1^2\dot{\theta}_1^2 \bigg) + \bigg( \frac{1}{2}m_2l_1^2\dot{\theta}_1^2 + \frac{1}{2}m_2l_2^2\dot{\theta}_2^2 + m_2l_1l_2\dot{\theta}_1\dot{\theta}_2\cos\theta_1\cos\theta_2 + m_2l_1l_2\dot{\theta}_1\dot{\theta}_2\sin\theta_1\sin\theta_2 \bigg)$$
-        $$T_{total} = m_1l_1^2\dot{\theta}_1^2 + \frac{1}{2}m_2l_2^2\dot{\theta}_2^2 + m_2l_1l_2\dot{\theta}_1\dot{\theta}_2 \big( \cos\theta_1\cos\theta_2 + \sin\theta_1\sin\theta_2 \big)$$
-        $$T_{total} = m_1l_1^2\dot{\theta}_1^2 + \frac{1}{2}m_2l_2^2\dot{\theta}_2^2 + m_2l_1l_2\dot{\theta}_1\dot{\theta}_2 \cos(\theta_1-\theta_2)$$
+        <p> $T_{total} = \bigg( \frac{1}{2}m_1l_1^2\dot{\theta}_1^2 \bigg) + \bigg( \frac{1}{2}m_2l_1^2\dot{\theta}_1^2 + \frac{1}{2}m_2l_2^2\dot{\theta}_2^2 + m_2l_1l_2\dot{\theta}_1\dot{\theta}_2\cos\theta_1\cos\theta_2 + m_2l_1l_2\dot{\theta}_1\dot{\theta}_2\sin\theta_1\sin\theta_2 \bigg)$ </p>
+        <p> $T_{total} = m_1l_1^2\dot{\theta}_1^2 + \frac{1}{2}m_2l_2^2\dot{\theta}_2^2 + m_2l_1l_2\dot{\theta}_1\dot{\theta}_2 \big( \cos\theta_1\cos\theta_2 + \sin\theta_1\sin\theta_2 \big)$ </p>
+        <p> $T_{total} = m_1l_1^2\dot{\theta}_1^2 + \frac{1}{2}m_2l_2^2\dot{\theta}_2^2 + m_2l_1l_2\dot{\theta}_1\dot{\theta}_2 \cos(\theta_1-\theta_2)$ </p>
         <br>
 
-        $$V_{total} = m_1g(-l_1\cos\theta_1) + m_2g(-l_1\cos\theta_1-l_2\cos\theta_2)$$
-        $$V_{total} = -(m_1+m_2)gl_1\cos\theta_1 - m_2gl_2\cos\theta_2$$
+        <p> $V_{total} = m_1g(-l_1\cos\theta_1) + m_2g(-l_1\cos\theta_1-l_2\cos\theta_2)$ </p>
+        <p> $V_{total} = -(m_1+m_2)gl_1\cos\theta_1 - m_2gl_2\cos\theta_2$ </p>
         
         <p>Our Lagrangian will be:</p>
-        $$L = T_{total} - V_{total}$$
-        $$L = m_1l_1^2\dot{\theta}_1^2 + \frac{1}{2}m_2l_2^2\dot{\theta}_2^2 + m_2l_1l_2\dot{\theta}_1\dot{\theta}_2 \cos(\theta_1-\theta_2) + (m_1+m_2)gl_1\cos\theta_1 + m_2gl_2\cos\theta_2$$
+        <p> $L = T_{total} - V_{total}$ </p>
+        <p> $L = m_1l_1^2\dot{\theta}_1^2 + \frac{1}{2}m_2l_2^2\dot{\theta}_2^2 + m_2l_1l_2\dot{\theta}_1\dot{\theta}_2 \cos(\theta_1-\theta_2) + (m_1+m_2)gl_1\cos\theta_1 + m_2gl_2\cos\theta_2$ </p>
         
         <p>The Lagrange's equations are:</p>
-        $$\frac{d}{dt} \frac{\partial L}{\partial\dot{\theta}_1} = \frac{\partial L}{\partial\theta_1}$$
-        $$\frac{d}{dt} \frac{\partial L}{\partial\dot{\theta}_2} = \frac{\partial L}{\partial\theta_2}$$
+        <p> $\frac{d}{dt} \frac{\partial L}{\partial\dot{\theta}_1} = \frac{\partial L}{\partial\theta_1}$ </p>
+        <p> $\frac{d}{dt} \frac{\partial L}{\partial\dot{\theta}_2} = \frac{\partial L}{\partial\theta_2}$ </p>
         
         <p>The rest is just muscle work:</p>
-        $$\frac{\partial L}{\partial\theta_1} = - m_2l_1l_2\dot{\theta}_1\dot{\theta}_2 \sin(\theta_1-\theta_2) - (m_1+m_2)gl_1\sin\theta_1$$
+        <p> $\frac{\partial L}{\partial\theta_1} = - m_2l_1l_2\dot{\theta}_1\dot{\theta}_2 \sin(\theta_1-\theta_2) - (m_1+m_2)gl_1\sin\theta_1$ </p>
         
-        $$\frac{\partial L}{\partial\dot{\theta}_1} = 2m_1l_1^2\dot{\theta}_1 + m_2l_1l_2\dot{\theta}_2 \cos(\theta_1-\theta_2)$$
-        $$\frac{d}{dt} \frac{\partial L}{\partial\dot{\theta}_1} = 2m_1l_1^2\ddot{\theta}_1 +  m_2l_1l_2\ddot{\theta}_2 \cos(\theta_1-\theta_2) - m_2l_1l_2\dot{\theta}_2(\dot{\theta}_1-\dot{\theta}_2)\sin(\theta_1-\theta_2)$$
+        <p> $\frac{\partial L}{\partial\dot{\theta}_1} = 2m_1l_1^2\dot{\theta}_1 + m_2l_1l_2\dot{\theta}_2 \cos(\theta_1-\theta_2)$ </p>
+        <p> $\frac{d}{dt} \frac{\partial L}{\partial\dot{\theta}_1} = 2m_1l_1^2\ddot{\theta}_1 +  m_2l_1l_2\ddot{\theta}_2 \cos(\theta_1-\theta_2) - m_2l_1l_2\dot{\theta}_2(\dot{\theta}_1-\dot{\theta}_2)\sin(\theta_1-\theta_2)$ </p>
         
         <p>Now we get our first equation of motion:</p>
         
-        $$\frac{d}{dt} \frac{\partial L}{\partial\dot{\theta}_1} = \frac{\partial L}{\partial\theta_1}$$
-        $$2m_1l_1^2\ddot{\theta}_1 +  m_2l_1l_2\ddot{\theta}_2 \cos(\theta_1-\theta_2) + m_2l_1l_2\dot{\theta}_2^2\sin(\theta_1-\theta_2) = -(m_1+m_2)gl_1\sin\theta_1$$        
+        <p> $\frac{d}{dt} \frac{\partial L}{\partial\dot{\theta}_1} = \frac{\partial L}{\partial\theta_1}$ </p>
+        <p> $2m_1l_1^2\ddot{\theta}_1 +  m_2l_1l_2\ddot{\theta}_2 \cos(\theta_1-\theta_2) + m_2l_1l_2\dot{\theta}_2^2\sin(\theta_1-\theta_2) = -(m_1+m_2)gl_1\sin\theta_1$ </p>  
         
         <p>We can divide both sides of the equation by $l_1l_2$ to make it simpler:</p>
         
-        $$2m_1\frac{l_1}{l_2}\ddot{\theta}_1 + m_2 \cos(\theta_1-\theta_2) \ddot{\theta}_2 = - m_2\dot{\theta}_2^2\sin(\theta_1-\theta_2) - (m_1+m_2)\frac{g}{l_2}\sin\theta_1$$
+        <p> $2m_1\frac{l_1}{l_2}\ddot{\theta}_1 + m_2 \cos(\theta_1-\theta_2) \ddot{\theta}_2 = - m_2\dot{\theta}_2^2\sin(\theta_1-\theta_2) - (m_1+m_2)\frac{g}{l_2}\sin\theta_1$ </p>
         
         <p>Similarly, we can obtain our second equation of motion:</p>
         
-        $$m_2\frac{l_2}{l_1}\ddot{\theta}_2 + m_2 \cos(\theta_1-\theta_2) \ddot{\theta}_1 = m_2\dot{\theta}_1^2\sin(\theta_1-\theta_2) - m_2\frac{g}{l_1}\sin\theta_2$$
+        <p> $m_2\frac{l_2}{l_1}\ddot{\theta}_2 + m_2 \cos(\theta_1-\theta_2) \ddot{\theta}_1 = m_2\dot{\theta}_1^2\sin(\theta_1-\theta_2) - m_2\frac{g}{l_1}\sin\theta_2$ </p>
         
     </section>
+    </div>
 </body>
 </html>

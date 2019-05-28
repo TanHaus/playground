@@ -32,8 +32,10 @@ a:hover { color: var(--color-3); }
 
 ul, li { list-style: none; }
 
-button { background-color: var(--color-3); border: none; color: whitesmoke; min-width: 30px;
-  padding: var(--space-large); margin: var(--space-small) 0px; transition: 0.2s; }
+button { background-color: var(--color-3); border: none;
+         min-width: 30px; padding: var(--space-large); margin: var(--space-small) 0px;
+         color: whitesmoke; 
+         transition: 0.2s; }
 button:hover { background-color: var(--color-4); }
 
 #flex-container { display: flex; flex-flow: row wrap; }
