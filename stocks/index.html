@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Stocks</title>
+    <link rel="stylesheet" type="text/css" media="screen" href="../stylesheets/style.css"/>
+    <script defer src="script.js" type="module"></script>
+</head>
+<body>
+    <div id="flex-container">
+        <canvas id="myCanvas" class="flex"></canvas>
+        <div class="flex">
+            <header>
+                <h1>Stock prices</h1>
+                <p>All prices are quoted from <a href="https://www.alphavantage.co/">Alpha Vantage</a> using Alpha Vantage's free API.</p>
+            </header>
+            <section>
+                <div>API Key <input type="text"></div>
+                <div>Symbol <input type="text"></div>
+                <button>Get data</button>
+            </section>
+        </div>
+    </div>
+</body>
+</html>
