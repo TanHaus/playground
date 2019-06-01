@@ -677,6 +677,26 @@ export let Graph = {
         context.fill();
         context.restore();
     },
+    scatter: function(xSeq,ySeq,radius,xRange,yRange,canvas,color='blue') {
+        if(xSeq.length != ySeq.length) throw 'Invalid arguments. xSeq and ySeq do not have the same length';
+        if(xRange.length != 2) throw 'Invalid xRange. xRange must contain only 2 numbers';
+        if(yRange.length != 2) throw 'Invalid yRange. yRange must contain only 2 numbers';
+        
+        let xScale = canvas.width/Math.abs(xRange[0]-xRange[1]),
+            yScale = canvas.height/Math.abs(yRange[0]-yRange[1]),
+            context = canvas.getContext('2d');
+        if(radius==undefined) radius = 5;
+
+        context.save();
+        context.translate(-Math.min(xRange[0],xRange[1])*xScale,Math.max(yRange[0],yRange[1])*yScale);
+        context.fillStyle = color;
+        for(let i=0;i<xSeq.length;i++) {
+            context.beginPath();
+            context.arc(xSeq[i]*xScale,-ySeq[i]*yScale,radius,0,Math.PI*2);
+            context.fill();
+        }
+        context.restore();
+    },
     histogram: function(valueList,freqList,canvas) {
         if(valueList.length!=freqList.length) throw 'Value list and frequency list must have the same length';
          
