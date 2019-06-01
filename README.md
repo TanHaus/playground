@@ -19,23 +19,22 @@ To view what I have planned for this project, please navigate to the __Project__
 
 <h2>Featured</h2>
 <ul>
-    <li><a href="https://gau-nernst.github.io/web-apps/double-pendulum/">Double pendulum</a></li>
-    <li><a href="https://gau-nernst.github.io/web-apps/oscillator/">Harmonic oscillator</a></li>
-</ul>
-<h2>Others</h2>
-<ul>
-    <li><a href="https://gau-nernst.github.io/web-apps/fractals/">Fractals</a></li>
-    <li><a href="https://gau-nernst.github.io/web-apps/lissajous/">Lissajous curves</a></li>
-    <li><a href="https://gau-nernst.github.io/web-apps/pendulum/">Pendulum</a></li>
-    <li><a href="https://gau-nernst.github.io/web-apps/simple-balls/">Simple balls</a> (Not working as intended)</li>
+    <li><a href="double-pendulum/">Double pendulum</a></li>
+    <li><a href="oscillator/">Harmonic oscillator</a></li>
 </ul>
 <h2>Under development</h2>
 <ul>
-    <li><a href="https://gau-nernst.github.io/web-apps/graphing/">Graphing</a></li>                
-    <li><a href="https://gau-nernst.github.io/web-apps/wave/">Wave</a></li>
-    <li><a href="https://gau-nernst.github.io/web-apps/taylor-series/">Taylor series</a></li>
-    <li><a href="https://gau-nernst.github.io/web-apps/fourier-series/">Fourier series</a></li>
-    <li><a href="https://gau-nernst.github.io/web-apps/sort/">Sort algorithm visualization</a></li>
+    <li><a href="fractals/">Fractals</a></li>
+    <li><a href="lissajous/">Lissajous curves</a></li>
+    <li><a href="pendulum/">Pendulum</a></li>
+    <li><a href="graphing/">Graphing</a></li>                
+    <li><a href="wave/">Wave</a></li>
+    <li><a href="taylor-series/">Taylor series</a></li>
+    <li><a href="fourier-series/">Fourier series</a></li>
+    <li><a href="sort/">Sort algorithm visualization</a></li>
+    <li><a href="stokcs/">Stocks</a></li>
+    <li><a href="eqn-solver/">Equation solver</a></li>
+    <li><a href="slits/">Slits</a></li>
 </ul>
 
 ## Mathematical expressions
