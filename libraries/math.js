@@ -552,21 +552,14 @@ export let Solver = {
         }
         let determinant = b*b-4*a*c;
         if(determinant<0) { console.warn('No real roots'); return undefined; }
-        else if(determinant==0) { return [(-b/2/coeff[2])]; }
-        else return [-b+Math.sqrt(determinant)/2/a,-b-Math.sqrt(determinant)/2/a];
+        else if(determinant==0) { return [ -b/(2*a) ]; }
+        else return [(-b + Math.sqrt(determinant))/(2*a), (-b - Math.sqrt(determinant))/(2*a)];
     },
     cubicEqn: function(a,b,c,d,complex=false) {
-        let p = c/a-b*b/3/a/a,
-            q = d/a+2/27*b*b*b/a/a/a-b*c/3/a,
-            sqrtD = ComplexNumber.SQRT(q*q+4*p*p*p/27),
-            u1 = ComplexNumber.CBRT(sqrtD[0].add(-q).multiply(0.5)),
-            u2 = ComplexNumber.CBRT(sqrtD[1].add(-q).multiply(0.5)),
+        let d0 = b*b - 3*a*c,
+            d1 = 2*b*b*b - 9*a*b*c + 27*a*a*d,
             result = [];
-        if(complex==true) for(let i=0;i<3;i++) result.push(u1[i].add(u2[i]).add(-b/3/a));
-        else for(let i=0;i<3;i++) {
-            let number = u1[i].add(u2[i]).add(-b/3/a);
-            if(Math.abs(number.im)<a*1e-12) result.push(number.re); 
-        }
+        console.log(result);
         return result;
     },
     ODE: function(mode='Euler',func,x0,step=1/60) {
