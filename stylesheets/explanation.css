@@ -16,9 +16,10 @@ html { scroll-behavior: smooth; }
 
 body { margin: 0; background-color: var(--color-2);
     font-family: Calibri, Helvetica, Arial, sans-serif;  }
-header { background-color: var(--color-5); color: whitesmoke; }
+header {  padding: var(--space-largest) 7rem;
+    background-color: var(--color-5); color: whitesmoke; }
 section { max-width: 40rem; color: black; }
-header, footer, section { padding: var(--space-larger) var(--space-largest); }
+footer, section { padding: var(--space-larger) var(--space-largest); }
 
 #flex-layout { display: flex; flex-flow: row wrap; }
 
@@ -68,3 +69,4 @@ section p { text-indent: var(--space-large); }
 
 .math-box { display: inline-block; margin-left: var(--space-larger); }
 .illustration { display: block; max-width: 60%; max-height: 40vh; margin: auto; }
+hr { border: 1px solid black; }
