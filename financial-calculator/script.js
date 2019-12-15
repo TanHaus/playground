@@ -1,17 +1,15 @@
-import { Solver } from '../libraries/math.js'
-
 let n_show = document.querySelector("#n"),
     ir_show = document.querySelector("#ir"),
     pv_show = document.querySelector("#pv"),
     pmt_show = document.querySelector("#pmt"),
     fv_show = document.querySelector("#fv");
 
-let n = 10, ir = 0, pv = -300, pmt = 80, fv = 1000,
+let n = 10, ir = 0, pv = -5000, pmt = 100, fv = 1000,
     accuracy = 4;
 
 document.calculate = function(calculate_value) {
     // Retrieve and assign value to variables
-    retrieve_value();
+    //retrieve_value();
     let rate = 1 + ir,
         discount = rate**n,
         pmt_r = pmt/ir;
@@ -22,26 +20,29 @@ document.calculate = function(calculate_value) {
             break;
 
         case "ir":
-            let c2 = n*(n-1)/2,
-                c3 = c2*(n-2)/3;
-            let a = c2*pv + c3*pmt,
-                b = n*pv + c2*pmt,
-                c = pv + fv;
-            // Series expansion of ir to get a quadratic equation of ir → solve quadratic equation to get a good guess of initial value
-            let result = Solver.quadraticEqn(a,b,c);
-            for(let i=0; i<2; i++) {
-                if(result[i]>0) ir = result[i];
-            }
             // Use recursion formula to approximate the value
-            let ir1 = ir, ir2 = 0,
-                error = Math.pow(0.1,accuracy+3);
-            while(ir1-ir2>error) {
-                discount = Math.pow(1+ir1,n);
-                ir2 = -(pmt*(discount-1))/(fv+discount*pv);
-                discount = (1+ir2)**n;
-                ir1 = -(pmt*(discount-1))/(fv+discount*pv);
+            console.log("n = ", n, "pv = ", pv, "pmt = ", pmt, "fv = ", fv);
+            let ir1 = -1, ir2 = 0,
+                accuracy = 1e-7,
+                count = 0;
+
+            let function_min = r => pv*(1+r)**n*r + pmt*(1+r)**n - pmt + fv*r;
+            let derivative = r => n*pv*(1+r)**(n-1) + pv*(1+r)**n + n*pmt*(1+r)**(n-1) + fv;
+            let function_linear = r => Math.log(function_min(r)+1);
+            let derivative_linear = r => derivative(r)/(function_min(r)+1);
+
+            while(Math.abs(function_min(ir1)) > accuracy) {
+                ir2 = ir1 - function_min(ir1)/derivative(ir1);
+                ir1 = ir2 - function_min(ir2)/derivative(ir2);
+                console.log("ir1 = ", ir1, " ir2 = ", ir2);
+
+                count++;
+                if(count > 1000) break;
             }
             ir = ir1;
+
+            console.log("CONFIRM ", function_min(ir));
+
             break;
             
         case "pv":
@@ -90,4 +91,8 @@ let update_value = function(value) {
             fv_show.value = fv.toFixed(accuracy);
             break;
     }
+}
+
+let test = function() {
+    n = 10, ir = 0, pv = -5000, pmt = 80;
 }
