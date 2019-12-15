@@ -29,6 +29,7 @@
             <a href="#"><li class="flex">Home</li></a>
             <a href="#intro"><li class="flex">Intro</li></a>
             <a href="#eqn"><li class="flex">Equation of motion</li></a>
+            <a href="../"><li class="flex">Back to main page</li></a>
         </ul>
     </nav>
     <section class="flex">
@@ -62,7 +63,7 @@
         <p>Now I have to rewrite those energy terms in terms of <a href="https://en.wikipedia.org/wiki/Generalized_coordinates">generalized coordinates</a>. In total, there are:
         <ul>
             <li>4 <b>degrees of freedom</b>, 2 for each each masses, and</li>
-            <li>2 <b>constraints</b>, set out by the two solid massless rods.<</li>
+            <li>2 <b>constraints</b>, set out by the two solid massless rods.</li>
         </ul>our generalized coordinates will have $4-2=2$ coordinates.</p>
         
         <svg viewBox="30 0 200 80">
@@ -116,9 +117,10 @@
         <p> $L = T_{total} - V_{total}$ </p>
         <p> $L = m_1l_1^2\dot{\theta}_1^2 + \frac{1}{2}m_2l_2^2\dot{\theta}_2^2 + m_2l_1l_2\dot{\theta}_1\dot{\theta}_2 \cos(\theta_1-\theta_2) + (m_1+m_2)gl_1\cos\theta_1 + m_2gl_2\cos\theta_2$ </p>
         
+        <h3>2.4. Solving the equation of motion</h3>
         <p>The Lagrange's equations are:</p>
-        <p> $\frac{d}{dt} \frac{\partial L}{\partial\dot{\theta}_1} = \frac{\partial L}{\partial\theta_1}$ </p>
-        <p> $\frac{d}{dt} \frac{\partial L}{\partial\dot{\theta}_2} = \frac{\partial L}{\partial\theta_2}$ </p>
+        <p class='math-box'> $\frac{d}{dt} \frac{\partial L}{\partial\dot{\theta}_1} = \frac{\partial L}{\partial\theta_1}$ </p>
+        <p class='math-box'> $\frac{d}{dt} \frac{\partial L}{\partial\dot{\theta}_2} = \frac{\partial L}{\partial\theta_2}$ </p>
         
         <p>The rest is just muscle work:</p>
         <p> $\frac{\partial L}{\partial\theta_1} = - m_2l_1l_2\dot{\theta}_1\dot{\theta}_2 \sin(\theta_1-\theta_2) - (m_1+m_2)gl_1\sin\theta_1$ </p>
@@ -138,6 +140,18 @@
         <p>Similarly, we can obtain our second equation of motion:</p>
         
         <p> $m_2\frac{l_2}{l_1}\ddot{\theta}_2 + m_2 \cos(\theta_1-\theta_2) \ddot{\theta}_1 = m_2\dot{\theta}_1^2\sin(\theta_1-\theta_2) - m_2\frac{g}{l_1}\sin\theta_2$ </p>
+        
+        <p>Treating this as a system of equations for $\ddot{\theta}_1$ and $\ddot{\theta}_2$, we can solve for $\ddot{\theta}_1$ and $\ddot{\theta}_2$.</p>
+
+        <p>And that, we are done!</p>
+
+        <h3>2.4. Special case: same mass and same length</h3>
+        <p>The above solution sure looks ugly! To gain insights into the dynamics of a double pendulum system, let us consider the special case where two masses have the same value for mass and length.</p>
+
+        <p> $2\ddot{\theta}_1 + \cos(\theta_1-\theta_2) \ddot{\theta}_2 = - \dot{\theta}_2^2\sin(\theta_1-\theta_2) - 2\frac{g}{l}\sin\theta_1$ </p>
+        <p> $\cos(\theta_1-\theta_2)\ddot{\theta}_2 + \cos^2(\theta_1-\theta_2) \ddot{\theta}_1 = \cos(\theta_1-\theta_2)\dot{\theta}_1^2\sin(\theta_1-\theta_2) - \cos(\theta_1-\theta_2)\frac{g}{l}\sin\theta_2$ </p>
+        <p> $\big[2-\cos^2(\theta_1-\theta_2)\big]\ddot{\theta}_1 = -\sin(\theta_1-\theta_2)\big[\dot{\theta}_2^2+\cos(\theta_1-\theta_2)\dot{\theta}_1^2\big] + \frac{g}{l}\big[\cos(\theta_1-\theta_2)\sin\theta_2 - 2\sin\theta_1\big]$ </p>
+        <p> $\ddot{\theta}_1 = \frac{-\sin(\theta_1-\theta_2)\big[\dot{\theta}_2^2+\cos(\theta_1-\theta_2)\dot{\theta}_1^2\big] + \frac{g}{l}\big[\cos(\theta_1-\theta_2)\sin\theta_2 - 2\sin\theta_1\big]}{2-\cos^2(\theta_1-\theta_2)}</p>
         
     </section>
     </div>
