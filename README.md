@@ -1,21 +1,11 @@
-Web apps (https://gau-nernst.github.io/web-apps/)
+TanHaus' Playground! (https://tanhaus.github.io/playground/)
 ==================
-
-<div>
-    <img src="https://img.shields.io/github/repo-size/gau-nernst/web-apps.svg">
-    <img src="https://img.shields.io/github/languages/top/gau-nernst/web-apps.svg">
-    <img src="https://img.shields.io/github/license/gau-nernst/web-apps.svg">
-</div>
 
 # Description
 
-I write small applications that run directly in web browsers. Most of them are simple physics simulations and topics that I am intersted in. This site is written in HTML, CSS and JavaScript.
+Welcome to the TanHaus' Playground! This is where the Tans experiment and try out new ideas. It is a collection of web applets and small applications.
 
-Most of the apps are very basic. The more polished ones are in the __Featured__ list.
-
-To view what I have planned for this project, please navigate to the __Project__ tab above (or you can click [here](https://github.com/gau-nernst/web-apps/projects/1)).
-
-## List of apps
+# Web applets
 
 <h2>Featured</h2>
 <ul>
@@ -51,33 +41,6 @@ Each web app should have one explanation page accompanied it. Currently, only th
 
 Both the app page and the explanation page have responsive design. Meaning, they should be displayed well on both mobile and desktop devices.
 
-# Installation
-
-These web-apps can be run directly on any modern browser by navigating to https://gau-nernst.github.io/web-apps/.
-
-For offline uses and modifying the code, please click the green 'Clone and download' button, and 'Download as zip'. Otherwise, you can save the web page locally.
-
-![](download.gif)
+# math.js
 
 There is a special math library named `math.js` located in `\libraries\math.js`. This script contains all the math functions that I use in my code. Feel free to download this script for your own personal use. Documentation is available in the [Wiki](https://github.com/gau-nernst/web-apps/wiki/math.js) section (WIP).
-
-# Usage
-
-Instructions on how to use the web-apps are available on the web interface.
-
-To learn about my `math.js`, please go to the [Wiki](https://github.com/gau-nernst/web-apps/wiki/math.js) section (WIP).
-
-You can try out `math.js` in the hidden Test page [here](https://gau-nernst.github.io/web-apps/test/) (https://gau-nernst.github.io/web-apps/test/). The whole module is imported as a namespace, and then linked as a property named `math` of the `window` object. To use it, simply open the Console in your browser of choice and call the `math` object.
-
-```javascript
-math.Solver.cubicEqn(1,5,4,3);
-// The console will show 'Array [ -4.220692819987324 ]'
-```
-
-![](test.gif)
-
-The gif above shows instructions for Firefox. Opening the console in Edge, Chrome, Safari and other Chromium-based browsers should be similar.
-
-# License
-
-This project is licensed under the MIT License.
