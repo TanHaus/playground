@@ -93,21 +93,23 @@
             </tr>
         </table>
         <button onclick="add_cf_row()">Add row</button>
+        <p>Discount rate <input id="cf_ir" type="number" value=10></p>
         <table>
             <tr>
                 <td>IRR</td>
                 <td><span id="show_irr">0%</span></td>
-            </tr>
-            <tr>
                 <td><button onclick = "calc_irr()">Calculate</button></td>
             </tr>
             <tr>
-                <td>NPV</td>
-                <td><span id="show_npv">0</span></td>
+                
             </tr>
             <tr>
+                <td>NPV</td>
+                <td><span id="show_npv">$ 0</span></td>
                 <td><button onclick = "calc_npv()">Calculate</button></td>
-                <td>i/r <input id="cf_ir" type="number"></td>
+            </tr>
+            <tr>
+                
             </tr>
         </table>
     </section>

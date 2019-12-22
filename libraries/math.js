@@ -540,18 +540,61 @@ export let Solver = {
         for(let i=0;i<temp.length;i++) result.push(temp[i][temp[i].length-1]);
         return result;
     },
-    findRootEqn: function(func,x0=0,dfunc,accuracy=1e-15) {  // method used: Newton's method
-        if(dfunc==undefined) dfunc = function(x) { return Calculus.diff(func,x,undefined,1); };
+    root: function(method='newton', fx, x0=0, optional, tol=1e-7) {
+        /*
+        For Newton's method, the function signature:
+            root(method, fx, x0, dfx, tol)
+        For secant method, the function signature:
+            root(method, fx, x0, x1, tol) 
+         */
+        if(typeof optional != 'function') {
+            method='secant'
+            if(typeof optional != 'number') optional = x0+Math.random()
+        }
+
         let count = 0;
-        while(Math.abs(func(x0))>accuracy&&count<1e4) {
-            x0 -= func(x0)/dfunc(x0);
-            count++;
+
+        if(method=='newton') {
+            let x1 = x0
+            let dfunc = optional
+
+            do {
+                x1 = x0
+                x0 = x0 - fx(x1)/dfunc(x1);
+
+                count++;
+                if(count > 1000) {
+                    console.warn('Exceed 1000 iterations. Cannot find a root')
+                    break
+                }
+            } while(Math.abs(fx(x0)) > tol && Math.abs(x0-x1) > tol)
+
         }
-        if(Math.abs(func(x0)>1)) {
-            console.warn('No solution found');
-            return undefined;
+
+        if(method=='secant') {
+            let x1 = optional,
+                fx1 = fx(x1),
+                fx0 = fx(x0)
+
+            do {
+                let c = x1
+                let F = (fx1-fx0)/(x1-x0)
+                x1 = x0 - fx0/F
+
+                x0 = c
+                fx0 = fx1
+                fx1 = fx(x1)
+
+                count++
+                if(count > 1000) {
+                    console.warn('Exceed 1000 iterations. Cannot find a root')
+                    break
+                } 
+            } while(Math.abs(fx(x0)) > tol && Math.abs(x0-x1) > tol)
+
         }
-        return x0;
+
+        return x0
     },
     quadraticEqn: function(a,b,c,complex=false) {
         if(complex==true) {
@@ -606,10 +649,65 @@ export let Solver = {
         }
         
     },
-    npv: function(cf0, list_cf, list_freq){
+    npv: function(cf0, list_cf, list_freq, discountRate){
+        if(list_cf.length != list_freq.length) {
+            console.alert('Cashflow and Frequency lists don\'t have the same length')
+            return 0
+        }
+        let sum = cf0
+        let freq_sum = 0
+        
+        if(discountRate!=0) {
+            for(let i=0; i<list_cf.length; i++) {
+                let cf = list_cf[i],
+                    freq = list_freq[i]
+                
+                sum += cf/discountRate*(1-1/(1+discountRate)**freq) / (1+discountRate)**freq_sum
+                freq_sum += freq
+            }
+        } else {
+            for(let i=0; i<list_cf.length; i++) {
+                let cf = list_cf[i],
+                    freq = list_freq[i]
+                
+                sum += cf*freq
+            }
+        }
+    
+        return sum
 
     },
-    irr: function(cf0, list_cf, list_freq, discountRate){
+    irr: function(cf0, list_cf, list_freq){
+        let npvFunction = r => Solver.npv(cf0, list_cf, list_freq, r)
+
+        let npvDerivative = function(r) {
+            let sum = 0
+            let freq_sum = 0
+        
+            if(r!=0) {
+                for(let i=0; i<list_cf.length; i++) {
+                    let cf = list_cf[i],
+                        freq = list_freq[i]
+
+                    sum += cf/r/(1+r)**freq_sum * ( (1/r + (freq+freq_sum)/(1+r)/(1+r)**freq) - 1/r - freq_sum/(1+r) )
+                    freq_sum += freq
+                }
+            } else {
+                for(let i=0; i<list_cf.length; i++) {
+                    let row = data_table.rows[i+1]
+                    let cf = list_cf[i],
+                        freq = list_freq[i]
+                    
+                    sum += cf*freq*freq_sum*(1+freq_sum+freq)
+                    freq_sum += freq
+                }
+            }
+        
+            return sum
+        }
+
+        return Solver.root('secant', npvFunction, 0.1, 0.2)
+        // Newton's method yields wrong result. Possibly because npvDerivative() is wrong
 
     },
     mirr: function(cf0, list_cf, list_freq, wacc){

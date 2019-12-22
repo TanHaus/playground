@@ -1,3 +1,5 @@
+import { Solver } from '../libraries/math.js'
+
 let n_show = document.querySelector("#n"),
     ir_show = document.querySelector("#ir"),
     pv_show = document.querySelector("#pv"),
@@ -22,66 +24,10 @@ document.calculate = function(calculate_value) {
             break;
 
         case "ir":
-            let function_f = r => (r==0) ? pv + pmt*n + fv : pv*(1+r)**n + pmt/r*((1+r)**n - 1) + fv
-            let derivative_f = r => (r==0) ? pv*n + pmt*n*(n-1)/2 : pv*n*(1+r)**(n-1) + pmt/r**2*(n*(1+r)**(n-1)*r-(1+r)**n+1)
-            let tol = 1e-7
-            
-            /*
-            Implement midpoint's method. Not efficient but guarantee to find a solution
-             */
-            // let ir1 = 1, ir2 = -1
-            // let fir1 = function_f(ir1), fir2 = function_f(ir2)
-            // ensure they have opposite signs
-            // while(fir1*fir2>=0){
-            //     ir1 += 0.1
-            //     fir1 = function_f(ir1)
-            //     if(fir1*fir2<0) break
-            //     ir2 -= 0.1
-            //     fir2 = function_f(ir2)
-            // }
+            let calc_fv = r => (r==0) ? pv + pmt*n + fv : pv*(1+r)**n + pmt/r*((1+r)**n - 1) + fv
+            let derivative_fv = r => (r==0) ? pv*n + pmt*n*(n-1)/2 : pv*n*(1+r)**(n-1) + pmt/r**2*(n*(1+r)**(n-1)*r-(1+r)**n+1)
 
-            // let count = 0
-            // while(Math.abs(function_f(ir1)) > tol && Math.abs(ir1-ir2) > tol) {
-            //     // let m = (ir1 + ir2)/2
-            //     // let fm = function_f(m)
-
-            //     // if(fm*fir1 < 0) {
-            //     //     ir = ir2 = m
-            //     //     fir2 = fm
-            //     // } else if(fm*fir2 < 0) {
-            //     //     ir = ir1 = m
-            //     //     fir1 = fm
-            //     // } else {
-            //     //     ir = m
-            //     //     break;
-            //     // }
-
-            //     count++;
-            //     if(count > 1000) break;
-            // }
-
-            // if(Math.abs(fir1) > Math.abs(fir2)) ir = ir2; else ir = ir1;
-
-            // console.log("n = ", n, "pv = ", pv, "pmt = ", pmt, "fv = ", fv);
-
-            /* 
-            Implement Newton's method
-             */
-            let ir1 = 0.1+Math.random()/100, ir2 = 0.1+Math.random()/100
-            let count = 0
-            while(Math.abs(function_f(ir1)) > tol && Math.abs(ir1-ir2) > tol) {
-                let c = ir2
-                ir2 = ir1 - function_f(ir1)/derivative_f(ir1)
-                ir1 = c
-                console.log("ir1 = ", ir1, " ir2 = ", ir2);
-
-                count++;
-                if(count > 1000) {
-                    alert('Newton\'s method fails')
-                    break;
-                }
-            }
-            ir = ir2
+            ir = Solver.root('newton', calc_fv, 0.1, derivative_fv)
             break;
             
         case "pv":
@@ -152,89 +98,36 @@ document.add_cf_row = function() {
 }
 
 let npv_function = function(r) {
-    let sum = parseFloat(data_table.rows[1].cells[1].firstElementChild.value)
-    let freq_sum = 0
-    
-    if(r!=0) {
-        for(let i=1; i<=cf_rows; i++) {
-            let row = data_table.rows[i+1]
-            let cf = row.cells[1].firstElementChild.value,
-                freq = row.cells[2].firstElementChild.value
-            if(cf=='' || freq=='') break
-            sum += cf/r*(1-1/(1+r)**freq) / (1+r)**freq_sum
-            freq_sum += freq
-        }
-    } else {
-        for(let i=1; i<=cf_rows; i++) {
-            let row = data_table.rows[i+1]
-            let cf = row.cells[1].firstElementChild.value,
-                freq = row.cells[2].firstElementChild.value
-            if(cf=='' || freq=='') break
-            sum += cf*freq
-        }
+    let cf0 = parseFloat(data_table.rows[1].cells[1].firstElementChild.value)
+    let CFs = [], freqs = []
+
+    for(let i=1; i<=cf_rows; i++) {
+        let row = data_table.rows[i+1]
+        CFs.push(parseFloat(row.cells[1].firstElementChild.value))
+        freqs.push(parseFloat(row.cells[2].firstElementChild.value))
     }
 
-    return sum
-}
-
-let npv_derivative_function = function(r) {
-    let sum = 0
-    let freq_sum = 0
-
-    if(r!=0) {
-        for(let i=1; i<=cf_rows; i++) {
-            let row = data_table.rows[i+1]
-            let cf = row.cells[1].firstElementChild.value,
-                freq = row.cells[2].firstElementChild.value
-            if(cf=='' || freq=='') break
-            sum += cf/r/(1+r)**freq_sum * ( (1/r + (freq+freq_sum)/(1+r)/(1+r)**freq) - 1/r - freq_sum/(1+r) )
-            freq_sum += freq
-        }
-    } else {
-        for(let i=1; i<=cf_rows; i++) {
-            let row = data_table.rows[i+1]
-            let cf = row.cells[1].firstElementChild.value,
-                freq = row.cells[2].firstElementChild.value
-            if(cf=='' || freq=='') break
-            sum += cf*freq*freq_sum*(1+freq_sum+freq)
-            freq_sum += freq
-        }
-    }
-
-    return sum
+    return Solver.npv(cf0, CFs, freqs, r)
 }
 
 document.calc_npv = function() {
     let r = parseFloat(document.querySelector('#cf_ir').value)/100
     let npv = npv_function(r)
-    document.querySelector('#show_npv').innerHTML = npv.toFixed(4)
+    document.querySelector('#show_npv').innerHTML = '$ ' + npv.toFixed(4)
 }
 
 document.calc_irr = function() {
-    /*
-    Implement secant method 
-     */
-    let guess1 = 0.1, guess2 = 0.2
-    let npv1 = npv_function(guess1), npv2 = npv_function(guess2)
-    let tol = 1e-7
-    let count = 0
-    do {
-        let c = guess2
-        let F = (npv2-npv1)/(guess2-guess1)
-        guess2 = guess1 - npv1/F
-        // guess2 = guess1 - npv_function(guess1)/npv_derivative_function(guess1)
-        guess1 = c
-        npv1 = npv2
-        npv2 = npv_function(guess2)
-        console.log('guess2 = ', guess2)
+    let cf0 = parseFloat(data_table.rows[1].cells[1].firstElementChild.value)
+    let CFs = [], freqs = []
 
-        count++
-        if(count>1000) {
-            console.alert('Cannot find IRR')
-            break
-        }
-    }while(Math.abs(npv_function(guess1))>tol && Math.abs(guess1-guess2)>tol)
+    for(let i=1; i<=cf_rows; i++) {
+        let row = data_table.rows[i+1]
+        CFs.push(parseFloat(row.cells[1].firstElementChild.value))
+        freqs.push(parseFloat(row.cells[2].firstElementChild.value))
+    }
+
+    let irr = Solver.irr(cf0, CFs, freqs)
     
-    document.querySelector('#show_irr').textContent = (guess1*100).toFixed(4) + '%'
+    document.querySelector('#show_irr').textContent = (irr*100).toFixed(4) + '%'
 }
 
