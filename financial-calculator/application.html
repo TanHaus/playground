@@ -4,22 +4,27 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <meta name="description" content="Simple Financial Calculator with TVM">
-    <title>Financial Calculator</title>
+    <meta name="description" content="Financial Management">
+    <title>Financial Management</title>
     <link rel="icon" type="image/png" href="../favicon.ico">
     <link rel="stylesheet" type="text/css" media="screen" href="../stylesheets/style.css" />
     <link rel="stylesheet" type="text/css" media="screen" href="style.css" />
 
-    <script type="module" src="script.js" defer></script>
+    <!-- <script type="module" src="script.js" defer></script> -->
 </head>
 <body>
     <section>
-        <h1>Financial calculator</h1>
-        <p>This applet mimicks the few most important functions of the financial calculator TI-BA II Plus. Chances are, if you know how to use a financial calculator, what's on this page is enough. You can visit <a href="application.html">Application</a> to see how to use the TVM function.</p>
+        <h1>Financial Management - Introduction to Corporate Finance</h1>
+        <p>This page follows the content covered by the course <em>Financial Management</em> AB1201 (Fall 2019) by Nanyang Technological University, Singapore.</p>
     </section>
 
     <section>
-        <h2>Time Value of Money Calculator</h2>
+        <h2>Loan amortization</h2>
+
+    </section>
+
+    <section>
+        <h2>Bond valuation</h2>
         <table id="tvm">
             <tr>
                 <td>N</td>
@@ -70,46 +75,27 @@
     </section>
 
     <section>
-        <h2>Cash flow calculator</h2>
-        <table id="cf_data">
-            <tr>
-                <th></th>
-                <th>Cash flow</th>
-                <th>Frequency</th>
-            </tr>
-            <tr>
-                <td>0</td>
-                <td><input type="number" value=0></td>
-            </tr>
-            <tr>
-                <td>1</td>
-                <td><input type="number" value=0></td>
-                <td><input type="number" value=1></td>
-            </tr>
-            <tr>
-                <td>2</td>
-                <td><input type="number" value=0></td>
-                <td><input type="number" value=1></td>
-            </tr>
-        </table>
-        <button onclick="add_cf_row()">Add row</button>
-        <table>
-            <tr>
-                <td>IRR</td>
-                <td><span id="show_irr">0%</span></td>
-            </tr>
-            <tr>
-                <td><button onclick = "calc_irr()">Calculate</button></td>
-            </tr>
-            <tr>
-                <td>NPV</td>
-                <td><span id="show_npv">0</span></td>
-            </tr>
-            <tr>
-                <td><button onclick = "calc_npv()">Calculate</button></td>
-                <td>i/r <input id="cf_ir" type="number"></td>
-            </tr>
-        </table>
+        <h2>Stock valuation (Gordon's model)</h2>
+        <p>Use cases:</p>
+        
+        <h2>Capital Asset Pricing Model (CAPM)</h2>
+    </section>
+
+    <section>
+        <h2>Capital budgeting</h2>
+        
+        <h3>Weight-Average Cost of Capital (WACC)</h3>
+
+        <h3>Net Present Value (NPV)</h3>
+
+        <h3>Internal Rate of Return (IRR)</h3>
+
+        <h3>Modified Internal Rate of Return (MIRR)</h3>
+
+        <h3>Payback period</h3>
+
+        <h3>Discounted payback period</h3>
+
     </section>
 
 </body>

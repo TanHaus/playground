@@ -27,8 +27,8 @@ section { margin: var(--space-large) var(--space-larger); }
 section > h2 { margin-top: 0; }
 section > p { max-width: 30em; }
 
-a { text-decoration: none; color: var(--color-2); transition: 0.2s; }
-a:hover { color: var(--color-3); }
+a { text-decoration: none; transition: 0.2s; color: inherit; border-bottom: 2px solid var(--color-3);}
+a:hover { color: var(--color-3);  border-bottom-style: dotted; }
 
 ul, li { list-style: none; }
 

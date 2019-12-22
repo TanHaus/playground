@@ -7,7 +7,7 @@ export class ComplexNumber {
     toString() {
         if(arguments=='polar') return ''+this.magnitude()+'e^i'+this.arg().toPrecision(6);
         if(arguments=='polorLatex') return ''+this.magnitude()+'e^{i'+this.arg().toPrecision(6)+'}';
-        return ''+this.re+' + '+this.im+'i';
+        return '' + this.re + ' + ' + this.im + 'i';
     }
     clone(other) {
         if(typeof other=='number') { this.re = other; this.im = 0; }
@@ -313,24 +313,24 @@ export let Random = {
 };
 
 export let Calculus = {
-    diff: function(func,x,dx,n) {
+    diff: function(func,x,h,n) {
         if(typeof func != 'function') throw '' + func + ' is not a function';
-        if(dx==undefined) {
-            if(x!=0) dx = x*1e-2;
-            else dx=1e-2;
+        if(h==undefined) {
+            if(x!=0) h = x*1e-2;
+            else h=1e-2;
         }
         if(n==undefined) n=1;
         switch(n) {
             case 0: return func(x);
-            case 1: return (-func(x+2*dx)+8*func(x+dx)-8*func(x-dx)+func(x-2*dx))/(12*dx);
-            case 2: return (-func(x+2*dx)+16*func(x+dx)-30*func(x)+16*func(x-dx)-func(x-2*dx))/(12*Math.pow(dx,2));
-            case 3: return (-func(x+3*dx)+8*func(x+2*dx)-13*func(x+dx)+13*func(x-dx)-8*func(x-2*dx)+func(x-3*dx))/(8*Math.pow(dx,3));
-            case 4: return (-func(x+3*dx)+12*func(x+2*dx)-39*func(x+dx)+ 56*func(x)-39*func(x-dx)+12*func(x-2*dx)-func(x-3*dx))/(6*Math.pow(dx,4));
-            case 5: return (-func(x+4*dx)+9*func(x+3*dx)-26*func(x+2*dx)+29*func(x+dx)-29*func(x-dx)+26*func(x-2*dx)-9*func(x-3*dx)+func(x-4*dx))/(6*Math.pow(dx,5));
-            case 6: return (-func(x+4*dx)+12*func(x+3*dx)-52*func(x+2*dx)+116*func(x+dx)-150*func(x)+116*func(x-dx)-52*func(x-2*dx)+12*func(x-3*dx)-func(x-4*dx))/(4*Math.pow(dx,6));
+            case 1: return (-func(x+2*h)+8*func(x+h)-8*func(x-h)+func(x-2*h))/(12*h);
+            case 2: return (-func(x+2*h)+16*func(x+h)-30*func(x)+16*func(x-h)-func(x-2*h))/(12*Math.pow(h,2));
+            case 3: return (-func(x+3*h)+8*func(x+2*h)-13*func(x+h)+13*func(x-h)-8*func(x-2*h)+func(x-3*h))/(8*Math.pow(h,3));
+            case 4: return (-func(x+3*h)+12*func(x+2*h)-39*func(x+h)+ 56*func(x)-39*func(x-h)+12*func(x-2*h)-func(x-3*h))/(6*Math.pow(h,4));
+            case 5: return (-func(x+4*h)+9*func(x+3*h)-26*func(x+2*h)+29*func(x+h)-29*func(x-h)+26*func(x-2*h)-9*func(x-3*h)+func(x-4*h))/(6*Math.pow(h,5));
+            case 6: return (-func(x+4*h)+12*func(x+3*h)-52*func(x+2*h)+116*func(x+h)-150*func(x)+116*func(x-h)-52*func(x-2*h)+12*func(x-3*h)-func(x-4*h))/(4*Math.pow(h,6));
             default:
               console.warn('Numerical differentiation of order higher than 6 is not accurate');
-              return Calculus.diff(function(y) { return Calculus.diff(func,y,dx,n-6); },x,dx,6);
+              return Calculus.diff(function(y) { return Calculus.diff(func,y,h,n-6); },x,h,6);
         }
     },
     pdiff: function(func,numArgs,index,values) {
@@ -344,17 +344,25 @@ export let Calculus = {
             return func();
         }
     },
-    integrate: function(func,x1,x2,dx) { // method used: Simpson's 1/3 rule
+    integrate: function(func,start,end,N) {
+        /*
+        Based on MIT OCW Introduction to Numerical Analysis 18.330
+        https://ocw.mit.edu/courses/mathematics/18-330-introduction-to-numerical-analysis-spring-2012/
+        Method used: Simpson's rule
+        Coefficients: 1 4 2 4 2 ... 2 4 1
+        Error: forth-order for function with fifth differentiability
+        */
+
         if(typeof func != 'function') throw '' + func + ' is not a function';
-        if(dx==undefined) dx = (x2-x1)*1e-4;
+
+        if(N==undefined) N = 1e4
+        let h = (end-start)/N/2
         let result = 0;
-        let index = x1;
-        while(index + dx < x2) {
-            result += dx/6*(func(index)+4*func(index+dx/2)+func(index+dx));
-            index += dx;
-        }
-        dx = x2-index;
-        result += dx/6*(func(index)+4*func(index+dx/2)+func(index+dx));
+
+        for(let i=0; i<N; i++) result += 4*func(start+(2*i+1)*h) + 2*func(start+2*i*h)
+        result += func(end) - func(start)
+        result *= h/3
+
         return result;
     }
 }
@@ -574,6 +582,44 @@ export let Solver = {
             return x0+(k1+k2*2+k3*2+k4)/6;
         }
         return undefined;
+    },
+    tvm: function(n, ir, pv, pmt, fv){
+        let find = ''
+        let var_names = ['n', 'ir', 'pv', 'pmt', 'fv']
+        let vars = [n, ir, pv, pmt, fv]
+        for(let i=0; i<5; i++)  {
+            if(typeof vars[i] != 'number') {
+                find = var_names[i]
+                break
+            }
+        }
+        let factor = 1 + ir,
+            compoundFactor = factor**n
+
+        switch(find){
+            case 'n':
+                return Math.log((pmt/ir - fv) / (pmt/ir + pv))/Math.log(1+ir);
+            case 'ir':
+                let calc_fv = r => (r==0) ? pv + pmt*n + fv : pv*compoundFactor + pmt/r*(compoundFactor - 1) + fv
+                let calc_derivative_fv = r => (r==0) ? pv*n + pmt*n*(n-1)/2 : pv*n*(1+r)**(n-1) + pmt/r**2*(n*(1+r)**(n-1)*r-(1+r)**n+1)
+            
+        }
+        
+    },
+    npv: function(cf0, list_cf, list_freq){
+
+    },
+    irr: function(cf0, list_cf, list_freq, discountRate){
+
+    },
+    mirr: function(cf0, list_cf, list_freq, wacc){
+
+    },
+    payback: function(cf0, list_cf, list_freq){
+
+    },
+    discountedPayback: function(cf0, list_cf, list_freq, wacc){
+        
     }
 }
 
@@ -929,17 +975,18 @@ export let Signal = (function() {
 
     // public methods
     pub.fft = function(realSignal,fftSizeRef) {
-        /* Main function to call from outside
-         * INPUT: realSignal: an array of numbers
-         *        fftSize: a number
-         * This function first tests certain conditions and handle them if possible. Otherwise, throw an error
-         *     - Check if the signal is an array of numbers (only first element). If not, throw an error
-         *     - Check if fftSize is given. If not → fftSize = signal size
-         *     - Check if fftSize is a power of 2. If not, throw an error
-         *     - Check if signal is shorter than expected fftSize, do zero padding on the signal
-         * This function also warps the number array into a ComplexNumber array to feed into method FFT.FFT()
-         * RETURN: an array of ComplexNumber objects
-         */
+        /* 
+        Main function to call from outside
+        INPUT: realSignal: an array of numbers
+               fftSize: a number
+        This function first tests certain conditions and handle them if possible. Otherwise, throw an error
+            - Check if the signal is an array of numbers (only first element). If not, throw an error
+            - Check if fftSize is given. If not → fftSize = signal size
+            - Check if fftSize is a power of 2. If not, throw an error
+            - Check if signal is shorter than expected fftSize, do zero padding on the signal
+        This function also warps the number array into a ComplexNumber array to feed into method FFT.FFT()
+        RETURN: an array of ComplexNumber objects
+        */
         if(typeof fftSizeRef != 'number') throw 'FFT size is not a number';
         if(typeof realSignal[0] != 'number') throw 'Signal is not an array of numbers';
         
@@ -968,37 +1015,41 @@ export let Signal = (function() {
     
     pub.get = {
         ReArray: function(signal) {
-            /* Extract the real components from a ComplexNumber array
-             * INPUT: a ComplexNumber array
-             * RETURN: a number array of real components
-             */
+            /* 
+            Extract the real components from a ComplexNumber array
+            INPUT: a ComplexNumber array
+            RETURN: a number array of real components
+            */
             let result = [];
             for(let i=0;i<signal.length;i++) result[i] = signal[i].re;
             return result;
         },
         ImArray: function(signal) {
-            /* Extract the imaginary components from a ComplexNumber array
-             * INPUT: a ComplexNumber array
-             * RETURN: a number array of imaginary components
-             */
+            /* 
+            Extract the imaginary components from a ComplexNumber array
+            INPUT: a ComplexNumber array
+            RETURN: a number array of imaginary components
+            */
             let result = [];
             for(let i=0;i<signal.length;i++) result[i] = signal[i].im;
             return result;
         },
         MagnitudeArray: function(signal) {
-            /* Extract the magnitudes from a ComplexNumber array
-             * INPUT: a ComplexNumber array
-             * RETURN: a number array of magnitudes
-             */
+            /* 
+            Extract the magnitudes from a ComplexNumber array
+            INPUT: a ComplexNumber array
+            RETURN: a number array of magnitudes
+            */
             let result = [];
             for(let i=0;i<signal.length;i++) result[i] = Math.sqrt(signal[i].re*signal[i].re + signal[i].im*signal[i].im);
             return result;
         },
         getPhaseArray: function(signal) {
-            /* Extract the phases from a ComplexNumber array
-             * INPUT: a ComplexNumber array
-             * RETURN: a number array of phases in radian
-             */
+            /*
+            Extract the phases from a ComplexNumber array
+            INPUT: a ComplexNumber array
+            RETURN: a number array of phases in radian
+            */
             let result = [];
             for(let i=0;i<signal.length;i++) result[i] = Math.atan2(signal[i].im,signal[i].re);
             return result;
