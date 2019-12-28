@@ -1,4 +1,4 @@
-import { Solver } from '../libraries/math.js'
+import { Finance, Solver } from '../libraries/math.js'
 
 let n_show = document.querySelector("#n"),
     ir_show = document.querySelector("#ir"),
@@ -11,8 +11,10 @@ let n = 10, ir = 0, pv = -5000, pmt = 100, fv = 1000,
 
 let show = [n_show, ir_show, pv_show, pmt_show, fv_show]
 
+/**
+ * Retrieve and assign value to variables
+ */
 document.calculate = function(calculate_value) {
-    // Retrieve and assign value to variables
     retrieve_value();
     let rate = 1 + ir,
         discount = rate**n,
@@ -107,7 +109,7 @@ let npv_function = function(r) {
         freqs.push(parseFloat(row.cells[2].firstElementChild.value))
     }
 
-    return Solver.npv(cf0, CFs, freqs, r)
+    return Finance.npv(cf0, CFs, freqs, r)
 }
 
 document.calc_npv = function() {
@@ -126,7 +128,7 @@ document.calc_irr = function() {
         freqs.push(parseFloat(row.cells[2].firstElementChild.value))
     }
 
-    let irr = Solver.irr(cf0, CFs, freqs)
+    let irr = Finance.irr(cf0, CFs, freqs)
     
     document.querySelector('#show_irr').textContent = (irr*100).toFixed(4) + '%'
 }

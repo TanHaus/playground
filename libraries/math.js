@@ -1,5 +1,20 @@
+export * from './math/finance.js'
+export * from './math/solver.js'
+export * from './math/statistics.js'
+
+export const name = 'math'
+
 // Begin of classes
+
+/**
+ * 
+ */
 export class ComplexNumber {
+    /**
+     * @constructor
+     * @param {number} re - Real part of the complex number
+     * @param {number} im - Imanginary part of the complex number
+     */
     constructor(re,im) {
         this.re = re;
         this.im = im;
@@ -263,12 +278,6 @@ export class Set {
     }
 }
 
-export class Queue {
-    constructor() {
-        
-    }
-}
-
 // Begin of functions
 export let Random = {
     integer: function(min=1,max=100,signed=false) {
@@ -518,209 +527,6 @@ export let Vector = {
     }
 }
 
-export let Solver = {
-    sim2: function(matrix) {  // simultaneous equation, 2 unknowns. size of matrix is 2x3
-        if(matrix.length!=2 && matrix[0].length!=3 && matrix[1].length!=3) throw 'Matrix dimensions are not int 2x3 shape'
-        let a = matrix[0][0]; let b = matrix[0][1]; let m = matrix[0][2];
-        let c = matrix[1][0]; let d = matrix[1][1]; let n = matrix[1][2];
-
-        if(a*d==b*c) {
-            if(a*n==c*m) console.warn('Infinite number of solutions');
-            else console.warn('No solution found');
-            return undefined;
-        } else return {
-            x: (m*d-n*b)/(a*d-b*c),
-            y: (m*c-n*a)/(b*c-a*d),
-        }
-    },
-    simultaneousEqn: function(matrix) {  // method used: Gaussian elimination
-        if(matrix[0].length!=matrix.length+1) throw 'Augmented matrix has wrong dimension. It must be in n x (n+1)';
-        let temp = Matrix.reducedEchelonForm(matrix);
-        let result = [];
-        for(let i=0;i<temp.length;i++) result.push(temp[i][temp[i].length-1]);
-        return result;
-    },
-    root: function(method='newton', fx, x0=0, optional, tol=1e-7) {
-        /*
-        For Newton's method, the function signature:
-            root(method, fx, x0, dfx, tol)
-        For secant method, the function signature:
-            root(method, fx, x0, x1, tol) 
-         */
-        if(typeof optional != 'function') {
-            method='secant'
-            if(typeof optional != 'number') optional = x0+Math.random()
-        }
-
-        let count = 0;
-
-        if(method=='newton') {
-            let x1 = x0
-            let dfunc = optional
-
-            do {
-                x1 = x0
-                x0 = x0 - fx(x1)/dfunc(x1);
-
-                count++;
-                if(count > 1000) {
-                    console.warn('Exceed 1000 iterations. Cannot find a root')
-                    break
-                }
-            } while(Math.abs(fx(x0)) > tol && Math.abs(x0-x1) > tol)
-
-        }
-
-        if(method=='secant') {
-            let x1 = optional,
-                fx1 = fx(x1),
-                fx0 = fx(x0)
-
-            do {
-                let c = x1
-                let F = (fx1-fx0)/(x1-x0)
-                x1 = x0 - fx0/F
-
-                x0 = c
-                fx0 = fx1
-                fx1 = fx(x1)
-
-                count++
-                if(count > 1000) {
-                    console.warn('Exceed 1000 iterations. Cannot find a root')
-                    break
-                } 
-            } while(Math.abs(fx(x0)) > tol && Math.abs(x0-x1) > tol)
-
-        }
-
-        return x0
-    },
-    quadraticEqn: function(a,b,c,complex=false) {
-        if(complex==true) {
-            let sqrtD = ComplexNumber.SQRT(b*b-4*a*c);
-            return [sqrtD[0].add(-b).multiply(1/2/a),sqrtD[1].add(-b).multiply(1/2/a)];
-        }
-        let determinant = b*b-4*a*c;
-        if(determinant<0) { console.warn('No real roots'); return undefined; }
-        else if(determinant==0) { return [ -b/(2*a) ]; }
-        else return [(-b + Math.sqrt(determinant))/(2*a), (-b - Math.sqrt(determinant))/(2*a)];
-    },
-    cubicEqn: function(a,b,c,d,complex=false) {
-        let d0 = b*b - 3*a*c,
-            d1 = 2*b*b*b - 9*a*b*c + 27*a*a*d,
-            result = [];
-        console.log(result);
-        return result;
-    },
-    ODE: function(mode='Euler',func,x0,step=1/60) {
-        if(mode='Euler') {
-            return x0+h*func(x0);
-        }
-        if(mode='RK4') {
-            let k1 = h*func(x0),
-                k2 = h*func(x0+k1/2),
-                k3 = h*func(x0+k2/2),
-                k4 = h*func(x0+k3);
-            return x0+(k1+k2*2+k3*2+k4)/6;
-        }
-        return undefined;
-    },
-    tvm: function(n, ir, pv, pmt, fv){
-        let find = ''
-        let var_names = ['n', 'ir', 'pv', 'pmt', 'fv']
-        let vars = [n, ir, pv, pmt, fv]
-        for(let i=0; i<5; i++)  {
-            if(typeof vars[i] != 'number') {
-                find = var_names[i]
-                break
-            }
-        }
-        let factor = 1 + ir,
-            compoundFactor = factor**n
-
-        switch(find){
-            case 'n':
-                return Math.log((pmt/ir - fv) / (pmt/ir + pv))/Math.log(1+ir);
-            case 'ir':
-                let calc_fv = r => (r==0) ? pv + pmt*n + fv : pv*compoundFactor + pmt/r*(compoundFactor - 1) + fv
-                let calc_derivative_fv = r => (r==0) ? pv*n + pmt*n*(n-1)/2 : pv*n*(1+r)**(n-1) + pmt/r**2*(n*(1+r)**(n-1)*r-(1+r)**n+1)
-            
-        }
-        
-    },
-    npv: function(cf0, list_cf, list_freq, discountRate){
-        if(list_cf.length != list_freq.length) {
-            console.alert('Cashflow and Frequency lists don\'t have the same length')
-            return 0
-        }
-        let sum = cf0
-        let freq_sum = 0
-        
-        if(discountRate!=0) {
-            for(let i=0; i<list_cf.length; i++) {
-                let cf = list_cf[i],
-                    freq = list_freq[i]
-                
-                sum += cf/discountRate*(1-1/(1+discountRate)**freq) / (1+discountRate)**freq_sum
-                freq_sum += freq
-            }
-        } else {
-            for(let i=0; i<list_cf.length; i++) {
-                let cf = list_cf[i],
-                    freq = list_freq[i]
-                
-                sum += cf*freq
-            }
-        }
-    
-        return sum
-
-    },
-    irr: function(cf0, list_cf, list_freq){
-        let npvFunction = r => Solver.npv(cf0, list_cf, list_freq, r)
-
-        let npvDerivative = function(r) {
-            let sum = 0
-            let freq_sum = 0
-        
-            if(r!=0) {
-                for(let i=0; i<list_cf.length; i++) {
-                    let cf = list_cf[i],
-                        freq = list_freq[i]
-
-                    sum += cf/r/(1+r)**freq_sum * ( (1/r + (freq+freq_sum)/(1+r)/(1+r)**freq) - 1/r - freq_sum/(1+r) )
-                    freq_sum += freq
-                }
-            } else {
-                for(let i=0; i<list_cf.length; i++) {
-                    let row = data_table.rows[i+1]
-                    let cf = list_cf[i],
-                        freq = list_freq[i]
-                    
-                    sum += cf*freq*freq_sum*(1+freq_sum+freq)
-                    freq_sum += freq
-                }
-            }
-        
-            return sum
-        }
-
-        return Solver.root('secant', npvFunction, 0.1, 0.2)
-        // Newton's method yields wrong result. Possibly because npvDerivative() is wrong
-
-    },
-    mirr: function(cf0, list_cf, list_freq, wacc){
-
-    },
-    payback: function(cf0, list_cf, list_freq){
-
-    },
-    discountedPayback: function(cf0, list_cf, list_freq, wacc){
-        
-    }
-}
-
 export let Graph = {
     drawAxis: function(xRange,yRange,canvas) {
         let context = canvas.getContext('2d'),
@@ -857,97 +663,6 @@ export let Graph = {
         ctx.restore();
     }
 };
-
-export let Statistics = {
-    sum: function(list) {
-        let result = 0,
-            length = list.length;
-        for(let i=0;i<length;i++) result+=list[i];
-        return result;
-    },
-    mean: function(list) {
-        let result = 0,
-            length = list.length;
-        for(let i=0;i<length;i++) result+=list[i];
-        return result/length;
-    },
-    var: function(list) {
-        let sumSquared = 0,
-            sum = 0,
-            length = list.length;
-        for(let i=0;i<length;i++) {
-            sumSquared += list[i]*list[i];
-            sum += list[i];
-        }
-        sum /= length;
-        return sumSquared/length - sum*sum;
-    },
-    sd: function(list) {
-        return Math.sqrt(Statistics.var(list));
-    },
-    sampleVar: function(list) {  // unbiased estimate of population variance from a sample
-        let sumSquared = 0,
-            sum = 0,
-            length = list.length;
-        for(let i=0;i<length;i++) {
-            sumSquared += list[i]*list[i];
-            sum += list[i];
-        }
-        let temp = length-1;
-        return sumSquared/temp - sum*sum/length/temp;
-    },
-    sampleSd: function(list) {
-        return Math.sqrt(Statistics.sampleVar(list));
-    },
-    cov: function(list1,list2) {
-        if(list1.length!=list2.length) throw 'Two lists don\'t have the same length';
-        let xySum = 0,
-            xSum = 0,
-            ySum = 0,
-            length = list1.length;
-        for(let i=0;i<length;i++) {
-            xySum += list1[i]*list2[i];
-            xSum += list1[i];
-            ySum += list2[i];
-        }
-        return (xySum-xSum*ySum/length)/length;
-    },
-    regression: {
-        linear: function(listX,listY) {
-            if(listX.length!=listY.length) throw 'Two data sets must have the same length';
-            let sumX = 0,
-                sumY = 0,
-                sumX2 = 0,
-                sumY2 = 0,
-                sumXY = 0;
-            for(let i=0;i<listX.length;i++) {
-                sumX += listX[i];
-                sumY += listY[i];
-                sumX2 += listX[i]*listX[i];
-                sumY2 += listY[i]*listY[i];
-                sumXY += listX[i]*listY[i];
-            }
-            let denominator = sumX*sumX - listX.length*sumX2,
-                numerator = sumX*sumY-sumXY*listX.length,
-                A = (sumX*sumY-sumXY*listX.length)/denominator,
-                B = (sumXY*sumX-sumX2*sumY)/denominator,
-                R = -numerator/Math.sqrt(listX.length*sumX2-sumX*sumX)/Math.sqrt(listX.length*sumY2-sumY*sumY),
-                R2 = R*R;
-            return {'a': A, 'b': B, 'r2': R2, 'r': R};
-        },
-        exponential: function(listX,listY) {
-            if(listX.length!=listY.length) throw 'Two data sets must have the same length';
-            let listYnew = [];
-            for(let i=0;i<listY.length;i++) {
-                listYnew.push(Math.log(listY[i]));
-            }
-            let raw = Statistics.regression.linear(listX,listYnew),
-                A = Math.exp(raw.b),
-                B = Math.exp(raw.a);
-            return {'a': A, 'b': B, 'r2': raw.r2, 'r': raw.r};
-        }
-    }
-}
 
 export let Compute = {
     magnitude: function(x,y) {
