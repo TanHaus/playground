@@ -20,5 +20,5 @@ h1 { margin-left: 1.5vw; }
 p { color: whitesmoke; }
 ul { padding-left: 3vw; }
 li { list-style: none; margin-bottom: 5px; }
-a { text-decoration: none; color: var(--color-2); transition: 0.2s; }
-a:hover { color: var(--color-3); }
+a { text-decoration: none; transition: 0.2s; border-bottom: 2px solid var(--color-5);}
+a:hover { color: var(--color-2); border-bottom-style: dotted;}

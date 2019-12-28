@@ -1,5 +1,20 @@
+export * from './math/finance.js'
+export * from './math/solver.js'
+export * from './math/statistics.js'
+
+export const name = 'math'
+
 // Begin of classes
+
+/**
+ * 
+ */
 export class ComplexNumber {
+    /**
+     * @constructor
+     * @param {number} re - Real part of the complex number
+     * @param {number} im - Imanginary part of the complex number
+     */
     constructor(re,im) {
         this.re = re;
         this.im = im;
@@ -7,7 +22,7 @@ export class ComplexNumber {
     toString() {
         if(arguments=='polar') return ''+this.magnitude()+'e^i'+this.arg().toPrecision(6);
         if(arguments=='polorLatex') return ''+this.magnitude()+'e^{i'+this.arg().toPrecision(6)+'}';
-        return ''+this.re+' + '+this.im+'i';
+        return '' + this.re + ' + ' + this.im + 'i';
     }
     clone(other) {
         if(typeof other=='number') { this.re = other; this.im = 0; }
@@ -263,12 +278,6 @@ export class Set {
     }
 }
 
-export class Queue {
-    constructor() {
-        
-    }
-}
-
 // Begin of functions
 export let Random = {
     integer: function(min=1,max=100,signed=false) {
@@ -313,24 +322,24 @@ export let Random = {
 };
 
 export let Calculus = {
-    diff: function(func,x,dx,n) {
+    diff: function(func,x,h,n) {
         if(typeof func != 'function') throw '' + func + ' is not a function';
-        if(dx==undefined) {
-            if(x!=0) dx = x*1e-2;
-            else dx=1e-2;
+        if(h==undefined) {
+            if(x!=0) h = x*1e-2;
+            else h=1e-2;
         }
         if(n==undefined) n=1;
         switch(n) {
             case 0: return func(x);
-            case 1: return (-func(x+2*dx)+8*func(x+dx)-8*func(x-dx)+func(x-2*dx))/(12*dx);
-            case 2: return (-func(x+2*dx)+16*func(x+dx)-30*func(x)+16*func(x-dx)-func(x-2*dx))/(12*Math.pow(dx,2));
-            case 3: return (-func(x+3*dx)+8*func(x+2*dx)-13*func(x+dx)+13*func(x-dx)-8*func(x-2*dx)+func(x-3*dx))/(8*Math.pow(dx,3));
-            case 4: return (-func(x+3*dx)+12*func(x+2*dx)-39*func(x+dx)+ 56*func(x)-39*func(x-dx)+12*func(x-2*dx)-func(x-3*dx))/(6*Math.pow(dx,4));
-            case 5: return (-func(x+4*dx)+9*func(x+3*dx)-26*func(x+2*dx)+29*func(x+dx)-29*func(x-dx)+26*func(x-2*dx)-9*func(x-3*dx)+func(x-4*dx))/(6*Math.pow(dx,5));
-            case 6: return (-func(x+4*dx)+12*func(x+3*dx)-52*func(x+2*dx)+116*func(x+dx)-150*func(x)+116*func(x-dx)-52*func(x-2*dx)+12*func(x-3*dx)-func(x-4*dx))/(4*Math.pow(dx,6));
+            case 1: return (-func(x+2*h)+8*func(x+h)-8*func(x-h)+func(x-2*h))/(12*h);
+            case 2: return (-func(x+2*h)+16*func(x+h)-30*func(x)+16*func(x-h)-func(x-2*h))/(12*Math.pow(h,2));
+            case 3: return (-func(x+3*h)+8*func(x+2*h)-13*func(x+h)+13*func(x-h)-8*func(x-2*h)+func(x-3*h))/(8*Math.pow(h,3));
+            case 4: return (-func(x+3*h)+12*func(x+2*h)-39*func(x+h)+ 56*func(x)-39*func(x-h)+12*func(x-2*h)-func(x-3*h))/(6*Math.pow(h,4));
+            case 5: return (-func(x+4*h)+9*func(x+3*h)-26*func(x+2*h)+29*func(x+h)-29*func(x-h)+26*func(x-2*h)-9*func(x-3*h)+func(x-4*h))/(6*Math.pow(h,5));
+            case 6: return (-func(x+4*h)+12*func(x+3*h)-52*func(x+2*h)+116*func(x+h)-150*func(x)+116*func(x-h)-52*func(x-2*h)+12*func(x-3*h)-func(x-4*h))/(4*Math.pow(h,6));
             default:
               console.warn('Numerical differentiation of order higher than 6 is not accurate');
-              return Calculus.diff(function(y) { return Calculus.diff(func,y,dx,n-6); },x,dx,6);
+              return Calculus.diff(function(y) { return Calculus.diff(func,y,h,n-6); },x,h,6);
         }
     },
     pdiff: function(func,numArgs,index,values) {
@@ -344,17 +353,25 @@ export let Calculus = {
             return func();
         }
     },
-    integrate: function(func,x1,x2,dx) { // method used: Simpson's 1/3 rule
+    integrate: function(func,start,end,N) {
+        /*
+        Based on MIT OCW Introduction to Numerical Analysis 18.330
+        https://ocw.mit.edu/courses/mathematics/18-330-introduction-to-numerical-analysis-spring-2012/
+        Method used: Simpson's rule
+        Coefficients: 1 4 2 4 2 ... 2 4 1
+        Error: forth-order for function with fifth differentiability
+        */
+
         if(typeof func != 'function') throw '' + func + ' is not a function';
-        if(dx==undefined) dx = (x2-x1)*1e-4;
+
+        if(N==undefined) N = 1e4
+        let h = (end-start)/N/2
         let result = 0;
-        let index = x1;
-        while(index + dx < x2) {
-            result += dx/6*(func(index)+4*func(index+dx/2)+func(index+dx));
-            index += dx;
-        }
-        dx = x2-index;
-        result += dx/6*(func(index)+4*func(index+dx/2)+func(index+dx));
+
+        for(let i=0; i<N; i++) result += 4*func(start+(2*i+1)*h) + 2*func(start+2*i*h)
+        result += func(end) - func(start)
+        result *= h/3
+
         return result;
     }
 }
@@ -510,73 +527,6 @@ export let Vector = {
     }
 }
 
-export let Solver = {
-    sim2: function(matrix) {  // simultaneous equation, 2 unknowns. size of matrix is 2x3
-        if(matrix.length!=2 && matrix[0].length!=3 && matrix[1].length!=3) throw 'Matrix dimensions are not int 2x3 shape'
-        let a = matrix[0][0]; let b = matrix[0][1]; let m = matrix[0][2];
-        let c = matrix[1][0]; let d = matrix[1][1]; let n = matrix[1][2];
-
-        if(a*d==b*c) {
-            if(a*n==c*m) console.warn('Infinite number of solutions');
-            else console.warn('No solution found');
-            return undefined;
-        } else return {
-            x: (m*d-n*b)/(a*d-b*c),
-            y: (m*c-n*a)/(b*c-a*d),
-        }
-    },
-    simultaneousEqn: function(matrix) {  // method used: Gaussian elimination
-        if(matrix[0].length!=matrix.length+1) throw 'Augmented matrix has wrong dimension. It must be in n x (n+1)';
-        let temp = Matrix.reducedEchelonForm(matrix);
-        let result = [];
-        for(let i=0;i<temp.length;i++) result.push(temp[i][temp[i].length-1]);
-        return result;
-    },
-    findRootEqn: function(func,x0=0,dfunc,accuracy=1e-15) {  // method used: Newton's method
-        if(dfunc==undefined) dfunc = function(x) { return Calculus.diff(func,x,undefined,1); };
-        let count = 0;
-        while(Math.abs(func(x0))>accuracy&&count<1e4) {
-            x0 -= func(x0)/dfunc(x0);
-            count++;
-        }
-        if(Math.abs(func(x0)>1)) {
-            console.warn('No solution found');
-            return undefined;
-        }
-        return x0;
-    },
-    quadraticEqn: function(a,b,c,complex=false) {
-        if(complex==true) {
-            let sqrtD = ComplexNumber.SQRT(b*b-4*a*c);
-            return [sqrtD[0].add(-b).multiply(1/2/a),sqrtD[1].add(-b).multiply(1/2/a)];
-        }
-        let determinant = b*b-4*a*c;
-        if(determinant<0) { console.warn('No real roots'); return undefined; }
-        else if(determinant==0) { return [ -b/(2*a) ]; }
-        else return [(-b + Math.sqrt(determinant))/(2*a), (-b - Math.sqrt(determinant))/(2*a)];
-    },
-    cubicEqn: function(a,b,c,d,complex=false) {
-        let d0 = b*b - 3*a*c,
-            d1 = 2*b*b*b - 9*a*b*c + 27*a*a*d,
-            result = [];
-        console.log(result);
-        return result;
-    },
-    ODE: function(mode='Euler',func,x0,step=1/60) {
-        if(mode='Euler') {
-            return x0+h*func(x0);
-        }
-        if(mode='RK4') {
-            let k1 = h*func(x0),
-                k2 = h*func(x0+k1/2),
-                k3 = h*func(x0+k2/2),
-                k4 = h*func(x0+k3);
-            return x0+(k1+k2*2+k3*2+k4)/6;
-        }
-        return undefined;
-    }
-}
-
 export let Graph = {
     drawAxis: function(xRange,yRange,canvas) {
         let context = canvas.getContext('2d'),
@@ -714,97 +664,6 @@ export let Graph = {
     }
 };
 
-export let Statistics = {
-    sum: function(list) {
-        let result = 0,
-            length = list.length;
-        for(let i=0;i<length;i++) result+=list[i];
-        return result;
-    },
-    mean: function(list) {
-        let result = 0,
-            length = list.length;
-        for(let i=0;i<length;i++) result+=list[i];
-        return result/length;
-    },
-    var: function(list) {
-        let sumSquared = 0,
-            sum = 0,
-            length = list.length;
-        for(let i=0;i<length;i++) {
-            sumSquared += list[i]*list[i];
-            sum += list[i];
-        }
-        sum /= length;
-        return sumSquared/length - sum*sum;
-    },
-    sd: function(list) {
-        return Math.sqrt(Statistics.var(list));
-    },
-    sampleVar: function(list) {  // unbiased estimate of population variance from a sample
-        let sumSquared = 0,
-            sum = 0,
-            length = list.length;
-        for(let i=0;i<length;i++) {
-            sumSquared += list[i]*list[i];
-            sum += list[i];
-        }
-        let temp = length-1;
-        return sumSquared/temp - sum*sum/length/temp;
-    },
-    sampleSd: function(list) {
-        return Math.sqrt(Statistics.sampleVar(list));
-    },
-    cov: function(list1,list2) {
-        if(list1.length!=list2.length) throw 'Two lists don\'t have the same length';
-        let xySum = 0,
-            xSum = 0,
-            ySum = 0,
-            length = list1.length;
-        for(let i=0;i<length;i++) {
-            xySum += list1[i]*list2[i];
-            xSum += list1[i];
-            ySum += list2[i];
-        }
-        return (xySum-xSum*ySum/length)/length;
-    },
-    regression: {
-        linear: function(listX,listY) {
-            if(listX.length!=listY.length) throw 'Two data sets must have the same length';
-            let sumX = 0,
-                sumY = 0,
-                sumX2 = 0,
-                sumY2 = 0,
-                sumXY = 0;
-            for(let i=0;i<listX.length;i++) {
-                sumX += listX[i];
-                sumY += listY[i];
-                sumX2 += listX[i]*listX[i];
-                sumY2 += listY[i]*listY[i];
-                sumXY += listX[i]*listY[i];
-            }
-            let denominator = sumX*sumX - listX.length*sumX2,
-                numerator = sumX*sumY-sumXY*listX.length,
-                A = (sumX*sumY-sumXY*listX.length)/denominator,
-                B = (sumXY*sumX-sumX2*sumY)/denominator,
-                R = -numerator/Math.sqrt(listX.length*sumX2-sumX*sumX)/Math.sqrt(listX.length*sumY2-sumY*sumY),
-                R2 = R*R;
-            return {'a': A, 'b': B, 'r2': R2, 'r': R};
-        },
-        exponential: function(listX,listY) {
-            if(listX.length!=listY.length) throw 'Two data sets must have the same length';
-            let listYnew = [];
-            for(let i=0;i<listY.length;i++) {
-                listYnew.push(Math.log(listY[i]));
-            }
-            let raw = Statistics.regression.linear(listX,listYnew),
-                A = Math.exp(raw.b),
-                B = Math.exp(raw.a);
-            return {'a': A, 'b': B, 'r2': raw.r2, 'r': raw.r};
-        }
-    }
-}
-
 export let Compute = {
     magnitude: function(x,y) {
         return Math.sqrt(x*x+y*y);
@@ -929,17 +788,18 @@ export let Signal = (function() {
 
     // public methods
     pub.fft = function(realSignal,fftSizeRef) {
-        /* Main function to call from outside
-         * INPUT: realSignal: an array of numbers
-         *        fftSize: a number
-         * This function first tests certain conditions and handle them if possible. Otherwise, throw an error
-         *     - Check if the signal is an array of numbers (only first element). If not, throw an error
-         *     - Check if fftSize is given. If not → fftSize = signal size
-         *     - Check if fftSize is a power of 2. If not, throw an error
-         *     - Check if signal is shorter than expected fftSize, do zero padding on the signal
-         * This function also warps the number array into a ComplexNumber array to feed into method FFT.FFT()
-         * RETURN: an array of ComplexNumber objects
-         */
+        /* 
+        Main function to call from outside
+        INPUT: realSignal: an array of numbers
+               fftSize: a number
+        This function first tests certain conditions and handle them if possible. Otherwise, throw an error
+            - Check if the signal is an array of numbers (only first element). If not, throw an error
+            - Check if fftSize is given. If not → fftSize = signal size
+            - Check if fftSize is a power of 2. If not, throw an error
+            - Check if signal is shorter than expected fftSize, do zero padding on the signal
+        This function also warps the number array into a ComplexNumber array to feed into method FFT.FFT()
+        RETURN: an array of ComplexNumber objects
+        */
         if(typeof fftSizeRef != 'number') throw 'FFT size is not a number';
         if(typeof realSignal[0] != 'number') throw 'Signal is not an array of numbers';
         
@@ -968,37 +828,41 @@ export let Signal = (function() {
     
     pub.get = {
         ReArray: function(signal) {
-            /* Extract the real components from a ComplexNumber array
-             * INPUT: a ComplexNumber array
-             * RETURN: a number array of real components
-             */
+            /* 
+            Extract the real components from a ComplexNumber array
+            INPUT: a ComplexNumber array
+            RETURN: a number array of real components
+            */
             let result = [];
             for(let i=0;i<signal.length;i++) result[i] = signal[i].re;
             return result;
         },
         ImArray: function(signal) {
-            /* Extract the imaginary components from a ComplexNumber array
-             * INPUT: a ComplexNumber array
-             * RETURN: a number array of imaginary components
-             */
+            /* 
+            Extract the imaginary components from a ComplexNumber array
+            INPUT: a ComplexNumber array
+            RETURN: a number array of imaginary components
+            */
             let result = [];
             for(let i=0;i<signal.length;i++) result[i] = signal[i].im;
             return result;
         },
         MagnitudeArray: function(signal) {
-            /* Extract the magnitudes from a ComplexNumber array
-             * INPUT: a ComplexNumber array
-             * RETURN: a number array of magnitudes
-             */
+            /* 
+            Extract the magnitudes from a ComplexNumber array
+            INPUT: a ComplexNumber array
+            RETURN: a number array of magnitudes
+            */
             let result = [];
             for(let i=0;i<signal.length;i++) result[i] = Math.sqrt(signal[i].re*signal[i].re + signal[i].im*signal[i].im);
             return result;
         },
         getPhaseArray: function(signal) {
-            /* Extract the phases from a ComplexNumber array
-             * INPUT: a ComplexNumber array
-             * RETURN: a number array of phases in radian
-             */
+            /*
+            Extract the phases from a ComplexNumber array
+            INPUT: a ComplexNumber array
+            RETURN: a number array of phases in radian
+            */
             let result = [];
             for(let i=0;i<signal.length;i++) result[i] = Math.atan2(signal[i].im,signal[i].re);
             return result;

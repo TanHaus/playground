@@ -1,3 +1,5 @@
+import { Finance, Solver } from '../libraries/math.js'
+
 let n_show = document.querySelector("#n"),
     ir_show = document.querySelector("#ir"),
     pv_show = document.querySelector("#pv"),
@@ -7,9 +9,13 @@ let n_show = document.querySelector("#n"),
 let n = 10, ir = 0, pv = -5000, pmt = 100, fv = 1000,
     accuracy = 4;
 
+let show = [n_show, ir_show, pv_show, pmt_show, fv_show]
+
+/**
+ * Retrieve and assign value to variables
+ */
 document.calculate = function(calculate_value) {
-    // Retrieve and assign value to variables
-    //retrieve_value();
+    retrieve_value();
     let rate = 1 + ir,
         discount = rate**n,
         pmt_r = pmt/ir;
@@ -20,29 +26,10 @@ document.calculate = function(calculate_value) {
             break;
 
         case "ir":
-            // Use recursion formula to approximate the value
-            console.log("n = ", n, "pv = ", pv, "pmt = ", pmt, "fv = ", fv);
-            let ir1 = -1, ir2 = 0,
-                accuracy = 1e-7,
-                count = 0;
+            let calc_fv = r => (r==0) ? pv + pmt*n + fv : pv*(1+r)**n + pmt/r*((1+r)**n - 1) + fv
+            let derivative_fv = r => (r==0) ? pv*n + pmt*n*(n-1)/2 : pv*n*(1+r)**(n-1) + pmt/r**2*(n*(1+r)**(n-1)*r-(1+r)**n+1)
 
-            let function_min = r => pv*(1+r)**n*r + pmt*(1+r)**n - pmt + fv*r;
-            let derivative = r => n*pv*(1+r)**(n-1) + pv*(1+r)**n + n*pmt*(1+r)**(n-1) + fv;
-            let function_linear = r => Math.log(function_min(r)+1);
-            let derivative_linear = r => derivative(r)/(function_min(r)+1);
-
-            while(Math.abs(function_min(ir1)) > accuracy) {
-                ir2 = ir1 - function_min(ir1)/derivative(ir1);
-                ir1 = ir2 - function_min(ir2)/derivative(ir2);
-                console.log("ir1 = ", ir1, " ir2 = ", ir2);
-
-                count++;
-                if(count > 1000) break;
-            }
-            ir = ir1;
-
-            console.log("CONFIRM ", function_min(ir));
-
+            ir = Solver.root('newton', calc_fv, 0.1, derivative_fv)
             break;
             
         case "pv":
@@ -93,6 +80,56 @@ let update_value = function(value) {
     }
 }
 
-let test = function() {
-    n = 10, ir = 0, pv = -5000, pmt = 80;
+let reset_tvm = function() {
+    show.forEach(function(item) {
+        item.value = 0
+    })
 }
+
+reset_tvm()
+
+let cf_rows = 2
+let data_table = document.querySelector('#cf_data')
+
+document.add_cf_row = function() {
+    cf_rows++
+    let new_row = data_table.insertRow()
+    new_row.insertCell().textContent = cf_rows.toFixed(0)
+    new_row.insertCell().innerHTML = '<input type="number" value=0>'
+    new_row.insertCell().innerHTML = '<input type="number" value=1>'
+}
+
+let npv_function = function(r) {
+    let cf0 = parseFloat(data_table.rows[1].cells[1].firstElementChild.value)
+    let CFs = [], freqs = []
+
+    for(let i=1; i<=cf_rows; i++) {
+        let row = data_table.rows[i+1]
+        CFs.push(parseFloat(row.cells[1].firstElementChild.value))
+        freqs.push(parseFloat(row.cells[2].firstElementChild.value))
+    }
+
+    return Finance.npv(cf0, CFs, freqs, r)
+}
+
+document.calc_npv = function() {
+    let r = parseFloat(document.querySelector('#cf_ir').value)/100
+    let npv = npv_function(r)
+    document.querySelector('#show_npv').innerHTML = '$ ' + npv.toFixed(4)
+}
+
+document.calc_irr = function() {
+    let cf0 = parseFloat(data_table.rows[1].cells[1].firstElementChild.value)
+    let CFs = [], freqs = []
+
+    for(let i=1; i<=cf_rows; i++) {
+        let row = data_table.rows[i+1]
+        CFs.push(parseFloat(row.cells[1].firstElementChild.value))
+        freqs.push(parseFloat(row.cells[2].firstElementChild.value))
+    }
+
+    let irr = Finance.irr(cf0, CFs, freqs)
+    
+    document.querySelector('#show_irr').textContent = (irr*100).toFixed(4) + '%'
+}
+
