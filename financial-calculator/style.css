@@ -1,3 +1,11 @@
 #tvm button {
-    width: 5rem
+    width: 5rem;
+}
+
+.tvm-container, #cf_data {
+    display: grid;
+    grid-template-columns: repeat(3, min-content);
+    /* grid-template-rows: repeat(4, auto); */
+    column-gap: 0.5rem;
+    align-items: baseline;
 }

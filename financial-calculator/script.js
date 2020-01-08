@@ -1,4 +1,8 @@
-import { Finance, Solver } from '../libraries/math.js'
+import { Finance } from '../libraries/math.js'
+
+/**
+ * For TVM calculator
+ */
 
 let n_show = document.querySelector("#n"),
     ir_show = document.querySelector("#ir"),
@@ -16,32 +20,26 @@ let show = [n_show, ir_show, pv_show, pmt_show, fv_show]
  */
 document.calculate = function(calculate_value) {
     retrieve_value();
-    let rate = 1 + ir,
-        discount = rate**n,
-        pmt_r = pmt/ir;
 
     switch(calculate_value) {
         case "n":
-            n = Math.log((pmt_r - fv) / (pmt_r + pv))/Math.log(rate);
+            n = Finance.tvm('n', ir, pv, pmt, fv)
             break;
 
         case "ir":
-            let calc_fv = r => (r==0) ? pv + pmt*n + fv : pv*(1+r)**n + pmt/r*((1+r)**n - 1) + fv
-            let derivative_fv = r => (r==0) ? pv*n + pmt*n*(n-1)/2 : pv*n*(1+r)**(n-1) + pmt/r**2*(n*(1+r)**(n-1)*r-(1+r)**n+1)
-
-            ir = Solver.root('newton', calc_fv, 0.1, derivative_fv)
+            ir = Finance.tvm('ir', n, pv, pmt, fv)
             break;
             
         case "pv":
-            pv = -pmt_r * (1 - 1/discount) - fv/discount;
+            pv = Finance.tvm('pv', n, ir, pmt, fv)
             break;
 
         case "pmt":
-            pmt = (-fv - pv*discount) * ir / (discount - 1);
+            pmt = Finance.tvm('pmt', n, ir, pv, fv)
             break;
 
         case "fv":
-            fv = -pmt_r * (discount - 1) - pv*discount;
+            fv = Finance.tvm('fv', n, ir, pv, pmt)
             break;
     }
 
@@ -88,47 +86,59 @@ let reset_tvm = function() {
 
 reset_tvm()
 
+/**
+ * For CF calculator
+ */
+
+// Keep track of number of data rows
 let cf_rows = 2
 let data_table = document.querySelector('#cf_data')
 
 document.add_cf_row = function() {
     cf_rows++
-    let new_row = data_table.insertRow()
-    new_row.insertCell().textContent = cf_rows.toFixed(0)
-    new_row.insertCell().innerHTML = '<input type="number" value=0>'
-    new_row.insertCell().innerHTML = '<input type="number" value=1>'
+   
+    let index = document.createElement('span')
+    index.textContent = cf_rows.toFixed(0)
+    let inputCF = document.createElement('input')
+    inputCF.type = 'number'
+    inputCF.classList.add('CFvalue')
+    inputCF.value = 0
+    let inputFreq = document.createElement('input')
+    inputFreq.type = 'number'
+    inputFreq.classList.add('CFfreq')
+    inputFreq.value = 1
+
+    data_table.append(index, inputCF, inputFreq)
 }
 
-let npv_function = function(r) {
-    let cf0 = parseFloat(data_table.rows[1].cells[1].firstElementChild.value)
-    let CFs = [], freqs = []
+// Retrieve information from the CF table of data
+let getData = function() {
+    let CF0 = parseFloat(document.querySelector('.CF0').value)
+    let CFs = document.querySelectorAll('.CFvalue')
+    let Freqs = document.querySelectorAll('.CFfreq')
+    let CFvalues = [], CFfreqs = []
 
-    for(let i=1; i<=cf_rows; i++) {
-        let row = data_table.rows[i+1]
-        CFs.push(parseFloat(row.cells[1].firstElementChild.value))
-        freqs.push(parseFloat(row.cells[2].firstElementChild.value))
+    for(let i=0; i<CFs.length; i++) {
+        CFvalues[i] = parseFloat(CFs.item(i).value)
+        CFfreqs[i] = parseFloat(Freqs.item(i).value)
     }
 
-    return Finance.npv(cf0, CFs, freqs, r)
+    return [CF0, CFvalues, CFfreqs]
 }
 
 document.calc_npv = function() {
     let r = parseFloat(document.querySelector('#cf_ir').value)/100
-    let npv = npv_function(r)
+    let [CF0, CFvalues, CFfreqs] = getData()
+
+    let npv = Finance.npv(CF0, CFvalues, CFfreqs, r)
+    
     document.querySelector('#show_npv').innerHTML = '$ ' + npv.toFixed(4)
 }
 
 document.calc_irr = function() {
-    let cf0 = parseFloat(data_table.rows[1].cells[1].firstElementChild.value)
-    let CFs = [], freqs = []
+    let [CF0, CFvalues, CFfreqs] = getData()
 
-    for(let i=1; i<=cf_rows; i++) {
-        let row = data_table.rows[i+1]
-        CFs.push(parseFloat(row.cells[1].firstElementChild.value))
-        freqs.push(parseFloat(row.cells[2].firstElementChild.value))
-    }
-
-    let irr = Finance.irr(cf0, CFs, freqs)
+    let irr = Finance.irr(CF0, CFvalues, CFfreqs)
     
     document.querySelector('#show_irr').textContent = (irr*100).toFixed(4) + '%'
 }

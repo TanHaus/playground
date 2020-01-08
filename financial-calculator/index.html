@@ -20,98 +20,61 @@
 
     <section>
         <h2>Time Value of Money Calculator</h2>
-        <table id="tvm">
-            <tr>
-                <td>N</td>
-                <td>
-                    <input id="n" type="number">
-                </td>
-                <td>
-                    <button onclick="calculate('n')">N</button>
-                </td>
-            </tr>
-            <tr>
-                <td>I/Y</td>
-                <td>
-                    <input id="ir" type="number">
-                </td>
-                <td>
-                    <button onclick="calculate('ir')">I/Y</button>
-                </td>
-            </tr>
-            <tr>
-                <td>PV</span>
-                <td>
-                    <input id="pv" type="number">
-                </td>
-                <td>
-                    <button onclick="calculate('pv')">PV</button>
-                </td>
-            </tr>
-            <tr>
-                <td>PMT</td>
-                <td>
-                    <input id="pmt" type="number">
-                </td>
-                <td>
-                    <button onclick="calculate('pmt')">PMT</button>
-                </td>
-            </tr>
-            <tr>
-                <td>FV</td>
-                <td>
-                    <input id="fv" type="number">
-                </td>
-                <td>
-                    <button onclick="calculate('fv')">FV</button>
-                </td>
-            </tr>
-        </table>
+        <div class="tvm-container">
+            <span>N</span>          
+            <input id="n" type="number">
+            <button onclick="calculate('n')">N</button>
+    
+            <span>I/Y</span>
+            <input id="ir" type="number">
+            <button onclick="calculate('ir')">I/Y</button>
+    
+            <span>PV</span>
+            <input id="pv" type="number">
+            <button onclick="calculate('pv')">PV</button>
+    
+            <span>PMT</span>
+            <input id="pmt" type="number">
+            <button onclick="calculate('pmt')">PMT</button>
+    
+            <span>FV</span>
+            <input id="fv" type="number">
+            <button onclick="calculate('fv')">FV</button>
+        </div>
+        
     </section>
 
     <section>
         <h2>Cash flow calculator</h2>
-        <table id="cf_data">
-            <tr>
-                <th></th>
-                <th>Cash flow</th>
-                <th>Frequency</th>
-            </tr>
-            <tr>
-                <td>0</td>
-                <td><input type="number" value=0></td>
-            </tr>
-            <tr>
-                <td>1</td>
-                <td><input type="number" value=0></td>
-                <td><input type="number" value=1></td>
-            </tr>
-            <tr>
-                <td>2</td>
-                <td><input type="number" value=0></td>
-                <td><input type="number" value=1></td>
-            </tr>
-        </table>
+        <div id="cf_data">
+            <span></span>
+            <span>Cash flow</span>
+            <span>Frequency</span>
+                        
+            <span>0</span>
+            <input type="number" class="CF0" value=0>
+            <span></span>
+            
+            <span>1</span>
+            <input type="number" class="CFvalue" value=0>
+            <input type="number" class="CFfreq" value=1>
+            
+            <span>2</span>
+            <input type="number" class="CFvalue" value=0>
+            <input type="number" class="CFfreq" value=1>
+        </div>
+
         <button onclick="add_cf_row()">Add row</button>
         <p>Discount rate <input id="cf_ir" type="number" value=10></p>
-        <table>
-            <tr>
-                <td>IRR</td>
-                <td><span id="show_irr">0%</span></td>
-                <td><button onclick = "calc_irr()">Calculate</button></td>
-            </tr>
-            <tr>
-                
-            </tr>
-            <tr>
-                <td>NPV</td>
-                <td><span id="show_npv">$ 0</span></td>
-                <td><button onclick = "calc_npv()">Calculate</button></td>
-            </tr>
-            <tr>
-                
-            </tr>
-        </table>
+        
+        IRR
+        <span id="show_irr">0%</span>
+        <button onclick = "calc_irr()">Calculate</button>
+    
+        NPV
+        <span id="show_npv">$ 0</span>
+        <button onclick = "calc_npv()">Calculate</button>
+
     </section>
 
 </body>
