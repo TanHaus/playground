@@ -20,29 +20,24 @@ body {
     color: #686866; 
 }
 
-header, footer, section { 
-    padding: 0 var(--padding); 
+.row-block {
+    margin-right: 10vw;
+    margin-left: 10vw;
+    padding: 0;
+    min-height: 50wh;
 }
 
 header {
-    padding: 50px 0px 50px 0px;
-    min-height: 50wh;
-    /* position: absolute; */
+    margin-top: 10vh;
+}
+
+footer {
+    margin-top: 40vh;
 }
 
 h1 { 
     font-size: 100px;
-    margin: 10vw 10vw 5vw 10vw; 
-    /* position: relative; */
     border-bottom: 1px ridge;
-}
-
-p { 
-    color: #FFFFFF; 
-}
-
-ul { 
-    padding-left: 3vw; 
 }
 
 li { 
