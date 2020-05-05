@@ -1,4 +1,4 @@
-import {Graph} from '../libraries/math.js';
+import { Graph } from '../libraries/math.js';
 
 const canvas = document.querySelector('#myCanvas'),
       ctx = canvas.getContext('2d'),

@@ -1,4 +1,4 @@
-import { Compute,Random,Vector } from '../libraries/math.js';
+import { Compute, Random } from '../libraries/math.js';
 
 const GRAVITY = 9.81,
       canvas = document.querySelector('#myCanvas'),
@@ -55,32 +55,36 @@ class DoublePendulum {
             return [alpha1,alpha2];
         }
         if(type=='RK4') {
+        let addVector = (vec1, vec2) => [vec1[0]+vec2[0],
+                                         vec1[1]+vec2[1]]
+
         // RK4
-        let v0 = [this.omega1,this.omega2],
-            x0 = [this.theta1,this.theta2],
+        let v0 = [this.omega1, this.omega2],
+            x0 = [this.theta1, this.theta2];
             
-            dvh1 = Vector.scale(alpha(v0,x0),step),
-            dxh1 = Vector.scale(v0,step),
-            vh1 = Vector.add(v0,Vector.scale(dvh1,0.5)),
-            xh1 = Vector.add(x0,Vector.scale(dxh1,0.5)),
+        let dvh1 = alpha(v0,x0).map(x => x*step),
+            dxh1 = v0.map(x => x*step),
+            vh1 = addVector(v0,dvh1.map(x => x*0.5)),
+            xh1 = addVector(x0,dxh1.map(x => x*0.5))
 
-            dvh2 = Vector.scale(alpha(vh1,xh1),step),
-            dxh2 = Vector.scale(vh1,step),
-            vh2 = Vector.add(v0,Vector.scale(dvh2,0.5)),
-            xh2 = Vector.add(x0,Vector.scale(dxh2,0.5)),
+        let dvh2 = alpha(vh1,xh1).map(x => x*step),
+            dxh2 = vh1.map(x => x*step),
+            vh2 = addVector(v0, dvh2.map(x => x*0.5)),
+            xh2 = addVector(x0, dxh2.map(x => x*0.5))
             
-            dvh3 = Vector.scale(alpha(vh2,xh2),step),
-            dxh3 = Vector.scale(vh2,step),
-            vh3 = Vector.add(v0,Vector.scale(dxh3,0.5)),
-            xh3 = Vector.add(x0,Vector.scale(dxh2,0.5)),
+        let dvh3 = alpha(vh2,xh2).map(x => x*step),
+            dxh3 = vh2.map(x => x*step),
+            vh3 = addVector(v0, dxh3.map(x => x*0.5)),
+            xh3 = addVector(x0, dxh2.map(x => x*0.5))
 
-            dvh4 = Vector.scale(alpha(vh3,xh3),step),
-            dxh4 = Vector.scale(vh3,step);
+        let dvh4 = alpha(vh3,xh3).map(x => x*step),
+            dxh4 = vh3.map(x => x*step);
 
-        this.omega1 += (dvh1[0]+2*dvh2[0]+2*dvh3[0]+dvh4[0])/6;
-        this.omega2 += (dvh1[1]+2*dvh2[1]+2*dvh3[1]+dvh4[1])/6;
-        this.theta1 += (dxh1[0]+2*dxh2[0]+2*dxh3[0]+dxh4[0])/6;
-        this.theta2 += (dxh1[1]+2*dxh2[1]+2*dxh3[1]+dxh4[1])/6;
+        this.omega1 += (dvh1[0]+2*dvh2[0]+2*dvh3[0]+dvh4[0])/6
+        this.omega2 += (dvh1[1]+2*dvh2[1]+2*dvh3[1]+dvh4[1])/6
+        this.theta1 += (dxh1[0]+2*dxh2[0]+2*dxh3[0]+dxh4[0])/6
+        this.theta2 += (dxh1[1]+2*dxh2[1]+2*dxh3[1]+dxh4[1])/6
+
         } else if(type=='Euler') {
         // Euler
         let v0 = [this.omega1,this.omega2],
