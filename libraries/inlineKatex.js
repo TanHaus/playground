@@ -6,14 +6,17 @@
  * NOTE: the HTML document must load KaTeX first
  */
 let everything = document.querySelector('body');
-everything.innerHTML = everything.innerHTML.replace(/ \$/g,' <span class="math">')
+everything.innerHTML = everything.innerHTML.replace(/ \$\$/g, ' <p><span class="math"> ')
+                                           .replace(/\$\$/g, ' </span></p>')
+                                           .replace(/ \$/g,' <span class="math">')
                                            .replace(/\(\$/g,'(<span class="math">')
                                            .replace(/\$ /g,'</span> ')
                                            .replace(/\$\)/g,'</span>)')
                                            .replace(/\$\</g,'</span><')
                                            .replace(/\$\!/g,'</span>!')
                                            .replace(/\$\./g,'</span>.')
-                                           .replace(/\$\,/g,'</span>,');
+                                           .replace(/\$\,/g,'</span>,')
+
 let mathInline = document.querySelectorAll('span.math');
 for(let i=0; i<mathInline.length; i++) {
     katex.render(mathInline[i].innerText,mathInline[i]);
